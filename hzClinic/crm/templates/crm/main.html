@@ -1,0 +1,33 @@
+<!DOCTYPE html>{% load static %}
+<html lang="ru" >
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>{% block title %}TITLE{% endblock %}</title>
+  <link rel="stylesheet" href={% static "CRM/css/bootstrap.min.css" %}>
+  <link rel="stylesheet" href={% static "CRM/css/main.css" %}>
+</head>
+<body class="" data-gr-c-s-loaded="true">
+
+
+<main role="main">
+
+{% block hint %}{{main_body}}{% endblock %}
+<br>
+{% block content %}{{title}}{% endblock %}
+{% block advice %}{% endblock %}
+</main>
+
+<hr>
+{% block footer %}
+<footer class="container">
+  <p>© Просто магазин 2020</p>
+</footer>
+{% endblock %}
+
+<script src={% static "CRM/js/jquery-3.3.1.slim.min.js" %}></script>
+<script src={% static "CRM/js/popper.min.js" %}></script>
+<script src={% static "CRM/js/bootstrap.min.js" %}></script>
+</body>
+</html>
