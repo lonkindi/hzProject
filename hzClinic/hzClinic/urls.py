@@ -15,6 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 
 from crm import views
 
@@ -22,6 +24,11 @@ urlpatterns = [
     path('hzhzhz/', admin.site.urls),
     path('', views.main_view, name='main'),
     path('login/', views.login_view, name='login'),
-    path('login/', views.logout_view, name='logout'),
+    path('logout/', views.logout_view, name='logout'),
+    path('questionnaire/', views.questionnaire_view, name='questionnaire')
 
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)

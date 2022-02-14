@@ -1,7 +1,10 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.forms import SelectDateWidget, Textarea
 
 from users.models import CustomUser
+
+from crm.models import hzUserInfo
 
 
 class LoginForm(forms.Form):
@@ -22,3 +25,12 @@ class CustomUserChangeForm(UserChangeForm):
     class Meta(UserChangeForm):
         model = CustomUser
         fields = ('username', 'email', 'is_staff')
+
+
+class QuestForm(forms.ModelForm):
+    class Meta:
+        model = hzUserInfo
+        exclude = ['hz_user', 'type', ]
+        widgets = {'DOB': SelectDateWidget(),
+                   'reg_address': Textarea(),
+                   }

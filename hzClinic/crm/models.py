@@ -22,7 +22,7 @@ class hzUserInfo(models.Model):
     type = models.CharField(verbose_name='Тип пользователя', choices=UserTypeChoices.choices, max_length=7,
                             default='patient')
     foto = models.FileField(verbose_name='Фотография',
-                            upload_to=f'crm',
+                            upload_to=f'crm/foto/users/%Y/%m/%d/',
                             # upload_to=f'crm/media/foto/users/%Y/%m/%d/',
 
                             blank=True, null=True)

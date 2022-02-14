@@ -1,33 +1,62 @@
 <!DOCTYPE html>{% load static %}
-<html lang="ru" >
+<html lang="ru">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>{% block title %}TITLE{% endblock %}</title>
-  <link rel="stylesheet" href={% static "CRM/css/bootstrap.min.css" %}>
-  <link rel="stylesheet" href={% static "CRM/css/main.css" %}>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{% block title %}{{title}}{% endblock %}</title>
+    <link rel="stylesheet" href={% static "crm/css/bootstrap.min.css" %}>
+    <link rel="stylesheet" href={% static "crm/css/custom.css" %}>
 </head>
 <body class="" data-gr-c-s-loaded="true">
 
 
 <main role="main">
 
-{% block hint %}{{main_body}}{% endblock %}
-<br>
-{% block content %}{{title}}{% endblock %}
-{% block advice %}{% endblock %}
+    {% block hint %}
+        {{main_body}}
+    {% endblock %}
+    <br>
+    {% block content %}
+     <div class="col-lg-6 bg-white">
+       <div class="form-floating mb-3">
+                <div class="form-floating mb-3">
+                  <div class="input-material">Введите логин и пароль</div>
+                  <form class="form-floating mb-3" id="QuestForm" method="post" >
+                    {%csrf_token%}
+<!--                    <div class="form-group">-->
+                      <div class="mb-3">
+                    {{form}}
+                      </div>
+<!--                      <input id="login-username" type="text" name="loginUsername" required="" class="input-material">-->
+<!--                      <label for="id_user_login" class="label-material">Логин</label>-->
+<!--                    </div>-->
+<!--                    <div class="form-group">-->
+<!--                      <input id="login-password" type="password" name="loginPassword" required="" class="input-material">-->
+<!--                      <label for="id_user_password" class="label-material">Пароль</label>-->
+<!--                    </div><a id="login" href="CRM/main" class="btn btn-primary">Login</a>-->
+                    <p></p>
+                    <input class="btn btn-primary" type="submit" value="Сохранить">
+<!--                    &lt;!&ndash; This should be submit button but I replaced it with <a> for demo purposes&ndash;&gt;-->
+                  </form>
+<!--                  <a href="#" class="forgot-pass">Забыли пароль?</a><br>-->
+<!--                  <small>Ещё нет аккаунта? </small><a href="register.html" class="signup">Зарегистрируйтесь!</a>-->
+                </div>
+              </div>
+     </div>
+    {% endblock %}
+    {% block advice %}{% endblock %}
 </main>
 
 <hr>
 {% block footer %}
 <footer class="container">
-  <p>© Просто магазин 2020</p>
+    <p>© hzClinic 2020</p>
 </footer>
 {% endblock %}
 
-<script src={% static "CRM/js/jquery-3.3.1.slim.min.js" %}></script>
-<script src={% static "CRM/js/popper.min.js" %}></script>
-<script src={% static "CRM/js/bootstrap.min.js" %}></script>
+<script src={% static "crm/js/jquery-3.3.1.slim.min.js" %}></script>
+<script src={% static "crm/js/popper.min.js" %}></script>
+<script src={% static "crm/js/bootstrap.min.js" %}></script>
 </body>
 </html>
