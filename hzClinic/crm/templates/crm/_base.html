@@ -29,17 +29,25 @@
   <body>
     <div class="page home-page">
       <!-- Main Navbar-->
-      {% include "crm/_main_navbar.html" %}
+      {% block MainNavbar %}
+        {% include "crm/_main_navbar.html" %}
+      {% endblock %}
       <div class="page-content d-flex align-items-stretch">
         <!-- Side Navbar -->
         <nav class="side-navbar">
           <!-- Sidebar Header-->
-          {% include "crm/_sidebar_header.html" %}
+          {% block SidebarHeader %}
+            {% include "crm/_sidebar_header.html" %}
+          {% endblock %}
           <!-- Sidebar Navidation Menus-->
-          {% include "crm/_nav_menu.html" %}
+          {% block SidebarNavidationMenus %}
+            {% include "crm/_nav_menu.html" %}
+          {% endblock %}
         </nav>
         <!-- Sidebar Navidation Menus-->
+        {% block Content %}
           {% include "crm/_content.html" %}
+        {% endblock %}
       </div>
     </div>
     <!-- Javascript files-->

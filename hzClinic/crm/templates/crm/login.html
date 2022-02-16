@@ -17,7 +17,7 @@
     <!-- Custom stylesheet - for your changes-->
     <link rel="stylesheet" href={% static "CRM/css/custom.css" %}>
     <!-- Favicon-->
-    <link rel="shortcut icon" href={% static "CRM/img/favicon.ico" %}>
+    <link rel="shortcut icon" href={% static "crm/img/favicon.ico" %}>
     <!-- Font Awesome CDN-->
     <!-- you can replace it by local Font Awesome-->
     <script src="https://use.fontawesome.com/99347ac47f.js"></script>
@@ -47,18 +47,20 @@
             <div class="col-lg-6 bg-white">
               <div class="form d-flex align-items-center">
                 <div class="content">
-                  <div class="input-material">Введите логин и пароль</div>
+                  <div class="input-material">{{ information }}</div>
                   <form id="LoginForm" method="post" >
                     {%csrf_token%}
-<!--                    <div class="form-group">-->
-                    {{form}}
+                    <div class="form-group">
+<!--                    {{form.as_p}}-->
+                      {{form.user_login}}
 <!--                      <input id="login-username" type="text" name="loginUsername" required="" class="input-material">-->
-<!--                      <label for="id_user_login" class="label-material">Логин</label>-->
-<!--                    </div>-->
-<!--                    <div class="form-group">-->
-<!--                      <input id="login-password" type="password" name="loginPassword" required="" class="input-material">-->
-<!--                      <label for="id_user_password" class="label-material">Пароль</label>-->
-<!--                    </div><a id="login" href="CRM/main" class="btn btn-primary">Login</a>-->
+<!--                      <label for="{{form.user_login.id_for_label}}" class="label-material">_hz_Логин</label>-->
+                    </div>
+                    <div class="form-group">
+                    {{form.user_password}}
+<!--                      <label for="{{form.user_password.id_for_label}}" class="label-material">_hz_Пароль</label>-->
+                    </div>
+<!--                    <a id="login" href="CRM/main" class="btn btn-primary">Login</a>-->
                     <p></p>
                     <input class="btn btn-primary" type="submit" value="Вход">
 <!--                    &lt;!&ndash; This should be submit button but I replaced it with <a> for demo purposes&ndash;&gt;-->
@@ -72,11 +74,8 @@
           </div>
         </div>
       </div>
-      <div class="copyrights text-center">
-        <p>Design by <a href="https://bootstrapious.com/admin-templates" class="external">Bootstrapious</a></p>
-      </div>
-    </div>
-    <!-- Javascript files-->
+
+
     <script src=https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script src={% static "CRM/js/tether.min.js" %}></script>
     <script src={% static "CRM/js/bootstrap.min.js" %}></script>

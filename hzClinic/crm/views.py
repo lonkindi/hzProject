@@ -8,7 +8,7 @@ from crm.forms import LoginForm, QuestForm
 
 
 def main_view(request):
-    template_name = 'crm/_base.html'
+    template_name = 'crm/_main.html'
     hzuser = request.user
     hzuser_info = hzUserInfo.objects.filter(hz_user=hzuser)
     type = hzuser_info[0].type
@@ -24,15 +24,11 @@ def main_view(request):
 
 def login_view(request):
     if request.user.is_authenticated:
-        print(reverse(main_view))
         return redirect(reverse(main_view))
     if request.method == 'POST':
         username = request.POST.get('user_login', None)
         password = request.POST.get('user_password', None)
-        # print('username=', username)
-        # print('password=', password)
         user = authenticate(username=username, password=password)
-        print('user=', user)
         if user is not None:
             if user.is_active:
                 login(request, user)
@@ -40,10 +36,12 @@ def login_view(request):
             # else:
             #     pass
         else:
-            return HttpResponse('Invalid login or passpword!')
+            return HttpResponse('Некорректный логин или пароль!')
     template_name = 'crm/login.html'
     form = LoginForm()
-    context = {'form': form}
+    context = {'form': form,
+               'information': 'Для работы в системе необходимо авторизоваться',
+               }
     return render(request, template_name=template_name, context=context)
     # context = {'title': 'login_title', 'main_body': 'WELCOMMEN!'}
     # return render(request, template_name, context=context)
@@ -51,9 +49,14 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    template_name = 'crm/main.html'
-    context = {'title': 'logout_title', 'main_body': 'By-by!!!'}
-    return render(request, template_name, context=context)
+    return redirect(reverse(login_view))
+    # template_name = 'crm/login.html'
+    # form = LoginForm()
+    # context = {'form': form,
+    #            'title': 'Вы покинули клинику',
+    #            'information': 'Введите логин и пароль чтобы вернуться к работе',
+    #            }
+    # return render(request, template_name, context=context)
 
 
 def questionnaire_view(request):

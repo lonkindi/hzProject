@@ -11,8 +11,8 @@ class LoginForm(forms.Form):
     user_login = forms.CharField(label='', max_length=50)
     user_password = forms.CharField(label='', max_length=10, widget=forms.PasswordInput())
 
-    user_login.widget.attrs.update({'class': 'input-material', 'title': 'Your name'})
-    user_password.widget.attrs.update({'class': 'input-material'})
+    user_login.widget.attrs.update({'class': 'input-material', 'placeholder': 'введите логин'})
+    user_password.widget.attrs.update({'class': 'input-material', 'placeholder': 'введите пароль'})
 
 
 class CustomUserCreationForm(UserCreationForm):
