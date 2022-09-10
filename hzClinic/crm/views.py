@@ -60,10 +60,10 @@ def logout_view(request):
 
 
 def questionnaire_view(request):
-    template_name = 'crm/main.html'
+    template_name = 'crm/_quests.html'
     form = QuestForm()
     context = {'title': 'Анкета',
                'main_body': 'Заполните эту анкету',
                'form': form,
                }
-    return render(request, template_name, context=context)
+    return render(request, template_name=template_name, context=context)

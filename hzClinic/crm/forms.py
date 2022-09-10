@@ -32,5 +32,5 @@ class QuestForm(forms.ModelForm):
         model = hzUserInfo
         exclude = ['hz_user', 'type', ]
         widgets = {'DOB': SelectDateWidget(),
-                   'reg_address': Textarea(),
+                   #'reg_address': Textarea(),
                    }
