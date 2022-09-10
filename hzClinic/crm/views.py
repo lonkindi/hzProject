@@ -2,12 +2,14 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, reverse
 
-from crm.models import hzUserInfo
+from crm.models import hzUserInfo, Anket
 
 from crm.forms import LoginForm, QuestForm
 
 
 def main_view(request):
+    if not request.user.is_authenticated:
+        return redirect(reverse(login_view))
     template_name = 'crm/_main.html'
     hzuser = request.user
     hzuser_info = hzUserInfo.objects.filter(hz_user=hzuser)
@@ -62,8 +64,24 @@ def logout_view(request):
 def questionnaire_view(request):
     template_name = 'crm/_quests.html'
     form = QuestForm()
+    hzuser = request.user
+    hzuser_info = hzUserInfo.objects.filter(hz_user=hzuser)
+    ankets = Anket.objects.filter()
+    anket_list = list()
+    for item in ankets:
+        item_dict = dict()
+        item_dict['state'] = item.state
+        item_dict['external_id'] = item.external_id
+        item_dict['date_filling'] = item.date_filling
+        item_dict['FIO'] = item.content['Фамилия'] + item.content['Имя'] + item.content['Отчество']
+        item_dict['DOB'] = item.content['Дата рождения']
+        item_dict['tel'] = item.content['Ваш контактный телефон']
+        item_dict['addr'] = item.content['Адрес места жительства (регистрации)']
+        anket_list.append(item_dict)
     context = {'title': 'Анкета',
-               'main_body': 'Заполните эту анкету',
+               'user': hzuser,
+               'user_info': hzuser_info[0],
                'form': form,
+               'anket_list': anket_list,
                }
     return render(request, template_name=template_name, context=context)

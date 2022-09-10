@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -54,3 +56,21 @@ class hzUserEvents(models.Model):
 
     def __str__(self):
         return str(self.date_time)
+
+
+class Anket(models.Model):
+    """
+    Модель анкеты
+    """
+    external_id = models.PositiveIntegerField(verbose_name='Внешний ИД')
+    state = models.PositiveIntegerField(verbose_name='Статус')
+    content = models.JSONField(verbose_name='Содержимое анкеты')
+    date_filling = models.DateField(verbose_name='Дата заполнения', default=datetime.datetime.today())
+
+    class Meta:
+        verbose_name = 'Анкета'
+        verbose_name_plural = "Анкеты"
+        ordering = ('-external_id',)
+
+    def __str__(self):
+        return str(self.external_id)
