@@ -61,9 +61,8 @@ def logout_view(request):
     # return render(request, template_name, context=context)
 
 
-def questionnaire_view(request):
+def quests_view(request):
     template_name = 'crm/_quests.html'
-    form = QuestForm()
     hzuser = request.user
     hzuser_info = hzUserInfo.objects.filter(hz_user=hzuser)
     ankets = Anket.objects.filter()
@@ -73,15 +72,29 @@ def questionnaire_view(request):
         item_dict['state'] = item.state
         item_dict['external_id'] = item.external_id
         item_dict['date_filling'] = item.date_filling
-        item_dict['FIO'] = item.content['Фамилия'] + item.content['Имя'] + item.content['Отчество']
+        item_dict['FIO'] = item.content['Фамилия']+' '+item.content['Имя']+' '+item.content['Отчество']
         item_dict['DOB'] = item.content['Дата рождения']
         item_dict['tel'] = item.content['Ваш контактный телефон']
         item_dict['addr'] = item.content['Адрес места жительства (регистрации)']
         anket_list.append(item_dict)
-    context = {'title': 'Анкета',
+    context = {'title': 'Анкеты',
                'user': hzuser,
                'user_info': hzuser_info[0],
-               'form': form,
                'anket_list': anket_list,
+               }
+    return render(request, template_name=template_name, context=context)
+
+
+def quest_view(request, ext_id):
+    anket = list()
+    anket_qs = Anket.objects.filter(external_id=ext_id)
+    anket_dict = anket_qs[0].content
+    for item in anket_dict.items():
+        anket.append([item[0], item[1]])
+    print(type(anket))
+    # a.values()
+    template_name = 'crm/_quest.html'
+    context = {'title': 'Анкета',
+               'anket': anket,
                }
     return render(request, template_name=template_name, context=context)
