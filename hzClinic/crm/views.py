@@ -13,6 +13,7 @@ def main_view(request):
     template_name = 'crm/_main.html'
     hzuser = request.user
     hzuser_info = hzUserInfo.objects.filter(hz_user=hzuser)
+    print(hzuser_info)
     type = hzuser_info[0].type
     type_lbl = hzuser_info[0].UserTypeChoices[type].label
     context = {'title': 'Главная страница',
