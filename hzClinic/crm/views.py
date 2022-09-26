@@ -1,3 +1,5 @@
+import datetime
+
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, reverse
@@ -13,7 +15,7 @@ def main_view(request):
     template_name = 'crm/_main.html'
     hzuser = request.user
     hzuser_info = hzUserInfo.objects.filter(hz_user=hzuser)
-    print(hzuser_info)
+    # print(hzuser_info)
     type = hzuser_info[0].type
     type_lbl = hzuser_info[0].UserTypeChoices[type].label
     context = {'title': 'Главная страница',
@@ -90,12 +92,31 @@ def quest_view(request, ext_id):
     anket = list()
     anket_qs = Anket.objects.filter(external_id=ext_id)
     anket_dict = anket_qs[0].content
-    for item in anket_dict.items():
-        anket.append([item[0], item[1]])
-    print(type(anket))
-    # a.values()
+
+    fio = anket_dict['Фамилия'] + ' ' + anket_dict['Имя'] + ' ' + anket_dict['Отчество']
+    res_date = datetime.datetime.strptime(anket_dict['Дата рождения'], "%Y-%m-%d").strftime('%d.%m.%Y')
+
+    PerZ = 'ОРВИ'
+    PerZQ = anket_dict['Перенесённые и хронические заболевания?']
+    if PerZQ != 'Нет':
+        PerZA = ', ' + anket_dict['Перечислите перенесённые и хронические заболевания']
+        PerZ += PerZA
+
+
+    initial = {'FIO': fio,
+               'DateOfB': res_date,
+               'Address': anket_dict['Адрес места жительства (регистрации)'],
+               'Job': anket_dict['Место работы, должность'],
+               'PerZ': PerZ,
+
+               }
+    # for item in anket_dict.items():
+    #     anket.append([item[0], item[1]])
+    form = QuestForm(initial=initial)
+
     template_name = 'crm/_quest.html'
     context = {'title': 'Анкета',
                'anket': anket,
+               'form': form,
                }
     return render(request, template_name=template_name, context=context)

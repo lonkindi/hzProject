@@ -25,21 +25,19 @@
                       <table class="table table-striped table-sm">
                         <thead>
                           <tr>
-                            <th>#</th>
+                            <th>№ п.п.</th>
                             <th>Вопрос</th>
                             <th>Ответ</th>
 
                           </tr>
                         </thead>
                         <tbody>
-                        {% if anket %}
-                         {% for item in anket %}
-
+                        {% if form %}
+                         {% for item in form %}
                           <tr>
                             <th scope="row">{{forloop.counter}}</th>
-                              {% for i in item %}
-                              <td>{{ i }}</td>
-                              {% endfor %}
+                              <td>{{item.label}}</td>
+                              <td><input id={{item.id_for_label}} value={{item.value}}></td>
 <!--                              <td><a href="../quest/{{ item.external_id }}">{{ item.external_id }}</a></td>-->
 <!--                              <td>{{ item.date_filling }}</td>-->
 <!--                              <td>{{ item.FIO }}</td>-->
@@ -51,6 +49,16 @@
                         {% endif %}
                         </tbody>
                       </table>
+                        <form action="" method="POST">
+                            {% csrf_token %}
+                            <div class="card-body">
+                            <table class="table table-striped table-sm">
+                            {{ form.as_table }}
+                            </table>
+                            </div>
+                            <input class="btn btn-primary" type="Submit" name="submit" value="Оформить"/>
+                        </form>
+
                     </div>
                   </div>
                 </div>
