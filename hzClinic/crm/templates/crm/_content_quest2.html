@@ -1,0 +1,136 @@
+{% load static %}
+<div class="content-inner">
+          <!-- Page Header-->
+          <header class="page-header">
+            <div class="container-fluid">
+              <h2 class="no-margin-bottom">Оформление пакета документов</h2>
+            </div>
+          </header>
+          <ul class="breadcrumb">
+            <div class="container-fluid">
+              <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+              <li class="breadcrumb-item active">Forms</li>
+            </div>
+          </ul>
+          <!-- Forms Section-->
+          <section class="tables">
+            <form>
+             <div class="container-fluid">
+              <div class="row">
+                <!-- Anket Form-->
+                <div class="col-lg-6">
+                  <div class="card">
+                    <div class="card-close">
+                      <div class="dropdown">
+                        <button type="button" id="closeCard" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-ellipsis-v"></i></button>
+                        <div aria-labelledby="closeCard" class="dropdown-menu has-shadow"><a href="#" class="dropdown-item remove"> <i class="fa fa-times"></i>Close</a><a href="#" class="dropdown-item edit"> <i class="fa fa-gear"></i>Edit</a></div>
+                      </div>
+                    </div>
+                    <div class="card-header d-flex align-items-center">
+                      <h3 class="h4">Выбранная анкета</h3>
+                    </div>
+                    <div class="card-body">
+                      <p>Данные отправленные пациентом. Возможно редактирование.</p>
+                      {% csrf_token %}
+                      {% if form %}
+                         {% for item in form %}
+                          <div class="form-group">
+                          <label class="form-control-label">{{item.label}}</label>
+                          <input type="text" id={{item.id_for_label}} class="form-control" value={{item.value}}>
+                          </div>
+                          {% endfor %}
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+                <!-- Calendar Form-->
+                <div class="col-lg-6">
+                  <div class="card">
+                    <div class="card-close">
+                      <div class="dropdown">
+                        <button type="button" id="closeCard" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-ellipsis-v"></i></button>
+                        <div aria-labelledby="closeCard" class="dropdown-menu has-shadow"><a href="#" class="dropdown-item remove"> <i class="fa fa-times"></i>Close</a><a href="#" class="dropdown-item edit"> <i class="fa fa-gear"></i>Edit</a></div>
+                      </div>
+                    </div>
+                    <div class="card-header d-flex align-items-center">
+                      <h3 class="h4">Дата операции</h3>
+                    </div>
+                    <div class="card-body">
+                      <p>Выберите запланированную дату операции.</p>
+
+
+                      <div class="col-sm-9">
+                            <div>
+                              <input id="option" type="checkbox" value="">
+                              <label for="option">Option one is this and that—be sure to include why it's great</label>
+                            </div>
+                            <div>
+                              <input id="optionsRadios1" type="radio" checked="" value="option1" name="optionsRadios">
+                              <label for="optionsRadios1">Option one is this and that be sure to include why it's great</label>
+                            </div>
+                            <div>
+                              <input id="optionsRadios2" type="radio" value="option2" name="optionsRadios">
+                              <label for="optionsRadios2">Option two can be something else and selecting it will deselect option one</label>
+                            </div>
+                          </div>
+                    </div>
+                  </div>
+                  <div class="card">
+                    <div class="card-close">
+                      <div class="dropdown">
+                        <button type="button" id="closeCard" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-ellipsis-v"></i></button>
+                        <div aria-labelledby="closeCard" class="dropdown-menu has-shadow"><a href="#" class="dropdown-item remove"> <i class="fa fa-times"></i>Close</a><a href="#" class="dropdown-item edit"> <i class="fa fa-gear"></i>Edit</a></div>
+                      </div>
+                    </div>
+                    <div class="card-header d-flex align-items-center">
+                      <h3 class="h4">Виды операций</h3>
+                    </div>
+                    <div class="card-body">
+                      <p>Выберите, запланированные для пациента, виды операции.</p>
+                      {% csrf_token %}
+                      <div class="col-lg-6">
+                        {% if oper_types %}
+                         {% for item in oper_types %}
+                            <div>
+                              <input id={{item.code}} type="checkbox" value="">
+                              <label for={{item.code}}>{{item.name}}</label>
+                            </div>
+                        {% endfor %}
+                        {% endif %}
+                          </div>
+                    </div>
+                  </div>
+                </div>
+           <!-- Button Form-->
+                <div class="col-lg-6">
+                  <div class="card">
+                    <div class="card-body">
+                      <div class="col-sm-9">
+                           <div class="form-group">
+                          <input type="submit" value="Оформить документы" class="btn btn-primary">
+                        </div>
+                    </div>
+                  </div>
+                </div>
+           <!-- Opers Form-->
+                <div class="col-lg-6">
+
+                </div>
+              </div>
+             </div>
+            </form>
+          </section>
+          <!-- Page Footer-->
+          <footer class="main-footer">
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col-sm-6">
+                  <p>#ХотянЗнает! &copy; 2017-2022</p>
+                </div>
+                <div class="col-sm-6 text-right">
+                  <p>Design by <a href="https://bootstrapious.com/admin-templates" class="external">Bootstrapious</a></p>
+                </div>
+              </div>
+            </div>
+          </footer>
+        </div>

@@ -65,7 +65,7 @@ class Anket(models.Model):
     external_id = models.PositiveIntegerField(verbose_name='Внешний ИД')
     state = models.PositiveIntegerField(verbose_name='Статус')
     content = models.JSONField(verbose_name='Содержимое анкеты')
-    date_filling = models.DateField(verbose_name='Дата заполнения', default=datetime.datetime.today())
+    date_filling = models.DateField(verbose_name='Дата заполнения', default=datetime.datetime.today)
 
     class Meta:
         verbose_name = 'Анкета'
@@ -74,3 +74,20 @@ class Anket(models.Model):
 
     def __str__(self):
         return str(self.external_id)
+
+
+class TypeOperations(models.Model):
+    """
+    Модель видов операций
+    """
+    code = models.PositiveIntegerField(verbose_name='Код операции')
+    name = models.CharField(max_length=50, verbose_name='Название операции')
+    s_name = models.CharField(max_length=25, verbose_name='Сокращённое название')
+
+    class Meta:
+        verbose_name = 'Вид операции'
+        verbose_name_plural = "Виды операций"
+        ordering = ('code',)
+
+    def __str__(self):
+        return str(self.code) + '-' + str(self.name)

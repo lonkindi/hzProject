@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, reverse
 
-from crm.models import hzUserInfo, Anket
+from crm.models import hzUserInfo, Anket, TypeOperations
 
 from crm.forms import LoginForm, QuestForm
 
@@ -75,7 +75,7 @@ def quests_view(request):
         item_dict['state'] = item.state
         item_dict['external_id'] = item.external_id
         item_dict['date_filling'] = item.date_filling
-        item_dict['FIO'] = item.content['Фамилия']+' '+item.content['Имя']+' '+item.content['Отчество']
+        item_dict['FIO'] = item.content['Фамилия'] + ' ' + item.content['Имя'] + ' ' + item.content['Отчество']
         item_dict['DOB'] = item.content['Дата рождения']
         item_dict['tel'] = item.content['Ваш контактный телефон']
         item_dict['addr'] = item.content['Адрес места жительства (регистрации)']
@@ -102,21 +102,81 @@ def quest_view(request, ext_id):
         PerZA = ', ' + anket_dict['Перечислите перенесённые и хронические заболевания']
         PerZ += PerZA
 
+    PerO = 'отрицает'
+    PerOQ = anket_dict['У вас были операции раньше?']
+    if PerOQ != 'Нет':
+        PerO = anket_dict['Перечислите перенесённые операции']
+
+    PerT = 'отрицает'
+    PerTQ = anket_dict['У вас были травмы?']
+    if PerTQ != 'Нет':
+        PerT = anket_dict['Перечислите перенесённые ранее травмы']
+
+    PerG = 'отрицает'
+    PerGQ = anket_dict['Вы переносили гемотрансфузии?']
+    if PerGQ != 'Нет':
+        PerG = anket_dict['Перечислите перенесённые ранее гемотрансфузии']
+
+    Allerg = 'отрицает'
+    AllergQ = anket_dict['Были ли у Вас аллергические реакции?']
+    if AllergQ != 'Нет':
+        Allerg = anket_dict['На что были аллергические реакции?']
+
+    VICH = 'отрицает'
+    VICHQ = anket_dict['Являетесь ли Вы носителем ВИЧ-инфекции?']
+    if VICHQ != 'Нет':
+        VICH = 'ВИЧ-носитель'
+
+    Gepatit = 'отрицает'
+    GepatitQ = anket_dict['Болели ли вы гепатитом?']
+    if GepatitQ != 'Нет':
+        Gepatit = 'гепатит типа ' + anket_dict['Гепатитом какого типа вы болели?']
+
+    Tub = 'отрицает'
+    TubQ = anket_dict['Болели ли вы туберкулёзом лёгких?']
+    if TubQ != 'Нет':
+        Tub = 'положительно'
+
+    Diabet = 'отрицает'
+    DiabetQ = anket_dict['У вас есть сахарный диабет?']
+    if DiabetQ != 'Нет':
+        Diabet = anket_dict['Сахарный диабет какого типа и когда был диагностирован?']
+
+    Vener = 'отрицает'
+    VenerQ = anket_dict['Болели ли Вы венерическими заболеваниями?']
+    if VenerQ != 'Нет':
+        Vener = anket_dict['Какие венерические заболевания Вы перенесли?']
+
+    Alk = anket_dict['Отношение к алкоголю']
+    Kur = anket_dict['Отношение к курению']
+    Nark = anket_dict['Отношение к наркотикам']
 
     initial = {'FIO': fio,
                'DateOfB': res_date,
                'Address': anket_dict['Адрес места жительства (регистрации)'],
                'Job': anket_dict['Место работы, должность'],
                'PerZ': PerZ,
-
+               'PerO': PerO,
+               'PerT': PerT,
+               'PerG': PerG,
+               'Allerg': Allerg,
+               'VICH': VICH,
+               'Gepatit': Gepatit,
+               'Tub': Tub,
+               'Diabet': Diabet,
+               'Vener': Vener,
+               'Alk': Alk,
+               'Kur': Kur,
+               'Nark': Nark,
                }
     # for item in anket_dict.items():
     #     anket.append([item[0], item[1]])
     form = QuestForm(initial=initial)
-
+    oper_types = TypeOperations.objects.all()
     template_name = 'crm/_quest.html'
     context = {'title': 'Анкета',
                'anket': anket,
                'form': form,
+               'oper_types': oper_types,
                }
     return render(request, template_name=template_name, context=context)
