@@ -14,7 +14,7 @@
           </ul>
           <!-- Forms Section-->
           <section class="tables">
-            <form>
+            <form action="/quest/98728382" method="post">
              <div class="container-fluid">
               <div class="row">
                 <!-- Anket Form-->
@@ -27,7 +27,7 @@
                       </div>
                     </div>
                     <div class="card-header d-flex align-items-center">
-                      <h3 class="h4">Выбранная анкета</h3>
+                      <h3 class="h4">Выбранная анкета {{ ext_id }}</h3>
                     </div>
                     <div class="card-body">
                       <p>Данные отправленные пациентом. Возможно редактирование.</p>
@@ -36,7 +36,7 @@
                          {% for item in form %}
                           <div class="form-group">
                           <label class="form-control-label">{{item.label}}</label>
-                          <input type="text" id={{item.id_for_label}} class="form-control" value={{item.value}}>
+                          <input type="text" name={{item.id_for_label}} id={{item.id_for_label}} class="form-control" value="{{item.value}}">
                           </div>
                           {% endfor %}
                       {% endif %}
@@ -57,23 +57,10 @@
                     </div>
                     <div class="card-body">
                       <p>Выберите запланированную дату операции.</p>
-
-
-                      <div class="col-sm-9">
-                            <div>
-                              <input id="option" type="checkbox" value="">
-                              <label for="option">Option one is this and that—be sure to include why it's great</label>
-                            </div>
-                            <div>
-                              <input id="optionsRadios1" type="radio" checked="" value="option1" name="optionsRadios">
-                              <label for="optionsRadios1">Option one is this and that be sure to include why it's great</label>
-                            </div>
-                            <div>
-                              <input id="optionsRadios2" type="radio" value="option2" name="optionsRadios">
-                              <label for="optionsRadios2">Option two can be something else and selecting it will deselect option one</label>
-                            </div>
-                          </div>
-                    </div>
+                      <div class="form-group">
+                        <input id="oper_date" name="operation_date" type="date" class="form-control">
+                      </div>
+                        </div>
                   </div>
                   <div class="card">
                     <div class="card-close">
@@ -87,16 +74,25 @@
                     </div>
                     <div class="card-body">
                       <p>Выберите, запланированные для пациента, виды операции.</p>
-                      {% csrf_token %}
                       <div class="col-lg-6">
                         {% if oper_types %}
                          {% for item in oper_types %}
                             <div>
-                              <input id={{item.code}} type="checkbox" value="">
+                              <input id={{item.code}} name="oper_{{item.code}}" type="checkbox" value="{{item.s_name}}">
                               <label for={{item.code}}>{{item.name}}</label>
                             </div>
                         {% endfor %}
                         {% endif %}
+                          <hr>
+                          <p>Дополнительно</p>
+                          <div>
+                              <input id="dop1" type="checkbox" value="option1" name="oper_dop1">
+                              <label for="dop1">Чик-лифт молярной клетчатки</label>
+                            </div>
+                            <div>
+                              <input id="dop2" type="checkbox" value="option2" name="oper_dop2">
+                              <label for="dop2">Липофилинг лица</label>
+                            </div>
                           </div>
                     </div>
                   </div>
@@ -112,10 +108,7 @@
                     </div>
                   </div>
                 </div>
-           <!-- Opers Form-->
-                <div class="col-lg-6">
-
-                </div>
+              </div>
               </div>
              </div>
             </form>
