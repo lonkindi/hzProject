@@ -17,9 +17,9 @@ def date_plus(c_date, delta):
     return res_date
 
 
-def do_docs(context_dict):
+def do_docs(query_dict):
     
-    select_operations = selected_operations
+    # select_operations = selected_operations
     
     docs_context = {'sDate0': '', 'FIO': '', 'sFIO': '', 'sOpers': '', 'DR': '', 'DG': '', 'Adr': '', 'Job': '',
                     'DateAZ': '', 'DateAN': '', 'DateSP': '', 'DateSV': '', 'Date0': '', 'Date1': '', 'Date2': '',
@@ -28,8 +28,8 @@ def do_docs(context_dict):
                     'Gepatit': '', 'Kur': '', 'CDD': '', 'CSS': '', 'AD': '', 'Temp': '', 'TempD': '', 'Risk': '',
                     'VICH': '', 'Tub': '', 'Tif': '', 'Diabet': '', 'Vener': '',
                     }
-
-    select_date = selected_date.toPyDate()
+    oper_date_str = query_dict.get('operation_date', False)
+    select_date = datetime.datetime.strptime(oper_date_str, "%Y-%m-%d")
     today = datetime.datetime.today().date()
 
     for item in [0, 1, 2, 3, 5, 6, 7, 14, 15, 29]:
@@ -42,59 +42,65 @@ def do_docs(context_dict):
     docs_context['DateSV'] = ''
 
     DopBlef = ''
-    if ui.DopBlefEdit.text() != '':
-        DopBlef = ', ' + ui.DopBlefEdit.text()
+    oper_dop1 = query_dict.get('oper_dop1', False)
+    oper_dop2 = query_dict.get('oper_dop2', False)
+    if oper_dop1:
+        DopBlef = ', ' + 'oper_dop1'
+    if oper_dop2:
+        DopBlef = ', ' + 'oper_dop2'
     docs_context['DopBlef'] = DopBlef
 
-    docs_context['PerZ'] = ui.PerZEdit.text()
-    docs_context['PerO'] = ui.PerOEdit.text()
-    docs_context['PerT'] = ui.PerTEdit.text()
-    docs_context['PerG'] = ui.PerGEdit.text()
-    docs_context['Allerg'] = ui.AllergEdit.text()
-    docs_context['Kur'] = ui.KurEdit.text()
-    docs_context['Alk'] = ui.AlkEdit.text()
-    docs_context['Nark'] = ui.NarkEdit.text()
-    docs_context['Gepatit'] = ui.GepatitEdit.text()
-    docs_context['Risk'] = ui.RiskEdit.text()
-    docs_context['VICH'] = ui.VICHEdit.text()
-    docs_context['Tub'] = ui.TubEdit.text()
+    docs_context['PerZ'] = query_dict.get('id_PerZ', False)
+    docs_context['PerO'] = query_dict.get('id_PerO', False)
+    docs_context['PerT'] = query_dict.get('id_PerT', False)
+    docs_context['PerG'] = query_dict.get('id_PerG', False)
+    docs_context['Allerg'] = query_dict.get('id_Allerg', False)
+    docs_context['Kur'] = query_dict.get('id_Kur', False)
+    docs_context['Alk'] = query_dict.get('id_Alk', False)
+    docs_context['Nark'] = query_dict.get('id_Nark', False)
+    docs_context['Gepatit'] = query_dict.get('id_Gepatit', False)
+    docs_context['Risk'] = query_dict.get('id_Risk', False)
+    docs_context['VICH'] = query_dict.get('id_VICH', False)
+    docs_context['Tub'] = query_dict.get('id_Tub', False)
     docs_context['Tif'] = 'отрицает'  # ui.TifEdit.text()
-    docs_context['Diabet'] = ui.DiabetEdit.text()
-    docs_context['Vener'] = ui.VenerEdit.text()
+    docs_context['Diabet'] = query_dict.get('id_Diabet', False)
+    docs_context['Vener'] = query_dict.get('id_Vener', False)
 
     docs_context['sDate0'] = re.sub('\D', '', docs_context['Date0'])
-    docs_context['FIO'] = ui.FIOEdit.text()
+    docs_context['FIO'] = query_dict.get('id_FIO', False)
     docs_context['sFIO'] = re.sub(r'\b(\w+)\b\s+\b(\w)\w*\b\s+\b(\w)\w*\b', r'\1\2\3', docs_context['FIO'])
 
     sum_opers = '-'
-    for item in selected_operations:
-        for oper in TEST_DATA.types_operations:
-            if oper[1] == item:
-                sum_opers += (oper[2] + '-')
+    # for item in selected_operations:
+    for oper in TypeOperations.objects.all():
+        oper_id = 'oper_' + str(oper.code)
+        if query_dict.get(oper_id, False):
+            sum_opers += (oper.s_name + '-')
 
     docs_context['sOpers'] = sum_opers[1:-1]
-    docs_context['DR'] = ui.DREdit.text()
-    docs_context['DG'] = ui.DREdit.text()[6:]
-    docs_context['Adr'] = ui.AdrEdit.text()
-    docs_context['Job'] = ui.JobEdit.text()
+    docs_context['DR'] = query_dict.get('id_DateOfB', False)
+    docs_context['DG'] = docs_context['DR'][6:]
+    docs_context['Adr'] = query_dict.get('id_Address', False)
+    docs_context['Job'] = query_dict.get('id_Job', False)
 
     docs_context['Temp'] = 36.0 + random.choice(range(3, 9, 1)) / 10
     docs_context['TempD'] = 36.0 + random.choice(range(5, 9, 1)) / 10
     docs_context['CDD'] = random.choice(range(16, 25, 1))
     docs_context['CSS'] = random.choice(range(64, 98, 1))
     docs_context['AD'] = str(random.choice(range(110, 135, 5))) + '/' + str(random.choice(range(70, 90, 5)))
-    if len(selected_operations) == 0:
-        print_status('Операции НЕ выбраны, документы НЕ будут сформированы!')
-    else:
-        print_status(
-            'Документы сформированы и сохранены в папке: ' + fill_tmpl(selected_operations, docs_context))
-        ext_id = ui.ext_ID.text()
-        req_data = TEST_DATA.req_data
-        req_login = requests.post('http://cr74664-django-l4m8f.tw1.ru/login', data=req_data)
-        token = json.loads(req_login.text)['Token']
-        headers = {'Authorization': 'Token ' + token}
-        req_upd_anket = requests.put('http://cr74664-django-l4m8f.tw1.ru/putanket?id=' + ext_id + '&state=1',
-                                     headers=headers)
+    print(docs_context)
+    # if len(selected_operations) == 0:
+    #     print_status('Операции НЕ выбраны, документы НЕ будут сформированы!')
+    # else:
+    #     print_status(
+    #         'Документы сформированы и сохранены в папке: ' + fill_tmpl(selected_operations, docs_context))
+    #     ext_id = ui.ext_ID.text()
+    #     req_data = TEST_DATA.req_data
+    #     req_login = requests.post('http://cr74664-django-l4m8f.tw1.ru/login', data=req_data)
+    #     token = json.loads(req_login.text)['Token']
+    #     headers = {'Authorization': 'Token ' + token}
+    #     req_upd_anket = requests.put('http://cr74664-django-l4m8f.tw1.ru/putanket?id=' + ext_id + '&state=1',
+    #                                  headers=headers)
 
 
 def main_view(request):
@@ -184,8 +190,8 @@ def quest_view(request, ext_id):
     # context = dict()
     if request.method == 'POST':
         form = QuestForm(request.POST)
-        # do_docs(request.POST)
-        print(request.POST)
+        do_docs(request.POST)
+        # print(request.POST)
         # print("FIO= " + str(form.cleaned_data.get("FIO")))
         if form.is_valid():
             first = form.cleaned_data.get("FIO")
@@ -278,9 +284,9 @@ def quest_view(request, ext_id):
         #     anket.append([item[0], item[1]])
         form = QuestForm(initial=initial)
     oper_types = TypeOperations.objects.all()
-
+    today = datetime.datetime.today().date().strftime("%Y-%m-%d") #.strftime('%d.%m.%Y')
     context = {'title': 'Анкета',
-               # 'anket': anket,
+               'today': today,
                'oper_types': oper_types,
                'form': form,
                'ext_id': ext_id,

@@ -14,7 +14,7 @@
           </ul>
           <!-- Forms Section-->
           <section class="tables">
-            <form action="/quest/98728382" method="post">
+            <form action="/quest/{{ ext_id }}" method="post">
              <div class="container-fluid">
               <div class="row">
                 <!-- Anket Form-->
@@ -28,6 +28,7 @@
                     </div>
                     <div class="card-header d-flex align-items-center">
                       <h3 class="h4">Выбранная анкета {{ ext_id }}</h3>
+                      <input type="hidden" name="id_ext" value="{{ ext_id }}">
                     </div>
                     <div class="card-body">
                       <p>Данные отправленные пациентом. Возможно редактирование.</p>
@@ -58,7 +59,7 @@
                     <div class="card-body">
                       <p>Выберите запланированную дату операции.</p>
                       <div class="form-group">
-                        <input id="oper_date" name="operation_date" type="date" class="form-control">
+                        <input id="oper_date" name="operation_date" type="date" class="form-control" value="{{ today }}">
                       </div>
                         </div>
                   </div>
