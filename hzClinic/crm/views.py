@@ -1,15 +1,32 @@
 import datetime
 import random
 import re
+from docxtpl import DocxTemplate
 
+from crm.forms import LoginForm, QuestForm
+from crm.models import hzUserInfo, Anket, TypeOperations
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, reverse
 
-from crm.models import hzUserInfo, Anket, TypeOperations
 
-from crm.forms import LoginForm, QuestForm
-
+def fill_tmpl(oper_list, context_dict):
+    docs_path = 'crm/docs'
+    doc_folder = context_dict['sFIO'] + '_' + context_dict['sOpers'] + '_' + context_dict['sDate0']
+    # if os.path.exists(docs_path):
+    #     if os.path.exists(docs_path + doc_folder):
+    #         pass
+    #     else:
+    #         os.mkdir(docs_path + doc_folder)
+    # else:
+    #     os.mkdir(docs_path)
+    for item in oper_list:
+        for type_doc in ['v', 'o', 'p', 's', 'd']:
+            doc = DocxTemplate('crm/docs/tmpls/' + type_doc + '_' + item + '.docx')
+            doc.render(context_dict)
+            doc.save(
+                docs_path + doc_folder + '/' + type_doc + '_' + str(item.code) + '_' + context_dict['sFIO'] + '.docx')
+    return doc_folder
 
 def date_plus(c_date, delta):
     new_date = c_date + datetime.timedelta(days=delta)
@@ -19,7 +36,7 @@ def date_plus(c_date, delta):
 
 def do_docs(query_dict):
     
-    # select_operations = selected_operations
+    selected_operations = []
     
     docs_context = {'sDate0': '', 'FIO': '', 'sFIO': '', 'sOpers': '', 'DR': '', 'DG': '', 'Adr': '', 'Job': '',
                     'DateAZ': '', 'DateAN': '', 'DateSP': '', 'DateSV': '', 'Date0': '', 'Date1': '', 'Date2': '',
@@ -75,6 +92,7 @@ def do_docs(query_dict):
     for oper in TypeOperations.objects.all():
         oper_id = 'oper_' + str(oper.code)
         if query_dict.get(oper_id, False):
+            selected_operations.append(oper)
             sum_opers += (oper.s_name + '-')
 
     docs_context['sOpers'] = sum_opers[1:-1]
@@ -89,6 +107,8 @@ def do_docs(query_dict):
     docs_context['CSS'] = random.choice(range(64, 98, 1))
     docs_context['AD'] = str(random.choice(range(110, 135, 5))) + '/' + str(random.choice(range(70, 90, 5)))
     print(docs_context)
+    print(selected_operations)
+    fill_tmpl(selected_operations, docs_context)
     # if len(selected_operations) == 0:
     #     print_status('Операции НЕ выбраны, документы НЕ будут сформированы!')
     # else:
@@ -191,14 +211,7 @@ def quest_view(request, ext_id):
     if request.method == 'POST':
         form = QuestForm(request.POST)
         do_docs(request.POST)
-        # print(request.POST)
-        # print("FIO= " + str(form.cleaned_data.get("FIO")))
-        if form.is_valid():
-            first = form.cleaned_data.get("FIO")
-            last = form.cleaned_data.get("DateOfB")
-            email = form.cleaned_data.get("Address")
-            print(form.cleaned_data.get("FIO"))
-            return redirect(reverse(login_view))
+        return redirect(reverse(login_view))
     else:
         anket = list()
         anket_qs = Anket.objects.filter(external_id=ext_id)
@@ -280,17 +293,15 @@ def quest_view(request, ext_id):
                    'Kur': Kur,
                    'Nark': Nark,
                    }
-        # for item in anket_dict.items():
-        #     anket.append([item[0], item[1]])
+
         form = QuestForm(initial=initial)
     oper_types = TypeOperations.objects.all()
-    today = datetime.datetime.today().date().strftime("%Y-%m-%d") #.strftime('%d.%m.%Y')
+    today = datetime.datetime.today().date().strftime("%Y-%m-%d")
     context = {'title': 'Анкета',
                'today': today,
                'oper_types': oper_types,
                'form': form,
                'ext_id': ext_id,
                }
-    # context['form'] = form
     template_name = 'crm/_quest.html'
     return render(request, template_name=template_name, context=context)
