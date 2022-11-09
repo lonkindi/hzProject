@@ -1,7 +1,7 @@
 import datetime
+import os
 import random
 import re
-import os
 from docxtpl import DocxTemplate
 
 from crm.forms import LoginForm, QuestForm
@@ -11,27 +11,29 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect, reverse
 
 from hzClinic import settings
-
+# /home/dmitry/PycharmProjects/hzProject/hzClinic/crm/templates/crm/docs
 
 def fill_tmpl(oper_list, context_dict):
     doc_folder = context_dict['sFIO'] + '_' + context_dict['sOpers'] + '_' + context_dict['sDate0']
     base_dir = settings.BASE_DIR
-    file_path = os.path.join(base_dir, 'crm\\docs\\tmpls\\')
-    docs_path = os.path.join(base_dir, 'crm\\docs\\')
+    file_path = os.path.join(base_dir, 'crm/templates/crm/docs/tmpls/')
+    docs_path = os.path.join(base_dir, 'crm/templates/crm/docs/')
     # if os.path.exists(docs_path):
-    #     if os.path.exists(docs_path + doc_folder):
-    #         pass
-    #     else:
-    #         os.mkdir(docs_path + doc_folder)
+    if not os.path.exists(docs_path + doc_folder):
+        os.mkdir(docs_path + doc_folder)
+
     # else:
     #     os.mkdir(docs_path)
-    os.mkdir(docs_path + doc_folder)
+    # os.mkdir(docs_path + doc_folder)
     for item in oper_list:
-        for type_doc in ['v', 'o', 'p', 's', 'd']:
+        for type_doc in ['v', 'o', 'p', 's']:
             doc = DocxTemplate(file_path + type_doc + '_' + str(item.code) + '.docx')
             doc.render(context_dict)
             doc.save(
-                docs_path + doc_folder + '\\' + type_doc + '_' + str(item.code) + '_' + context_dict['sFIO'] + '.docx')
+                docs_path + doc_folder + '/' + type_doc + '_' + str(item.code) + '_' + context_dict['sFIO'] + '.docx')
+    doc = DocxTemplate(file_path + 'd.docx')
+    doc.render(context_dict)
+    doc.save(docs_path + doc_folder + '/d_' + context_dict['sFIO'] + '.docx')
     return doc_folder
 
 def date_plus(c_date, delta):
@@ -85,7 +87,7 @@ def do_docs(query_dict):
     docs_context['Risk'] = query_dict.get('id_Risk', False)
     docs_context['VICH'] = query_dict.get('id_VICH', False)
     docs_context['Tub'] = query_dict.get('id_Tub', False)
-    docs_context['Tif'] = 'отрицает'
+    docs_context['Tif'] = 'отрицает'  # ui.TifEdit.text()
     docs_context['Diabet'] = query_dict.get('id_Diabet', False)
     docs_context['Vener'] = query_dict.get('id_Vener', False)
 
@@ -112,8 +114,8 @@ def do_docs(query_dict):
     docs_context['CDD'] = random.choice(range(16, 25, 1))
     docs_context['CSS'] = random.choice(range(64, 98, 1))
     docs_context['AD'] = str(random.choice(range(110, 135, 5))) + '/' + str(random.choice(range(70, 90, 5)))
-    # print(docs_context)
-    # print(selected_operations)
+    print(docs_context)
+    print(selected_operations)
     fill_tmpl(selected_operations, docs_context)
     # if len(selected_operations) == 0:
     #     print_status('Операции НЕ выбраны, документы НЕ будут сформированы!')
