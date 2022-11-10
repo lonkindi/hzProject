@@ -8,8 +8,8 @@
           </header>
           <ul class="breadcrumb">
             <div class="container-fluid">
-              <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-              <li class="breadcrumb-item active">Forms</li>
+              <li class="breadcrumb-item"><a href="../quests/0">Анкеты</a></li>
+              <li class="breadcrumb-item active">{{ FIO }}</li>
             </div>
           </ul>
           <!-- Forms Section-->
@@ -27,7 +27,11 @@
                       </div>
                     </div>
                     <div class="card-header d-flex align-items-center">
-                      <h3 class="h4">Выбранная анкета {{ ext_id }}</h3>
+                      <h3 class="h4">Выбранная анкета {{ ext_id }}
+                      {% if state == 1 %}
+                          <font color="red"><b> - уже оформлена!</b></font>
+                      {% endif %}
+                      </h3>
                       <input type="hidden" name="id_ext" value="{{ ext_id }}">
                     </div>
                     <div class="card-body">

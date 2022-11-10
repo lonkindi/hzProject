@@ -10,7 +10,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, reverse
 
-from hzClinic import settings
+from hzClinic import settings, settings_local
 # /home/dmitry/PycharmProjects/hzProject/hzClinic/crm/templates/crm/docs
 
 def fill_tmpl(oper_list, context_dict):
@@ -34,6 +34,9 @@ def fill_tmpl(oper_list, context_dict):
     doc = DocxTemplate(file_path + 'd.docx')
     doc.render(context_dict)
     doc.save(docs_path + doc_folder + '/d_' + context_dict['sFIO'] + '.docx')
+    id_ext = int(context_dict.get('id_ext', 0))
+    if id_ext:
+        Anket.objects.filter(external_id=id_ext).update(state=1)
     return doc_folder
 
 def date_plus(c_date, delta):
@@ -46,7 +49,7 @@ def do_docs(query_dict):
     
     selected_operations = []
     
-    docs_context = {'sDate0': '', 'FIO': '', 'sFIO': '', 'sOpers': '', 'DR': '', 'DG': '', 'Adr': '', 'Job': '',
+    docs_context = {'id_ext': '', 'sDate0': '', 'FIO': '', 'sFIO': '', 'sOpers': '', 'DR': '', 'DG': '', 'Adr': '', 'Job': '',
                     'DateAZ': '', 'DateAN': '', 'DateSP': '', 'DateSV': '', 'Date0': '', 'Date1': '', 'Date2': '',
                     'Date3': '', 'Date5': '', 'Date6': '', 'Date7': '', 'Date14': '', 'Date15': '', 'Date29': '',
                     'DopBlef': '', 'PerZ': '', 'PerO': '', 'PerT': '', 'PerG': '', 'Allerg': '', 'Alk': '', 'Nark': '',
@@ -70,11 +73,12 @@ def do_docs(query_dict):
     oper_dop1 = query_dict.get('oper_dop1', False)
     oper_dop2 = query_dict.get('oper_dop2', False)
     if oper_dop1:
-        DopBlef = ', ' + 'oper_dop1'
+        DopBlef += ', чик-лифт молярной клетчатки'
     if oper_dop2:
-        DopBlef = ', ' + 'oper_dop2'
+        DopBlef += ', липофилинг лица'
     docs_context['DopBlef'] = DopBlef
 
+    docs_context['id_ext'] = query_dict.get('id_ext', False)
     docs_context['PerZ'] = query_dict.get('id_PerZ', False)
     docs_context['PerO'] = query_dict.get('id_PerO', False)
     docs_context['PerT'] = query_dict.get('id_PerT', False)
@@ -114,9 +118,11 @@ def do_docs(query_dict):
     docs_context['CDD'] = random.choice(range(16, 25, 1))
     docs_context['CSS'] = random.choice(range(64, 98, 1))
     docs_context['AD'] = str(random.choice(range(110, 135, 5))) + '/' + str(random.choice(range(70, 90, 5)))
-    print(docs_context)
-    print(selected_operations)
+    # print(docs_context)
+    # print(selected_operations)
     fill_tmpl(selected_operations, docs_context)
+
+
     # if len(selected_operations) == 0:
     #     print_status('Операции НЕ выбраны, документы НЕ будут сформированы!')
     # else:
@@ -186,21 +192,31 @@ def logout_view(request):
     # return render(request, template_name, context=context)
 
 
-def quests_view(request):
+def quests_view(request, state_id=-1):
     if not request.user.is_authenticated:
         return redirect(reverse(login_view))
     template_name = 'crm/_quests.html'
     hzuser = request.user
     hzuser_info = hzUserInfo.objects.filter(hz_user=hzuser)
-    ankets = Anket.objects.filter()
+    stat_ankets = ' только лишь всех '
+    if state_id == 0:
+        stat_ankets = ' новых '
+    elif state_id == 1:
+        stat_ankets = ' оформленных '
+    if state_id in (0, 1):
+        ankets = Anket.objects.filter(state=state_id)
+    else:
+        ankets = Anket.objects.all()
+
+    # ankets = Anket.objects.filter(state_filter)
     anket_list = list()
     for item in ankets:
         item_dict = dict()
         item_dict['state'] = item.state
         item_dict['external_id'] = item.external_id
-        item_dict['date_filling'] = item.date_filling
+        item_dict['date_filling'] = date_plus(item.date_filling, 0)
         item_dict['FIO'] = item.content['Фамилия'] + ' ' + item.content['Имя'] + ' ' + item.content['Отчество']
-        item_dict['DOB'] = item.content['Дата рождения']
+        item_dict['DOB'] =  datetime.datetime.strptime(item.content['Дата рождения'], "%Y-%m-%d").strftime('%d.%m.%Y')
         item_dict['tel'] = item.content['Ваш контактный телефон']
         item_dict['addr'] = item.content['Адрес места жительства (регистрации)']
         anket_list.append(item_dict)
@@ -208,6 +224,7 @@ def quests_view(request):
                'user': hzuser,
                'user_info': hzuser_info[0],
                'anket_list': anket_list,
+               'stat_ankets': stat_ankets,
                }
     return render(request, template_name=template_name, context=context)
 
@@ -217,9 +234,8 @@ def quest_view(request, ext_id):
         return redirect(reverse(login_view))
     # context = dict()
     if request.method == 'POST':
-        form = QuestForm(request.POST)
         do_docs(request.POST)
-        return redirect(reverse(login_view))
+        return redirect(reverse(quests_view))
     else:
         anket = list()
         anket_qs = Anket.objects.filter(external_id=ext_id)
@@ -305,11 +321,17 @@ def quest_view(request, ext_id):
         form = QuestForm(initial=initial)
     oper_types = TypeOperations.objects.all()
     today = datetime.datetime.today().date().strftime("%Y-%m-%d")
+    hzuser = request.user
+    hzuser_info = hzUserInfo.objects.filter(hz_user=hzuser)
     context = {'title': 'Анкета',
+               'user': hzuser,
+               'user_info': hzuser_info[0],
                'today': today,
                'oper_types': oper_types,
                'form': form,
                'ext_id': ext_id,
+               'FIO': fio,
+               'state': anket_qs[0].state,
                }
     template_name = 'crm/_quest.html'
     return render(request, template_name=template_name, context=context)

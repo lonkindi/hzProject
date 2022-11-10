@@ -73,18 +73,7 @@
                       </div>
                     </div>
                     <div class="card-header d-flex align-items-center">
-                      <h3 class="h4">Список анкет</h3>
-                        <div class="col-xl-3 col-sm-6">
-
-                              <input id="optionsRadios1" type="radio" checked="" value="option1" name="optionsRadios">
-                              <label for="optionsRadios1">только новые</label>
-
-
-
-                              <input id="optionsRadios2" type="radio" value="option2" name="optionsRadios">
-                              <label for="optionsRadios2">только лишь все</label>
-
-                        </div>
+                      <h3 class="h4">Список{{stat_ankets}}анкет</h3>
 
                     </div>
                     <div class="card-body">
@@ -104,16 +93,19 @@
                         <tbody>
                         {% if anket_list %}
                          {% for item in anket_list %}
-
                           <tr>
-                            <th scope="row">{{forloop.counter}}</th>
-                              <td>{{ item.state }}</td>
+                            <th scope="row"><a href="../quest/{{ item.external_id }}">{{forloop.counter}}</a></th>
+                              {% if item.state == 0 %}
+                                <td><a href="../quest/{{ item.external_id }}">Новая</a></td>
+                              {% else %}
+                                <td><a  href="../quest/{{ item.external_id }}"><strike>Оформленная</strike></a></td>
+                              {% endif %}
                               <td><a href="../quest/{{ item.external_id }}">{{ item.external_id }}</a></td>
-                              <td>{{ item.date_filling }}</td>
-                              <td>{{ item.FIO }}</td>
-                              <td>{{ item.DOB }}</td>
-                              <td>{{ item.tel }}</td>
-                              <td>{{ item.addr }}</td>
+                              <td><a href="../quest/{{ item.external_id }}">{{ item.date_filling }}</a></td>
+                              <td><a href="../quest/{{ item.external_id }}">{{ item.FIO }}</a></td>
+                              <td><a href="../quest/{{ item.external_id }}">{{ item.DOB }}</a></td>
+                              <td><a href="../quest/{{ item.external_id }}">{{ item.tel }}</a></td>
+                              <td><a href="../quest/{{ item.external_id }}">{{ item.addr }}</a></td>
                           </tr>
                          {% endfor %}
                         {% endif %}
