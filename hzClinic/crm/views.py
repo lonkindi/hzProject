@@ -9,8 +9,11 @@ from crm.models import hzUserInfo, Anket, TypeOperations
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, reverse
+from crm import YaD
 
 from hzClinic import settings, settings_local
+
+
 # /home/dmitry/PycharmProjects/hzProject/hzClinic/crm/templates/crm/docs
 
 def fill_tmpl(oper_list, context_dict):
@@ -18,10 +21,10 @@ def fill_tmpl(oper_list, context_dict):
     base_dir = settings.BASE_DIR
     file_path = os.path.join(base_dir, 'crm/templates/crm/docs/tmpls/')
     docs_path = os.path.join(base_dir, 'crm/templates/crm/docs/')
-    # if os.path.exists(docs_path):
-    if not os.path.exists(docs_path + doc_folder):
-        os.mkdir(docs_path + doc_folder)
-
+    target_path = docs_path + doc_folder
+    if not os.path.exists(target_path):
+        os.mkdir(target_path)
+    YaD.create_folder(f'MedicalCase/{doc_folder}')
     # else:
     #     os.mkdir(docs_path)
     # os.mkdir(docs_path + doc_folder)
@@ -37,6 +40,11 @@ def fill_tmpl(oper_list, context_dict):
     id_ext = int(context_dict.get('id_ext', 0))
     if id_ext:
         Anket.objects.filter(external_id=id_ext).update(state=1)
+
+    for file in os.listdir(target_path):
+        upload_file = target_path + '/' + file
+        YaD.upload_file(upload_file, f'MedicalCase/{doc_folder}/{file}')
+
     return doc_folder
 
 def date_plus(c_date, delta):
