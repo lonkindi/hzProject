@@ -54,8 +54,8 @@ class hzUserEvents(models.Model):
         verbose_name_plural = "Список событий"
         ordering = ('-date_time',)
 
-    def __str__(self):
-        return str(self.date_time)
+    # def __str__(self):
+    #     return str(self.date_time)
 
 
 class Anket(models.Model):

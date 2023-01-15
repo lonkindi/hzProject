@@ -1,26 +1,32 @@
 import ast
 import datetime
+import os
 import random
 import re
-import os
 from docxtpl import DocxTemplate
 
+from transliterate import translit
 from crm.forms import LoginForm, QuestForm
 from crm.models import hzUserInfo, Anket, TypeOperations
-from crm import YaD, MyAPI
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, reverse
+from crm import YaD, MyAPI
 
-from hzClinic import settings
+from hzClinic import settings, settings_local
 
 
 def fill_tmpl(oper_list, context_dict):
-    doc_folder = (context_dict['sFIO'] + '_' + context_dict['sOpers'] + '_' + context_dict['sDate0']).encode('utf-8')
+    sFIO = translit(context_dict['sFIO'], 'ru', reversed=True)
+    sOpers = translit(context_dict['sOpers'], 'ru', reversed=True)
+    doc_folder = sFIO + '_' + sOpers + '_' + context_dict['sDate0']
+    # doc_folder = translit(doc_folder_ru, 'ru', reversed=True)
     base_dir = settings.BASE_DIR
-    file_path = os.path.join(base_dir, 'crm/templates/crm/docs/tmpls/')
-    docs_path = os.path.join(base_dir, 'crm/templates/crm/docs/')
+    file_path = os.path.join(base_dir, 'crm/docs/tmpls/')
+    docs_path = os.path.join(base_dir, 'crm/docs/')
+    # target_path = u' '.join(docs_path, doc_folder).encode('utf-8').strip()
     target_path = docs_path + doc_folder
+    # target_path = target_path_u.encode('utf-8')
     if not os.path.exists(target_path):
         os.mkdir(target_path)
     YaD.create_folder(f'MedicalCase/{doc_folder}')
@@ -31,20 +37,26 @@ def fill_tmpl(oper_list, context_dict):
         for type_doc in ['v', 'o', 'p', 's']:
             doc = DocxTemplate(file_path + type_doc + '_' + str(item.code) + '.docx')
             doc.render(context_dict)
-            doc.save(
-                docs_path + doc_folder + '/' + type_doc + '_' + str(item.code) + '_' + context_dict['sFIO'] + '.docx')
+            target_str = target_path + '/' + type_doc + '_' + str(item.code) + '_' + sFIO + '.docx'
+            # target_str = target_path + target_str_r
+            doc.save(target_str)
+            # target_str = u''.join([target_path.decode('utf-8'), target_str_r])
+            # doc.save(target_str.encode('utf-8').decode('utf-8'))
+
     doc = DocxTemplate(file_path + 'd.docx')
     doc.render(context_dict)
-    doc.save(docs_path + doc_folder + '/d_' + context_dict['sFIO'] + '.docx')
+    doc.save(docs_path + doc_folder + '/d_' + sFIO + '.docx')
     id_ext = int(context_dict.get('id_ext', 0))
     if id_ext:
-        Anket.objects.filter(external_id=id_ext).update(state=1)
+        MyAPI.update_anket_myapi(ext_id=id_ext, state=1)
+        # Anket.objects.filter(external_id=id_ext).update(state=1)
 
     for file in os.listdir(target_path):
         upload_file = target_path + '/' + file
         YaD.upload_file(upload_file, f'MedicalCase/{doc_folder}/{file}')
 
     return doc_folder
+
 
 def date_plus(c_date, delta):
     new_date = c_date + datetime.timedelta(days=delta)
@@ -53,10 +65,10 @@ def date_plus(c_date, delta):
 
 
 def do_docs(query_dict):
-    
     selected_operations = []
-    
-    docs_context = {'sDate0': '', 'FIO': '', 'sFIO': '', 'sOpers': '', 'DR': '', 'DG': '', 'Adr': '', 'Job': '',
+
+    docs_context = {'id_ext': '', 'sDate0': '', 'FIO': '', 'sFIO': '', 'sOpers': '', 'DR': '', 'DG': '', 'Adr': '',
+                    'Job': '',
                     'DateAZ': '', 'DateAN': '', 'DateSP': '', 'DateSV': '', 'Date0': '', 'Date1': '', 'Date2': '',
                     'Date3': '', 'Date5': '', 'Date6': '', 'Date7': '', 'Date14': '', 'Date15': '', 'Date29': '',
                     'DopBlef': '', 'PerZ': '', 'PerO': '', 'PerT': '', 'PerG': '', 'Allerg': '', 'Alk': '', 'Nark': '',
@@ -70,7 +82,7 @@ def do_docs(query_dict):
     for item in [0, 1, 2, 3, 5, 6, 7, 14, 15, 29]:
         docs_context['Date' + str(item)] = date_plus(select_date, item)
     delta_ambul = -random.choice(range(3, 180, 1))
-    
+
     docs_context['DateAZ'] = date_plus(select_date, delta_ambul)
     docs_context['DateAN'] = docs_context['DateAZ']
     docs_context['DateSP'] = docs_context['Date0']
@@ -80,11 +92,12 @@ def do_docs(query_dict):
     oper_dop1 = query_dict.get('oper_dop1', False)
     oper_dop2 = query_dict.get('oper_dop2', False)
     if oper_dop1:
-        DopBlef = ', ' + 'oper_dop1'
+        DopBlef += ', чик-лифт молярной клетчатки'
     if oper_dop2:
-        DopBlef = ', ' + 'oper_dop2'
+        DopBlef += ', липофилинг лица'
     docs_context['DopBlef'] = DopBlef
 
+    docs_context['id_ext'] = query_dict.get('id_ext', False)
     docs_context['PerZ'] = query_dict.get('id_PerZ', False)
     docs_context['PerO'] = query_dict.get('id_PerO', False)
     docs_context['PerT'] = query_dict.get('id_PerT', False)
@@ -97,7 +110,7 @@ def do_docs(query_dict):
     docs_context['Risk'] = query_dict.get('id_Risk', False)
     docs_context['VICH'] = query_dict.get('id_VICH', False)
     docs_context['Tub'] = query_dict.get('id_Tub', False)
-    docs_context['Tif'] = 'отрицает'
+    docs_context['Tif'] = 'отрицает'  # ui.TifEdit.text()
     docs_context['Diabet'] = query_dict.get('id_Diabet', False)
     docs_context['Vener'] = query_dict.get('id_Vener', False)
 
@@ -124,21 +137,7 @@ def do_docs(query_dict):
     docs_context['CDD'] = random.choice(range(16, 25, 1))
     docs_context['CSS'] = random.choice(range(64, 98, 1))
     docs_context['AD'] = str(random.choice(range(110, 135, 5))) + '/' + str(random.choice(range(70, 90, 5)))
-    # print(docs_context)
-    # print(selected_operations)
     fill_tmpl(selected_operations, docs_context)
-    # if len(selected_operations) == 0:
-    #     print_status('Операции НЕ выбраны, документы НЕ будут сформированы!')
-    # else:
-    #     print_status(
-    #         'Документы сформированы и сохранены в папке: ' + fill_tmpl(selected_operations, docs_context))
-    #     ext_id = ui.ext_ID.text()
-    #     req_data = TEST_DATA.req_data
-    #     req_login = requests.post('http://cr74664-django-l4m8f.tw1.ru/login', data=req_data)
-    #     token = json.loads(req_login.text)['Token']
-    #     headers = {'Authorization': 'Token ' + token}
-    #     req_upd_anket = requests.put('http://cr74664-django-l4m8f.tw1.ru/putanket?id=' + ext_id + '&state=1',
-    #                                  headers=headers)
 
 
 def main_view(request):
@@ -147,7 +146,6 @@ def main_view(request):
     template_name = 'crm/_main.html'
     hzuser = request.user
     hzuser_info = hzUserInfo.objects.filter(hz_user=hzuser)
-    # print(hzuser_info)
     type = hzuser_info[0].type
     type_lbl = hzuser_info[0].UserTypeChoices[type].label
     context = {'title': 'Главная страница',
@@ -203,11 +201,11 @@ def quests_view(request, state_id=-1):
     hzuser = request.user
     hzuser_info = hzUserInfo.objects.filter(hz_user=hzuser)
     ankets = []
-    stat_ankets = ' только лишь всех '
+    stat_ankets = 'Список только лишь всех анкет'
     if state_id == 0:
-        stat_ankets = ' новых '
+        stat_ankets = 'Список новых анкет'
     elif state_id == 1:
-        stat_ankets = ' оформленных '
+        stat_ankets = 'Список оформленных анкет'
     if state_id in (0, 1):
         ankets = MyAPI.get_ankets_myapi(state_id)
         # ankets = Anket.objects.filter(state=state_id)
@@ -215,9 +213,8 @@ def quests_view(request, state_id=-1):
         ankets = MyAPI.get_ankets_myapi(-1)
         # ankets = Anket.objects.all()
     # ankets = Anket.objects.filter(state_filter)
-
     anket_list = list()
-    if ankets:
+    if ankets != ['']:
         for item_row in ankets:
             item = ast.literal_eval(item_row.replace('"', "'") + '}')
             item_dict = dict()
@@ -233,12 +230,17 @@ def quests_view(request, state_id=-1):
             """для анкет из API"""
             item_dict['state'] = item['state']
             item_dict['external_id'] = item['external_id']
-            item_dict['date_filling'] = item['date_filling']
-            item_dict['FIO'] = item['content']['Фамилия'] + ' ' + item['content']['Имя'] + ' ' + item['content']['Отчество']
-            item_dict['DOB'] = item['content']['Дата рождения']
+            item_dict['date_filling'] = datetime.datetime.strptime(item['date_filling'], "%Y-%m-%d").strftime(
+                '%d.%m.%Y')
+            item_dict['FIO'] = item['content']['Фамилия'] + ' ' + item['content']['Имя'] + ' ' + item['content'][
+                'Отчество']
+            item_dict['DOB'] = datetime.datetime.strptime(item['content']['Дата рождения'], "%Y-%m-%d").strftime(
+                '%d.%m.%Y')
             item_dict['tel'] = item['content']['Ваш контактный телефон']
             item_dict['addr'] = item['content']['Адрес места жительства (регистрации)']
             anket_list.append(item_dict)
+    else:
+        stat_ankets += ' пуст'
     context = {'title': 'Анкеты',
                'user': hzuser,
                'user_info': hzuser_info[0],
@@ -259,7 +261,8 @@ def quest_view(request, ext_id):
         anket = MyAPI.get_anket_myapi(ext_id)
         # anket_qs = Anket.objects.filter(external_id=ext_id)
         anket_qs = ast.literal_eval(anket[0].replace('"', "'") + '}')
-        anket_dict = anket_qs['content']#anket[0].content
+        anket_dict = anket_qs['content']  # anket[0].content
+
         fio = anket_dict['Фамилия'] + ' ' + anket_dict['Имя'] + ' ' + anket_dict['Отчество']
         res_date = datetime.datetime.strptime(anket_dict['Дата рождения'], "%Y-%m-%d").strftime('%d.%m.%Y')
 
