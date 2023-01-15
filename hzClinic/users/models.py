@@ -47,6 +47,7 @@ class CustomUser(AbstractUser):
     REQUIRED_FIELDS = []
     objects = CustomUserManager()
     email = models.EmailField(_('email address'), unique=True)
+    phone = models.CharField(blank=True, max_length=12)
     USERNAME_FIELD = 'email'
     class Meta:
         verbose_name = 'Пользователь'

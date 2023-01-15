@@ -1,23 +1,22 @@
+import ast
 import datetime
-import os
 import random
 import re
+import os
 from docxtpl import DocxTemplate
 
 from crm.forms import LoginForm, QuestForm
 from crm.models import hzUserInfo, Anket, TypeOperations
+from crm import YaD, MyAPI
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, reverse
-from crm import YaD
 
-from hzClinic import settings, settings_local
+from hzClinic import settings
 
-
-# /home/dmitry/PycharmProjects/hzProject/hzClinic/crm/templates/crm/docs
 
 def fill_tmpl(oper_list, context_dict):
-    doc_folder = context_dict['sFIO'] + '_' + context_dict['sOpers'] + '_' + context_dict['sDate0']
+    doc_folder = (context_dict['sFIO'] + '_' + context_dict['sOpers'] + '_' + context_dict['sDate0']).encode('utf-8')
     base_dir = settings.BASE_DIR
     file_path = os.path.join(base_dir, 'crm/templates/crm/docs/tmpls/')
     docs_path = os.path.join(base_dir, 'crm/templates/crm/docs/')
@@ -57,7 +56,7 @@ def do_docs(query_dict):
     
     selected_operations = []
     
-    docs_context = {'id_ext': '', 'sDate0': '', 'FIO': '', 'sFIO': '', 'sOpers': '', 'DR': '', 'DG': '', 'Adr': '', 'Job': '',
+    docs_context = {'sDate0': '', 'FIO': '', 'sFIO': '', 'sOpers': '', 'DR': '', 'DG': '', 'Adr': '', 'Job': '',
                     'DateAZ': '', 'DateAN': '', 'DateSP': '', 'DateSV': '', 'Date0': '', 'Date1': '', 'Date2': '',
                     'Date3': '', 'Date5': '', 'Date6': '', 'Date7': '', 'Date14': '', 'Date15': '', 'Date29': '',
                     'DopBlef': '', 'PerZ': '', 'PerO': '', 'PerT': '', 'PerG': '', 'Allerg': '', 'Alk': '', 'Nark': '',
@@ -81,12 +80,11 @@ def do_docs(query_dict):
     oper_dop1 = query_dict.get('oper_dop1', False)
     oper_dop2 = query_dict.get('oper_dop2', False)
     if oper_dop1:
-        DopBlef += ', чик-лифт молярной клетчатки'
+        DopBlef = ', ' + 'oper_dop1'
     if oper_dop2:
-        DopBlef += ', липофилинг лица'
+        DopBlef = ', ' + 'oper_dop2'
     docs_context['DopBlef'] = DopBlef
 
-    docs_context['id_ext'] = query_dict.get('id_ext', False)
     docs_context['PerZ'] = query_dict.get('id_PerZ', False)
     docs_context['PerO'] = query_dict.get('id_PerO', False)
     docs_context['PerT'] = query_dict.get('id_PerT', False)
@@ -99,7 +97,7 @@ def do_docs(query_dict):
     docs_context['Risk'] = query_dict.get('id_Risk', False)
     docs_context['VICH'] = query_dict.get('id_VICH', False)
     docs_context['Tub'] = query_dict.get('id_Tub', False)
-    docs_context['Tif'] = 'отрицает'  # ui.TifEdit.text()
+    docs_context['Tif'] = 'отрицает'
     docs_context['Diabet'] = query_dict.get('id_Diabet', False)
     docs_context['Vener'] = query_dict.get('id_Vener', False)
 
@@ -129,8 +127,6 @@ def do_docs(query_dict):
     # print(docs_context)
     # print(selected_operations)
     fill_tmpl(selected_operations, docs_context)
-
-
     # if len(selected_operations) == 0:
     #     print_status('Операции НЕ выбраны, документы НЕ будут сформированы!')
     # else:
@@ -206,33 +202,48 @@ def quests_view(request, state_id=-1):
     template_name = 'crm/_quests.html'
     hzuser = request.user
     hzuser_info = hzUserInfo.objects.filter(hz_user=hzuser)
+    ankets = []
     stat_ankets = ' только лишь всех '
     if state_id == 0:
         stat_ankets = ' новых '
     elif state_id == 1:
         stat_ankets = ' оформленных '
     if state_id in (0, 1):
-        ankets = Anket.objects.filter(state=state_id)
+        ankets = MyAPI.get_ankets_myapi(state_id)
+        # ankets = Anket.objects.filter(state=state_id)
     else:
-        ankets = Anket.objects.all()
-
+        ankets = MyAPI.get_ankets_myapi(-1)
+        # ankets = Anket.objects.all()
     # ankets = Anket.objects.filter(state_filter)
+
     anket_list = list()
-    for item in ankets:
-        item_dict = dict()
-        item_dict['state'] = item.state
-        item_dict['external_id'] = item.external_id
-        item_dict['date_filling'] = date_plus(item.date_filling, 0)
-        item_dict['FIO'] = item.content['Фамилия'] + ' ' + item.content['Имя'] + ' ' + item.content['Отчество']
-        item_dict['DOB'] =  datetime.datetime.strptime(item.content['Дата рождения'], "%Y-%m-%d").strftime('%d.%m.%Y')
-        item_dict['tel'] = item.content['Ваш контактный телефон']
-        item_dict['addr'] = item.content['Адрес места жительства (регистрации)']
-        anket_list.append(item_dict)
+    if ankets:
+        for item_row in ankets:
+            item = ast.literal_eval(item_row.replace('"', "'") + '}')
+            item_dict = dict()
+            """ для анкет из БД
+            item_dict['state'] = item.state
+            item_dict['external_id'] = item.external_id
+            item_dict['date_filling'] = item.date_filling
+            item_dict['FIO'] = item.content['Фамилия'] + ' ' + item.content['Имя'] + ' ' + item.content['Отчество']
+            item_dict['DOB'] = item.content['Дата рождения']
+            item_dict['tel'] = item.content['Ваш контактный телефон']
+            item_dict['addr'] = item.content['Адрес места жительства (регистрации)']
+            """
+            """для анкет из API"""
+            item_dict['state'] = item['state']
+            item_dict['external_id'] = item['external_id']
+            item_dict['date_filling'] = item['date_filling']
+            item_dict['FIO'] = item['content']['Фамилия'] + ' ' + item['content']['Имя'] + ' ' + item['content']['Отчество']
+            item_dict['DOB'] = item['content']['Дата рождения']
+            item_dict['tel'] = item['content']['Ваш контактный телефон']
+            item_dict['addr'] = item['content']['Адрес места жительства (регистрации)']
+            anket_list.append(item_dict)
     context = {'title': 'Анкеты',
                'user': hzuser,
                'user_info': hzuser_info[0],
-               'anket_list': anket_list,
                'stat_ankets': stat_ankets,
+               'anket_list': anket_list,
                }
     return render(request, template_name=template_name, context=context)
 
@@ -245,10 +256,10 @@ def quest_view(request, ext_id):
         do_docs(request.POST)
         return redirect(reverse(quests_view))
     else:
-        anket = list()
-        anket_qs = Anket.objects.filter(external_id=ext_id)
-        anket_dict = anket_qs[0].content
-
+        anket = MyAPI.get_anket_myapi(ext_id)
+        # anket_qs = Anket.objects.filter(external_id=ext_id)
+        anket_qs = ast.literal_eval(anket[0].replace('"', "'") + '}')
+        anket_dict = anket_qs['content']#anket[0].content
         fio = anket_dict['Фамилия'] + ' ' + anket_dict['Имя'] + ' ' + anket_dict['Отчество']
         res_date = datetime.datetime.strptime(anket_dict['Дата рождения'], "%Y-%m-%d").strftime('%d.%m.%Y')
 
@@ -339,7 +350,7 @@ def quest_view(request, ext_id):
                'form': form,
                'ext_id': ext_id,
                'FIO': fio,
-               'state': anket_qs[0].state,
+               'state': anket_qs['state'],
                }
     template_name = 'crm/_quest.html'
     return render(request, template_name=template_name, context=context)
