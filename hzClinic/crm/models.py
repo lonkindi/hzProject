@@ -1,5 +1,6 @@
 import datetime
 
+from django.core.validators import RegexValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -42,7 +43,7 @@ class hzUserEvents(models.Model):
     hz_user = models.ForeignKey(CustomUser, verbose_name='Пользователь', related_name='events',
                                 blank=True, null=True,
                                 on_delete=models.CASCADE)
-    date_time = models.DateTimeField(verbose_name='Дата и время', auto_now=True)
+    date_time = models.DateTimeField(verbose_name='Дата и время', default=datetime.datetime.today)
     title = models.CharField(max_length=100, verbose_name='Событие')
     description = models.TextField(verbose_name='Описание')
     media = models.FileField(verbose_name='Медиафайлы', name='event_media',
@@ -52,10 +53,11 @@ class hzUserEvents(models.Model):
     class Meta:
         verbose_name = 'Заметка'
         verbose_name_plural = "Список событий"
+
         ordering = ('-date_time',)
 
-    # def __str__(self):
-    #     return str(self.date_time)
+    def __str__(self):
+        return self.title
 
 
 class Anket(models.Model):
@@ -90,4 +92,29 @@ class TypeOperations(models.Model):
         ordering = ('code',)
 
     def __str__(self):
-        return str(self.code) + '-' + str(self.name)
+        return str(self.name)
+
+
+class Candidate(models.Model):
+    """
+    Модель кандидата на операцию
+    """
+    phoneNumberRegex = RegexValidator(regex=r"^\+?1?\d{8,15}$")
+    phoneNumber = models.CharField(validators=[phoneNumberRegex], max_length=16, unique=True,
+                                   verbose_name='Номер телефона (phoneNumber)')
+    date_oper = models.DateField(verbose_name='Дата операции (date_oper)', default=datetime.date.today)
+    Sname = models.CharField(max_length=25, verbose_name='Фамилия (Sname)')
+    Name  = models.CharField(max_length=25, verbose_name='Имя (Name)')
+    Mname = models.CharField(max_length=25, verbose_name='Отчество (Mname)')
+    typeOpers = models.ManyToManyField(TypeOperations, verbose_name='Операции (typeOpers)', related_name='operations')
+
+
+
+    class Meta:
+        verbose_name = 'Кандидат'
+        verbose_name_plural = "Кандидаты"
+        ordering = ('date_oper',)
+
+    def __str__(self):
+        return str(self.date_oper) + '-' + self.Sname + ' ' + self.Name + ' ' + self.Mname
+

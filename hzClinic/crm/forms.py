@@ -1,10 +1,10 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from django.forms import SelectDateWidget, Textarea
+from django.forms import SelectDateWidget, Textarea, ModelForm, CheckboxSelectMultiple, DateInput, TextInput
 
 from users.models import CustomUser
 
-from crm.models import hzUserInfo
+from crm.models import hzUserInfo, Candidate
 
 
 class LoginForm(forms.Form):
@@ -53,3 +53,15 @@ class QuestForm(forms.Form):
     #     widgets = {'DOB': SelectDateWidget(),
     #                #'reg_address': Textarea(),
     #                }
+
+
+class CandidateForm(ModelForm):
+    class Meta:
+        model = Candidate
+        fields = ['date_oper', 'phoneNumber', 'Sname', 'Name', 'Mname', 'typeOpers']
+        widgets = {
+            'typeOpers': CheckboxSelectMultiple(),
+            'date_oper': DateInput(attrs={'type': 'date'}),
+            'phoneNumber': TextInput(attrs={'placeholder': 'формат ввода 79998887766'}),
+        }
+

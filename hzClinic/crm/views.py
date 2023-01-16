@@ -6,8 +6,8 @@ import re
 from docxtpl import DocxTemplate
 
 from transliterate import translit
-from crm.forms import LoginForm, QuestForm
-from crm.models import hzUserInfo, Anket, TypeOperations
+from crm.forms import LoginForm, QuestForm, CandidateForm
+from crm.models import hzUserInfo, Anket, TypeOperations, Candidate
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, reverse
@@ -357,3 +357,24 @@ def quest_view(request, ext_id):
                }
     template_name = 'crm/_quest.html'
     return render(request, template_name=template_name, context=context)
+
+
+def recording_view(request):
+    if not request.user.is_authenticated:
+        return redirect(reverse(login_view))
+    if request.method == 'POST':
+        pass
+    template_name = 'crm/_record.html'
+    form = CandidateForm()
+    today = datetime.datetime.today().date().strftime("%Y-%m-%d")
+    hzuser = request.user
+    hzuser_info = hzUserInfo.objects.filter(hz_user=hzuser)
+    context = {'form': form,
+               'title': 'Анкета',
+               'user': hzuser,
+               'user_info': hzuser_info[0],
+               'today': today,
+               }
+    return render(request, template_name=template_name, context=context)
+    # context = {'title': 'login_title', 'main_body': 'WELCOMMEN!'}
+    # return render(request, template_name, context=context)

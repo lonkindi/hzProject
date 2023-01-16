@@ -34,4 +34,6 @@ class hzUserInfoAdmin(admin.ModelAdmin):
 
 @admin.register(hzUserEvents)
 class hzUserEventsAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('date_time', 'title', 'hz_user')
+    # list_editable = ('external_id', 'state',)
+

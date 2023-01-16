@@ -4,7 +4,7 @@ from django.forms import SelectDateWidget, Textarea
 
 #from users.models import CustomUser
 
-from crm.models import hzUserInfo
+from crm.models import hzUserInfo, Candidate
 
 
 class LoginForm(forms.Form):

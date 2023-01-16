@@ -25,6 +25,7 @@ urlpatterns = [
     path('', views.main_view, name='main'),
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
+    path('recording/', views.recording_view, name='recording'),
     path('quests/', views.quests_view, name='quests'),
     path('quests/<int:state_id>', views.quests_view, name='quests'),
     path('quest/<int:ext_id>', views.quest_view, name='quest'),
