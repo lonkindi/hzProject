@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.core.exceptions import NON_FIELD_ERRORS
 from django.forms import SelectDateWidget, Textarea, ModelForm, CheckboxSelectMultiple, DateInput, TextInput
 
 from users.models import CustomUser
@@ -56,12 +57,24 @@ class QuestForm(forms.Form):
 
 
 class CandidateForm(ModelForm):
+    error_css_class = 'has-danger'
+    # required_css_class = 'has-warning'
     class Meta:
+        error_messages = {'typeOpers': {'required': 'Не выбраны виды планируемых операций!'},
+                          'phoneNumber': {'unique': 'Кандидат с таким номером телефона уже записан!'}
+                          }
+        labels = {'typeOpers': 'Операции (обязательное*)', 'date_oper': 'Дата операции (обязательное*)',
+                  'phoneNumber': 'Номер телефона (обязательное*)', 'Sname': 'Фамилия (обязательное*)',
+                  'Name': 'Имя (обязательное*)', 'Mname': 'Отчество (необязательное)',
+                  }
         model = Candidate
         fields = ['date_oper', 'phoneNumber', 'Sname', 'Name', 'Mname', 'typeOpers']
         widgets = {
-            'typeOpers': CheckboxSelectMultiple(),
-            'date_oper': DateInput(attrs={'type': 'date'}),
-            'phoneNumber': TextInput(attrs={'placeholder': 'формат ввода 79998887766'}),
+            'typeOpers': CheckboxSelectMultiple(attrs={'class': 'form-control-label'}),
+            'date_oper': DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'phoneNumber': TextInput(attrs={'placeholder': 'формат ввода +79998887766', 'class': 'form-control', 'pattern': '^\+?1?\d{8,15}$'}),
+            'Sname': TextInput(attrs={'help_text': 'help_text', 'placeholder': 'Фамилия', 'class': 'form-control'}),
+            'Name': TextInput(attrs={'placeholder': 'Имя', 'class': 'form-control'}),
+            'Mname': TextInput(attrs={'placeholder': 'Отчество', 'class': 'form-control'}),
         }
 

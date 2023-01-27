@@ -6,6 +6,12 @@
             <h2 class="no-margin-bottom">_hz_ Dashboard</h2>
         </div>
     </header>
+    <ul class="breadcrumb">
+            <div class="container-fluid">
+              <li class="breadcrumb-item"><a href="../quests/0">Анкеты</a></li>
+              <li class="breadcrumb-item active">{{ FIO }}</li>
+            </div>
+          </ul>
     <section class="forms">
         <div class="container-fluid">
             <div class="row">
@@ -27,7 +33,7 @@
                             <h3 class="h4">Запись на операцию</h3>
                         </div>
                         <div class="card-body">
-                            <p>Lorem ipsum dolor sit amet consectetur.</p>
+                            <p>Обязательно проверьте данные перед записью кандидата!</p>
                             <form id="CandidateForm" method="post">
                                 {%csrf_token%}
                                 {{form.as_p}}

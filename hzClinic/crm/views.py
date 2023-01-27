@@ -216,7 +216,8 @@ def quests_view(request, state_id=-1):
     anket_list = list()
     if ankets != ['']:
         for item_row in ankets:
-            item = ast.literal_eval(item_row.replace('"', "'") + '}')
+            item_raw = item_row.replace("'", '`')
+            item = ast.literal_eval(item_raw.replace('"', "'") + '}')
             item_dict = dict()
             """ для анкет из БД
             item_dict['state'] = item.state
@@ -258,9 +259,9 @@ def quest_view(request, ext_id):
         do_docs(request.POST)
         return redirect(reverse(quests_view))
     else:
-        anket = MyAPI.get_anket_myapi(ext_id)
-        # anket_qs = Anket.objects.filter(external_id=ext_id)
-        anket_qs = ast.literal_eval(anket[0].replace('"', "'") + '}')
+        anket = MyAPI.get_anket_myapi(ext_id) # list
+        anket_str = anket[0].replace("'", '`')
+        anket_qs = ast.literal_eval(anket_str.replace('"', "'") + '}')
         anket_dict = anket_qs['content']  # anket[0].content
 
         fio = anket_dict['Фамилия'] + ' ' + anket_dict['Имя'] + ' ' + anket_dict['Отчество']
@@ -362,13 +363,42 @@ def quest_view(request, ext_id):
 def recording_view(request):
     if not request.user.is_authenticated:
         return redirect(reverse(login_view))
-    if request.method == 'POST':
-        pass
     template_name = 'crm/_record.html'
-    form = CandidateForm()
+
     today = datetime.datetime.today().date().strftime("%Y-%m-%d")
     hzuser = request.user
     hzuser_info = hzUserInfo.objects.filter(hz_user=hzuser)
+
+    if request.method == 'POST':
+        # Создаём экземпляр формы и заполняем данными из запроса (связывание, binding):
+        form = CandidateForm(request.POST)
+        # print('form= ', form)
+        # Проверка валидности данных формы:
+        if form.is_valid():
+            new_candidate = form.save()
+            # new_candidate = Candidate
+            # new_candidate.phoneNumber = form.cleaned_data['phoneNumber']
+            # new_candidate.date_oper = form.cleaned_data['date_oper']
+            # new_candidate.Sname = form.cleaned_data['Sname']
+            # new_candidate.Name = form.cleaned_data['Name']
+            # new_candidate.Mname = form.cleaned_data['Mname']
+            # new_candidate.typeOpers = form.cleaned_data['typeOpers']
+            # new_candidate.save()
+            return redirect(reverse(quests_view))
+    else:
+        form = CandidateForm()
+        #     print(form.errors)
+        # template_name = 'crm/_record.html'
+        #
+        # today = datetime.datetime.today().date().strftime("%Y-%m-%d")
+        # hzuser = request.user
+        # hzuser_info = hzUserInfo.objects.filter(hz_user=hzuser)
+        # context = {'form': form,
+        #            'title': 'Анкета',
+        #            'user': hzuser,
+        #            'user_info': hzuser_info[0],
+        #            'today': today,
+        #            }
     context = {'form': form,
                'title': 'Анкета',
                'user': hzuser,
@@ -376,5 +406,3 @@ def recording_view(request):
                'today': today,
                }
     return render(request, template_name=template_name, context=context)
-    # context = {'title': 'login_title', 'main_body': 'WELCOMMEN!'}
-    # return render(request, template_name, context=context)

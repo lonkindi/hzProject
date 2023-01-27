@@ -6,7 +6,13 @@
             <h2 class="no-margin-bottom">Работа с анкетами</h2>
         </div>
     </header>
-
+    <ul class="breadcrumb">
+            <div class="container-fluid">
+              <li class="breadcrumb-item"><a href="../">Начало</a></li>
+              <li class="breadcrumb-item"><a href="../quests/">Анкеты</a></li>
+              <li class="breadcrumb-item active">{{ stat_ankets }}</li>
+            </div>
+          </ul>
     <!-- Forms Section-->
     <section class="tables">
         <form action="/quest/{{ ext_id }}" method="post">
