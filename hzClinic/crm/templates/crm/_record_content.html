@@ -8,10 +8,11 @@
     </header>
     <ul class="breadcrumb">
             <div class="container-fluid">
-              <li class="breadcrumb-item"><a href="../quests/0">Анкеты</a></li>
-              <li class="breadcrumb-item active">{{ FIO }}</li>
+              <li class="breadcrumb-item"><a href="../">Главная</a></li>
+              <li class="breadcrumb-item"><a href="../timetable/">Расписание</a></li>
+              <li class="breadcrumb-item active">Запись на операцию</li>
             </div>
-          </ul>
+    </ul>
     <section class="forms">
         <div class="container-fluid">
             <div class="row">
@@ -33,11 +34,18 @@
                             <h3 class="h4">Запись на операцию</h3>
                         </div>
                         <div class="card-body">
-                            <p>Обязательно проверьте данные перед записью кандидата!</p>
+                            <div class="badge-rounded bg-red" style="text-align: center;">
+                                Обязательно проверьте данные перед записью кандидата!
+                            </div>
+                            <p></p>
                             <form id="CandidateForm" method="post">
                                 {%csrf_token%}
                                 {{form.as_p}}
                                 <p></p>
+                                <div class="badge-rounded bg-red" style="text-align: center;">
+                                Обязательно проверьте данные перед записью кандидата!
+                                    <p></p>
+                            </div>
                                 <input class="btn btn-primary" type="submit" value="Записать">
                             </form>
                         </div>

@@ -12,7 +12,7 @@
               <li class="breadcrumb-item"><a href="../quests/">Анкеты</a></li>
               <li class="breadcrumb-item active">{{ stat_ankets }}</li>
             </div>
-          </ul>
+    </ul>
     <!-- Forms Section-->
     <section class="tables">
         <form action="/quest/{{ ext_id }}" method="post">
@@ -47,10 +47,8 @@
                                             <h3 class="h4">{{ item.FIO }}</h3>
                             </div>
                             <div class="card-body">
-                                <p>Данные отправленные пациентом. Возможно редактирование.</p>
+                                <label class="form-control-label">ID: {{ item.external_id }} / {{ item.date_filling }}</label>
                                 <div class="card-body">
-                                    <h6>ID: {{ item.external_id }} / {{ item.date_filling }}</h6>
-
                                     <div class="form-group">
                                         <label class="form-control-label">Дата рождения:</label>
                                         <p>{{ item.DOB }}</p>

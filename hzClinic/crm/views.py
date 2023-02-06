@@ -257,7 +257,7 @@ def quest_view(request, ext_id):
     # context = dict()
     if request.method == 'POST':
         do_docs(request.POST)
-        return redirect(reverse(quests_view))
+        return redirect(reverse('quests', args=[0]))
     else:
         anket = MyAPI.get_anket_myapi(ext_id) # list
         anket_str = anket[0].replace("'", '`')

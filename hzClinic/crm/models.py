@@ -100,7 +100,7 @@ class Candidate(models.Model):
     Модель кандидата на операцию
     """
     phoneNumberRegex = RegexValidator(regex=r"^\+?1?\d{8,15}$", message='Неверный формат ввода номера телефона!')
-    phoneNumber = models.CharField(validators=[phoneNumberRegex], max_length=16, unique=True,
+    phoneNumber = models.CharField(validators=[phoneNumberRegex], max_length=16, unique=False,
                                    verbose_name='Номер телефона (phoneNumber)')
     date_oper = models.DateField(verbose_name='Дата операции (date_oper)', default=datetime.date.today)
     Sname = models.CharField(max_length=25, verbose_name='Фамилия (Sname)')
