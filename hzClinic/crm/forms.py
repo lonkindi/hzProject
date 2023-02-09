@@ -46,6 +46,7 @@ class QuestForm(forms.Form):
     Alk = forms.CharField(max_length=100, label='Отношение к алкоголю')
     Kur = forms.CharField(max_length=100, label='Отношение к курению')
     Nark = forms.CharField(max_length=100, label='Отношение к наркотикам')
+    MedPrep = forms.CharField(max_length=100, label='Лекарственные препараты на постоянной основе')
 
 
     # class Meta:

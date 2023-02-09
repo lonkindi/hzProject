@@ -3,6 +3,8 @@ import datetime
 import os
 import random
 import re
+
+from django.core.paginator import Paginator
 from docxtpl import DocxTemplate
 
 from transliterate import translit
@@ -131,6 +133,8 @@ def do_docs(query_dict):
     docs_context['DG'] = docs_context['DR'][6:]
     docs_context['Adr'] = query_dict.get('id_Address', False)
     docs_context['Job'] = query_dict.get('id_Job', False)
+    docs_context['MedPrep'] = query_dict.get('id_MedPrep', False)
+
 
     docs_context['Temp'] = 36.0 + random.choice(range(3, 9, 1)) / 10
     docs_context['TempD'] = 36.0 + random.choice(range(5, 9, 1)) / 10
@@ -214,6 +218,11 @@ def quests_view(request, state_id=-1):
         # ankets = Anket.objects.all()
     # ankets = Anket.objects.filter(state_filter)
     anket_list = list()
+    b_ankets = ''
+    current_page = ''
+    prev_page = ''
+    next_page = ''
+
     if ankets != ['']:
         for item_row in ankets:
             item_raw = item_row.replace("'", '`')
@@ -240,13 +249,36 @@ def quests_view(request, state_id=-1):
             item_dict['tel'] = item['content']['Ваш контактный телефон']
             item_dict['addr'] = item['content']['Адрес места жительства (регистрации)']
             anket_list.append(item_dict)
+
+            paginator = Paginator(anket_list, 9)
+            current_page = request.GET.get('page', 1)
+            b_ankets = paginator.get_page(current_page)
+            prev_page, next_page = None, None
+            if b_ankets.has_previous():
+                prev_page = b_ankets.previous_page_number
+                prev_page = prev_page()
+            else:
+                prev_page = 1
+            if b_ankets.has_next():
+                next_page = b_ankets.next_page_number
+                next_page = next_page()
+            else:
+                next_page = paginator.num_pages
+            # return render(request, template_name='index_bus.html', context={
+
+            # })
+
     else:
         stat_ankets += ' пуст'
     context = {'title': 'Анкеты',
                'user': hzuser,
                'user_info': hzuser_info[0],
                'stat_ankets': stat_ankets,
-               'anket_list': anket_list,
+               'anket_list': b_ankets, #anket_list,
+               'b_ankets': b_ankets,
+               'current_page': current_page,
+               'prev_page_url': f'{reverse("quests", args=[state_id])}?page={prev_page}',
+               'next_page_url': f'{reverse("quests", args=[state_id])}?page={next_page}',
                }
     return render(request, template_name=template_name, context=context)
 
@@ -274,7 +306,7 @@ def quest_view(request, ext_id):
             PerZ += PerZA
 
         PerO = 'отрицает'
-        PerOQ = anket_dict['У вас были операции раньше?']
+        PerOQ = anket_dict['У вас были пластические операции раньше?']
         if PerOQ != 'Нет':
             PerO = anket_dict['Перечислите перенесённые операции']
 
@@ -288,7 +320,7 @@ def quest_view(request, ext_id):
         if PerGQ != 'Нет':
             PerG = anket_dict['Перечислите перенесённые ранее гемотрансфузии']
 
-        Allerg = 'отрицает'
+        Allerg = 'аллергия отсутствует'
         AllergQ = anket_dict['Были ли у Вас аллергические реакции?']
         if AllergQ != 'Нет':
             Allerg = anket_dict['На что были аллергические реакции?']
@@ -322,6 +354,12 @@ def quest_view(request, ext_id):
         Kur = anket_dict['Отношение к курению']
         Nark = anket_dict['Отношение к наркотикам']
 
+        MedPrep = 'не принимаю'
+        MedPrepQ = anket_dict['Вы принимаете какие-то лекарственные препараты на постоянной основе?']
+        if MedPrepQ != 'Нет':
+            MedPrep = anket_dict['Какие лекарственные препараты вы принимаете на постоянной основе?']
+
+
         initial = {'FIO': fio,
                    'DateOfB': res_date,
                    'Address': anket_dict['Адрес места жительства (регистрации)'],
@@ -339,6 +377,7 @@ def quest_view(request, ext_id):
                    'Alk': Alk,
                    'Kur': Kur,
                    'Nark': Nark,
+                   'MedPrep': MedPrep,
                    }
 
         form = QuestForm(initial=initial)
