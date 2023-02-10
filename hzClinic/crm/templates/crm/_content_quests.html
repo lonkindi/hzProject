@@ -7,12 +7,32 @@
         </div>
     </header>
     <ul class="breadcrumb">
-            <div class="container-fluid">
-              <li class="breadcrumb-item"><a href="../">Начало</a></li>
-              <li class="breadcrumb-item"><a href="../quests/">Анкеты</a></li>
-              <li class="breadcrumb-item active">{{ stat_ankets }}</li>
-            </div>
+        <div class="container-fluid">
+            <li class="breadcrumb-item"><a href="../">Начало</a></li>
+            <li class="breadcrumb-item"><a href="../quests/{{state_id}}">Анкеты</a></li>
+            <li class="breadcrumb-item active">{{ stat_ankets }}</li>
+        </div>
     </ul>
+    <!-- Paginator Section-->
+        <section class="dashboard-counts no-padding-bottom">
+            <div class="container-fluid">
+                <div class="row bg-white has-shadow">
+
+                    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                        <div class="btn-group mr-2" role="group" aria-label="First group">
+                            {% if prev_page_url %}<a class="btn btn-secondary"
+                                                     href="{{ prev_page_url }}">⟵</a>{% endif %}
+                            <a class="btn btn-secondary disabled" role="button" aria-disabled="true"
+                               href="">Страница {{ current_page }} из {{ anket_list.paginator.num_pages }}</a>
+                            {% if next_page_url %}<a class="btn btn-secondary"
+                                                     href="{{ next_page_url }}">⟶</a>{% endif %}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
     <!-- Forms Section-->
     <section class="tables">
         <form action="/quest/{{ ext_id }}" method="post">
@@ -29,22 +49,23 @@
                                             class="fa fa-ellipsis-v"></i></button>
                                     <div aria-labelledby="closeCard" class="dropdown-menu has-shadow"><a href="#"
                                                                                                          class="dropdown-item remove">
-                                        <i class="fa fa-times"></i>Скрыть</a><a href="../quest/{{ item.external_id }}" class="dropdown-item edit"> <i
+                                        <i class="fa fa-times"></i>Скрыть</a><a href="../quest/{{ item.external_id }}"
+                                                                                class="dropdown-item edit"> <i
                                             class="fa fa-gear"></i>Оформить</a></div>
                                 </div>
                             </div>
                             <div class="card-header d-flex align-items-center">
                                 {% if item.state == 0 %}
-                                                <div class="badge badge-rounded bg-green">
-                                                    Новая
-                                                </div>&nbsp;&nbsp;&nbsp;
-                                                {% else %}
-                                                <div class="badge badge-rounded bg-red">
-                                                    Оформленная
-                                                </div>&nbsp;&nbsp;&nbsp;
-                                                {% endif %}
+                                <div class="badge badge-rounded bg-red">
+                                    Новая
+                                </div>&nbsp;&nbsp;&nbsp;
+                                {% else %}
+                                <div class="badge badge-rounded bg-green">
+                                    Оформленная
+                                </div>&nbsp;&nbsp;&nbsp;
+                                {% endif %}
 
-                                            <h3 class="h4">{{ item.FIO }}</h3>
+                                <h3 class="h4">{{ item.FIO }}</h3>
                             </div>
                             <div class="card-body">
                                 <label class="form-control-label">ID: {{ item.external_id }} / {{ item.date_filling }}</label>
@@ -69,14 +90,33 @@
                     </div>
                     {% endfor %}
                     {% endif %}
-                    <h1>Y!</h1>
-                {% if prev_page_url %}<a class="button button-primary" href="{{ prev_page_url }}">⟵</a>{% endif %}
-                <a class="button disabled" href="">{{ current_page }}</a>
-                {% if next_page_url %}<a class="button button-primary" href="{{ next_page_url }}">⟶</a>{% endif %}
                 </div>
             </div>
         </form>
+        <!-- Paginator Section-->
+        <section class="dashboard-counts no-padding-bottom">
+            <div class="container-fluid">
+                <div class="row bg-white has-shadow">
+
+                    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                        <div class="btn-group mr-2" role="group" aria-label="First group">
+                            {% if prev_page_url %}<a class="btn btn-secondary"
+                                                     href="{{ prev_page_url }}">⟵</a>{% endif %}
+                            <a class="btn btn-secondary disabled" role="button" aria-disabled="true"
+                               href="">Страница {{ current_page }} из {{ anket_list.paginator.num_pages }}</a>
+                            {% if next_page_url %}<a class="btn btn-secondary"
+                                                     href="{{ next_page_url }}">⟶</a>{% endif %}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
     </section>
+
+
+
+
     <!-- Page Footer-->
     <footer class="main-footer">
         <div class="container-fluid">

@@ -249,21 +249,23 @@ def quests_view(request, state_id=-1):
             item_dict['tel'] = item['content']['Ваш контактный телефон']
             item_dict['addr'] = item['content']['Адрес места жительства (регистрации)']
             anket_list.append(item_dict)
-
-            paginator = Paginator(anket_list, 9)
-            current_page = request.GET.get('page', 1)
-            b_ankets = paginator.get_page(current_page)
-            prev_page, next_page = None, None
-            if b_ankets.has_previous():
-                prev_page = b_ankets.previous_page_number
-                prev_page = prev_page()
-            else:
-                prev_page = 1
-            if b_ankets.has_next():
-                next_page = b_ankets.next_page_number
-                next_page = next_page()
-            else:
-                next_page = paginator.num_pages
+        anket_list.sort(key=lambda anket: anket['FIO'])
+        paginator = Paginator(anket_list, 9)
+        current_page = request.GET.get('page', 1)
+        b_ankets = paginator.get_page(current_page)
+        # print('anket_list = ', anket_list)
+        # print('sorted anket_list = ', sorted(anket_list, key=lambda anket: anket['FIO']))
+        # prev_page, next_page = None, None
+        if b_ankets.has_previous():
+            prev_page = b_ankets.previous_page_number
+            prev_page = prev_page()
+        else:
+            prev_page = 1
+        if b_ankets.has_next():
+            next_page = b_ankets.next_page_number
+            next_page = next_page()
+        else:
+            next_page = paginator.num_pages
             # return render(request, template_name='index_bus.html', context={
 
             # })
@@ -274,6 +276,7 @@ def quests_view(request, state_id=-1):
                'user': hzuser,
                'user_info': hzuser_info[0],
                'stat_ankets': stat_ankets,
+               'state_id': state_id,
                'anket_list': b_ankets, #anket_list,
                'b_ankets': b_ankets,
                'current_page': current_page,
