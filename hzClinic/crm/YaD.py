@@ -12,15 +12,15 @@ def create_folder(path):
     path: Путь к создаваемой папке."""
     requests.put(f'{URL}?path={path}', headers=headers)
 
-def upload_file(loadfile, savefile, replace=False):
+def upload_file(loadfile, savefile, replace=True):
     """Загрузка файла.
-    savefile: Путь к файлу на Диске
     loadfile: Путь к загружаемому файлу
+    savefile: Путь к файлу на Диске
     replace: true or false Замена файла на Диске"""
     res = requests.get(f'{URL}/upload?path={savefile}&overwrite={replace}', headers=headers).json()
     with open(loadfile, 'rb') as f:
         try:
-            requests.put(res['href'], files={'file':f})
+            requests.put(res['href'], files={'file': f})
         except KeyError:
             print(res)
 if __name__ == '__main__':
