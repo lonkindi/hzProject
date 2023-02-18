@@ -48,6 +48,15 @@ def fill_tmpl(oper_list, context_dict):
     doc = DocxTemplate(file_path + 'd.docx')
     doc.render(context_dict)
     doc.save(docs_path + doc_folder + '/d_' + sFIO + '.docx')
+
+    doc = DocxTemplate(file_path + 'ids.docx')
+    doc.render(context_dict)
+    doc.save(docs_path + doc_folder + '/ids_' + sFIO + '.docx')
+
+    doc = DocxTemplate(file_path + 'fv.docx')
+    doc.render(context_dict)
+    doc.save(docs_path + doc_folder + '/fv_' + sFIO + '.docx')
+
     id_ext = int(context_dict.get('id_ext', 0))
     if id_ext:
         MyAPI.update_anket_myapi(ext_id=id_ext, state=1)
@@ -75,7 +84,7 @@ def do_docs(query_dict):
                     'Date3': '', 'Date5': '', 'Date6': '', 'Date7': '', 'Date14': '', 'Date15': '', 'Date29': '',
                     'DopBlef': '', 'PerZ': '', 'PerO': '', 'PerT': '', 'PerG': '', 'Allerg': '', 'Alk': '', 'Nark': '',
                     'Gepatit': '', 'Kur': '', 'CDD': '', 'CSS': '', 'AD': '', 'Temp': '', 'TempD': '', 'Risk': '',
-                    'VICH': '', 'Tub': '', 'Tif': '', 'Diabet': '', 'Vener': '',
+                    'VICH': '', 'Tub': '', 'Tif': '', 'Diabet': '', 'Vener': '', 'MedPrep': '',
                     }
     oper_date_str = query_dict.get('operation_date', False)
     select_date = datetime.datetime.strptime(oper_date_str, "%Y-%m-%d")
