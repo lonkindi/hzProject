@@ -318,7 +318,7 @@ def quest_view(request, ext_id):
             PerZ += PerZA
 
         PerO = 'отрицает'
-        PerOQ = anket_dict['У вас были пластические операции раньше?']
+        PerOQ = anket_dict.get('У вас были пластические операции раньше?', 'Нет')
         if PerOQ != 'Нет':
             PerO = anket_dict['Перечислите перенесённые операции']
 

@@ -3,7 +3,7 @@
           <!-- Page Header-->
           <header class="page-header">
             <div class="container-fluid">
-              <h2 class="no-margin-bottom">Оформление пакета документов</h2>
+              <h2 class="no-margin-bottom">Оформление документов для медицинской карты</h2>
             </div>
           </header>
           <ul class="breadcrumb">
@@ -20,16 +20,10 @@
                 <!-- Anket Form-->
                 <div class="col-lg-6">
                   <div class="card">
-                    <div class="card-close">
-                      <div class="dropdown">
-                        <button type="button" id="closeCard" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-ellipsis-v"></i></button>
-                        <div aria-labelledby="closeCard" class="dropdown-menu has-shadow"><a href="#" class="dropdown-item remove"> <i class="fa fa-times"></i>Close</a><a href="#" class="dropdown-item edit"> <i class="fa fa-gear"></i>Edit</a></div>
-                      </div>
-                    </div>
                     <div class="card-header d-flex align-items-center">
                       <h3 class="h4">Выбранная анкета {{ ext_id }}
                       {% if state == 1 %}
-                          <font color="red"><b> - уже оформлена!</b></font>
+                          <br><div class="badge badge-rounded bg-red">документы уже оформлялись </div>
                       {% endif %}
                       </h3>
                       <input type="hidden" name="id_ext" value="{{ ext_id }}">
@@ -51,12 +45,7 @@
                 <!-- Calendar Form-->
                 <div class="col-lg-6">
                   <div class="card">
-                    <div class="card-close">
-                      <div class="dropdown">
-                        <button type="button" id="closeCard" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-ellipsis-v"></i></button>
-                        <div aria-labelledby="closeCard" class="dropdown-menu has-shadow"><a href="#" class="dropdown-item remove"> <i class="fa fa-times"></i>Close</a><a href="#" class="dropdown-item edit"> <i class="fa fa-gear"></i>Edit</a></div>
-                      </div>
-                    </div>
+
                     <div class="card-header d-flex align-items-center">
                       <h3 class="h4">Дата операции</h3>
                     </div>
@@ -68,12 +57,6 @@
                         </div>
                   </div>
                   <div class="card">
-                    <div class="card-close">
-                      <div class="dropdown">
-                        <button type="button" id="closeCard" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-ellipsis-v"></i></button>
-                        <div aria-labelledby="closeCard" class="dropdown-menu has-shadow"><a href="#" class="dropdown-item remove"> <i class="fa fa-times"></i>Close</a><a href="#" class="dropdown-item edit"> <i class="fa fa-gear"></i>Edit</a></div>
-                      </div>
-                    </div>
                     <div class="card-header d-flex align-items-center">
                       <h3 class="h4">Виды операций</h3>
                     </div>
@@ -108,7 +91,32 @@
                     <div class="card-body">
                       <div class="col-sm-9">
                            <div class="form-group">
-                          <input type="submit" value="Оформить документы" class="btn btn-primary">
+
+                          <button type="button" data-toggle="modal" data-target="#myModal" class="btn btn-primary">Продолжить</button>
+
+                           <!-- Modal-->
+    <div id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
+         class="modal fade text-left">
+        <div role="document" class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 id="exampleModalLabel" class="modal-title">Подготовка документов для медицинской карты пациента <em>{{form.FIO.value}}</em></h4>
+                    <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span
+                            aria-hidden="true">×</span></button>
+                </div>
+                <div class="modal-body">
+                    <p>После оформления документы будут загружены в облачное хранилище.</p>
+                    <p>Дождитесь окончания процесса и возврата к списку анкет.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" data-dismiss="modal" class="btn btn-secondary">Отмена</button>
+                    <input type="submit" class="btn btn-primary" value="Оформить документы">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
                         </div>
                     </div>
                   </div>
@@ -118,17 +126,7 @@
              </div>
             </form>
           </section>
-          <!-- Page Footer-->
-          <footer class="main-footer">
-            <div class="container-fluid">
-              <div class="row">
-                <div class="col-sm-6">
-                  <p>#ХотянЗнает! &copy; 2017-2022</p>
-                </div>
-                <div class="col-sm-6 text-right">
-                  <p>Design by <a href="https://bootstrapious.com/admin-templates" class="external">Bootstrapious</a></p>
-                </div>
-              </div>
-            </div>
-          </footer>
+
+
+
         </div>
