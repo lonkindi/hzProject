@@ -31,8 +31,15 @@ class CustomUserChangeForm(UserChangeForm):
 class QuestForm(forms.Form):
     FIO = forms.CharField(max_length=100, label='Ф.И.О.')
     DateOfB = forms.DateField(input_formats=['%d.%m.%Y', '%Y-%m-%d'], label='Дата рождения')
-    Address = forms.CharField(max_length=100, label='Адрес места жительства')
-    Job = forms.CharField(max_length=255, label='Место работы, должность')
+    Address = forms.CharField(max_length=255, label='Адрес места жительства')
+    veSub = forms.CharField(max_length=100, label='Субъект (Республика/Край/Область)')
+    veRn = forms.CharField(max_length=100, label='Район субъекта')
+    veGor = forms.CharField(max_length=100, label='Город')
+    veNP = forms.CharField(max_length=100, label='Населённый пункт')
+    veUl = forms.CharField(max_length=100, label='Улица')
+    veDom = forms.CharField(max_length=100, label='Номер дома')
+    veStr = forms.CharField(max_length=100, label='Строение/Корпус/Владение и т.д.')
+    veKv = forms.CharField(max_length=100, label='Квартира')
     PerZ = forms.CharField(max_length=100, label='Перенесённые и хронические заболевания?')
     PerO = forms.CharField(max_length=100, label='Перенесённые операции')
     PerT = forms.CharField(max_length=100, label='Перенесённые травмы')
@@ -47,6 +54,15 @@ class QuestForm(forms.Form):
     Kur = forms.CharField(max_length=100, label='Отношение к курению')
     Nark = forms.CharField(max_length=100, label='Отношение к наркотикам')
     MedPrep = forms.CharField(max_length=100, label='Лекарственные препараты на постоянной основе')
+    MedIzd = forms.CharField(max_length=100, label='Медицинские изделия')
+    Gender = forms.CharField(max_length=100, label='Пол')
+    oGender = forms.CharField(max_length=100, label='Дополнительная информация для осмотра, в зависимости от пола')
+    Rost = forms.CharField(max_length=100, label='Рост, см')
+    Massa = forms.CharField(max_length=100, label='Вес, кг')
+    GK = forms.CharField(max_length=100, label='Группа крови (O(I), A(II), B(III), AB(IV))')
+    RH = forms.CharField(max_length=100, label='Резус-фактор (+, -)')
+    KELL = forms.CharField(max_length=100, label='Келл-фактор (отрицательный, положительный)')
+
 
 
     # class Meta:

@@ -36,7 +36,7 @@ def fill_tmpl(oper_list, context_dict):
     #     os.mkdir(docs_path)
     # os.mkdir(docs_path + doc_folder)
     for item in oper_list:
-        for type_doc in ['v', 'o', 'p', 's']:
+        for type_doc in ['oh', 'pe', 'ln', 'po', 've', 's']:
             doc = DocxTemplate(file_path + type_doc + '_' + str(item.code) + '.docx')
             doc.render(context_dict)
             target_str = target_path + '/' + type_doc + '_' + str(item.code) + '_' + sFIO + '.docx'
@@ -45,9 +45,9 @@ def fill_tmpl(oper_list, context_dict):
             # target_str = u''.join([target_path.decode('utf-8'), target_str_r])
             # doc.save(target_str.encode('utf-8').decode('utf-8'))
 
-    doc = DocxTemplate(file_path + 'd.docx')
-    doc.render(context_dict)
-    doc.save(docs_path + doc_folder + '/d_' + sFIO + '.docx')
+    # doc = DocxTemplate(file_path + 'd.docx')
+    # doc.render(context_dict)
+    # doc.save(docs_path + doc_folder + '/d_' + sFIO + '.docx')
 
     doc = DocxTemplate(file_path + 'ids.docx')
     doc.render(context_dict)
@@ -78,35 +78,41 @@ def date_plus(c_date, delta):
 def do_docs(query_dict):
     selected_operations = []
 
-    docs_context = {'id_ext': '', 'sDate0': '', 'FIO': '', 'sFIO': '', 'sOpers': '', 'DR': '', 'DG': '', 'Adr': '',
-                    'Job': '',
-                    'DateAZ': '', 'DateAN': '', 'DateSP': '', 'DateSV': '', 'Date0': '', 'Date1': '', 'Date2': '',
-                    'Date3': '', 'Date5': '', 'Date6': '', 'Date7': '', 'Date14': '', 'Date15': '', 'Date29': '',
-                    'DopBlef': '', 'PerZ': '', 'PerO': '', 'PerT': '', 'PerG': '', 'Allerg': '', 'Alk': '', 'Nark': '',
-                    'Gepatit': '', 'Kur': '', 'CDD': '', 'CSS': '', 'AD': '', 'Temp': '', 'TempD': '', 'Risk': '',
-                    'VICH': '', 'Tub': '', 'Tif': '', 'Diabet': '', 'Vener': '', 'MedPrep': '',
-                    }
+    docs_context = dict()
     oper_date_str = query_dict.get('operation_date', False)
     select_date = datetime.datetime.strptime(oper_date_str, "%Y-%m-%d")
     today = datetime.datetime.today().date()
 
     for item in [0, 1, 2, 3, 5, 6, 7, 14, 15, 29]:
         docs_context['Date' + str(item)] = date_plus(select_date, item)
-    delta_ambul = -random.choice(range(3, 180, 1))
+    delta_ambul = -random.choice(range(3, 30, 1))
 
     docs_context['DateAZ'] = date_plus(select_date, delta_ambul)
     docs_context['DateAN'] = docs_context['DateAZ']
     docs_context['DateSP'] = docs_context['Date0']
     docs_context['DateSV'] = ''
 
-    DopBlef = ''
-    oper_dop1 = query_dict.get('oper_dop1', False)
-    oper_dop2 = query_dict.get('oper_dop2', False)
-    if oper_dop1:
-        DopBlef += ', чик-лифт молярной клетчатки'
-    if oper_dop2:
-        DopBlef += ', липофилинг лица'
-    docs_context['DopBlef'] = DopBlef
+    anest = ''
+    anest1 = query_dict.get('anest1', False)
+    anest2 = query_dict.get('anest2', False)
+    anest3 = query_dict.get('anest3', False)
+    anest4 = query_dict.get('anest4', False)
+
+    if anest1:
+        anest = 'общая ингаляционная анестезия'
+        if anest2 and anest1:
+            anest += ' + ИВЛ'
+    if anest3 and anest:
+        anest += ', местная анестезия'
+    elif anest3 and not anest:
+        anest = 'местная анестезия'
+    if anest4 and anest3 and not anest1:
+        anest += ' + мониторинг'
+
+    print(f'anest = {anest}')
+
+
+    docs_context['anest'] = anest
 
     docs_context['id_ext'] = query_dict.get('id_ext', False)
     docs_context['PerZ'] = query_dict.get('id_PerZ', False)
@@ -121,7 +127,6 @@ def do_docs(query_dict):
     docs_context['Risk'] = query_dict.get('id_Risk', False)
     docs_context['VICH'] = query_dict.get('id_VICH', False)
     docs_context['Tub'] = query_dict.get('id_Tub', False)
-    docs_context['Tif'] = 'отрицает'  # ui.TifEdit.text()
     docs_context['Diabet'] = query_dict.get('id_Diabet', False)
     docs_context['Vener'] = query_dict.get('id_Vener', False)
 
@@ -141,16 +146,38 @@ def do_docs(query_dict):
     docs_context['DR'] = query_dict.get('id_DateOfB', False)
     docs_context['DG'] = docs_context['DR'][6:]
     docs_context['Adr'] = query_dict.get('id_Address', False)
-    docs_context['Job'] = query_dict.get('id_Job', False)
+    docs_context['Gender'] = query_dict.get('id_Gender', False)
+    docs_context['oGender'] = query_dict.get('id_oGender', False)
     docs_context['MedPrep'] = query_dict.get('id_MedPrep', False)
+    docs_context['MedIzd'] = query_dict.get('id_MedIzd', False)
+    docs_context['veSub'] = query_dict.get('id_veSub', False)
+    docs_context['veRn'] = query_dict.get('id_veRn', False)
+    docs_context['veGor'] = query_dict.get('id_veGor', False)
+    docs_context['veNP'] = query_dict.get('id_veNP', False)
+    docs_context['veUl'] = query_dict.get('id_veUl', False)
+    docs_context['veDom'] = query_dict.get('id_veDom', False)
+    docs_context['veStr'] = query_dict.get('id_veStr', False)
+    docs_context['veKv'] = query_dict.get('id_veKv', False)
+    docs_context['Rost'] = query_dict.get('id_Rost', False)
+    docs_context['Massa'] = query_dict.get('id_Massa', False)
+    docs_context['GK'] = query_dict.get('id_GK', False)
+    docs_context['RH'] = query_dict.get('id_RH', False)
+    docs_context['veKELL'] = query_dict.get('id_KELL', False)
 
+    docs_context['oHH'] = random.choice(range(9, 11, 1))
+    docs_context['oMM'] = random.choice(range(0, 55, 5))
+    docs_context['oTemp'] = 36.0 + random.choice(range(3, 9, 1)) / 10
+    docs_context['oCDD'] = random.choice(range(16, 20, 1))
+    docs_context['oCSS'] = random.choice(range(64, 98, 1))
+    docs_context['oSat'] = random.choice(range(98, 101, 1))
+    docs_context['oAD'] = str(random.choice(range(110, 135, 5))) + '/' + str(random.choice(range(70, 90, 5)))
+    docs_context['peTemp'] = 36.0 + random.choice(range(5, 9, 1)) / 10
+    docs_context['peCDD'] = random.choice(range(16, 20, 1))
+    docs_context['peCSS'] = random.choice(range(64, 98, 1))
+    docs_context['peSat'] = random.choice(range(98, 101, 1))
+    docs_context['peAD'] = str(random.choice(range(110, 135, 5))) + '/' + str(random.choice(range(70, 90, 5)))
 
-    docs_context['Temp'] = 36.0 + random.choice(range(3, 9, 1)) / 10
-    docs_context['TempD'] = 36.0 + random.choice(range(5, 9, 1)) / 10
-    docs_context['CDD'] = random.choice(range(16, 25, 1))
-    docs_context['CSS'] = random.choice(range(64, 98, 1))
-    docs_context['AD'] = str(random.choice(range(110, 135, 5))) + '/' + str(random.choice(range(70, 90, 5)))
-    fill_tmpl(selected_operations, docs_context)
+    # fill_tmpl(selected_operations, docs_context)
 
 
 def main_view(request):
@@ -312,65 +339,81 @@ def quest_view(request, ext_id):
         res_date = datetime.datetime.strptime(anket_dict['Дата рождения'], "%Y-%m-%d").strftime('%d.%m.%Y')
 
         PerZ = 'ОРВИ'
-        PerZQ = anket_dict['Перенесённые и хронические заболевания?']
+        PerZQ = anket_dict.get('Перенесённые и хронические заболевания?', 'Нет')
         if PerZQ != 'Нет':
-            PerZA = ', ' + anket_dict['Перечислите перенесённые и хронические заболевания']
+            PerZA = ', ' + anket_dict.get('Перечислите перенесённые и хронические заболевания', '')
             PerZ += PerZA
 
         PerO = 'отрицает'
-        PerOQ = anket_dict.get('У вас были пластические операции раньше?', 'Нет')
+        PerOQ = anket_dict.get('У вас были операции раньше, в том числе пластические?', 'Нет')
         if PerOQ != 'Нет':
-            PerO = anket_dict['Перечислите перенесённые операции']
+            PerO = anket_dict.get('Перечислите перенесённые операции', '')
 
         PerT = 'отрицает'
-        PerTQ = anket_dict['У вас были травмы?']
+        PerTQ = anket_dict.get('У вас были травмы?', 'Нет')
         if PerTQ != 'Нет':
-            PerT = anket_dict['Перечислите перенесённые ранее травмы']
+            PerT = anket_dict.get('Перечислите перенесённые ранее травмы', '')
 
         PerG = 'отрицает'
-        PerGQ = anket_dict['Вы переносили гемотрансфузии?']
+        PerGQ = anket_dict.get('Вы переносили гемотрансфузии?', 'Нет')
         if PerGQ != 'Нет':
-            PerG = anket_dict['Перечислите перенесённые ранее гемотрансфузии']
+            PerG = anket_dict.get('Перечислите перенесённые ранее гемотрансфузии', '')
 
         Allerg = 'аллергия отсутствует'
-        AllergQ = anket_dict['Были ли у Вас аллергические реакции?']
+        AllergQ = anket_dict.get('Были ли у Вас аллергические реакции?', 'Нет')
         if AllergQ != 'Нет':
-            Allerg = anket_dict['На что были аллергические реакции?']
+            Allerg = anket_dict.get('На что были аллергические реакции?', '')
 
         VICH = 'отрицает'
-        VICHQ = anket_dict['Являетесь ли Вы носителем ВИЧ-инфекции?']
+        VICHQ = anket_dict.get('Являетесь ли Вы носителем ВИЧ-инфекции?', 'Нет')
         if VICHQ != 'Нет':
             VICH = 'ВИЧ-носитель'
 
         Gepatit = 'отрицает'
-        GepatitQ = anket_dict['Болели ли вы гепатитом?']
+        GepatitQ = anket_dict.get('Болели ли вы гепатитом?', 'Нет')
         if GepatitQ != 'Нет':
-            Gepatit = 'гепатит типа ' + anket_dict['Гепатитом какого типа вы болели?']
+            Gepatit = 'гепатит типа ' + anket_dict.get('Гепатитом какого типа вы болели?', '')
 
         Tub = 'отрицает'
-        TubQ = anket_dict['Болели ли вы туберкулёзом лёгких?']
+        TubQ = anket_dict.get('Болели ли вы туберкулёзом лёгких?', 'Нет')
         if TubQ != 'Нет':
             Tub = 'положительно'
 
         Diabet = 'отрицает'
-        DiabetQ = anket_dict['У вас есть сахарный диабет?']
+        DiabetQ = anket_dict.get('У вас есть сахарный диабет?', 'Нет')
         if DiabetQ != 'Нет':
-            Diabet = anket_dict['Сахарный диабет какого типа и когда был диагностирован?']
+            Diabet = anket_dict.get('Сахарный диабет какого типа и когда был диагностирован?', '')
 
         Vener = 'отрицает'
-        VenerQ = anket_dict['Болели ли Вы венерическими заболеваниями?']
+        VenerQ = anket_dict.get('Болели ли Вы венерическими заболеваниями?', 'Нет')
         if VenerQ != 'Нет':
-            Vener = anket_dict['Какие венерические заболевания Вы перенесли?']
+            Vener = anket_dict.get('Какие венерические заболевания Вы перенесли?', '')
 
-        Alk = anket_dict['Отношение к алкоголю']
-        Kur = anket_dict['Отношение к курению']
-        Nark = anket_dict['Отношение к наркотикам']
+        Alk = anket_dict.get('Отношение к алкоголю', 'отрицательно')
+        Kur = anket_dict.get('Отношение к курению', 'отрицательно')
+        Nark = anket_dict.get('Отношение к наркотикам', 'отрицательно')
 
         MedPrep = 'не принимаю'
-        MedPrepQ = anket_dict['Вы принимаете какие-то лекарственные препараты на постоянной основе?']
+        MedPrepQ = anket_dict.get('Вы принимаете какие-то лекарственные препараты на постоянной основе?', 'Нет')
         if MedPrepQ != 'Нет':
-            MedPrep = anket_dict['Какие лекарственные препараты вы принимаете на постоянной основе?']
+            MedPrep = anket_dict.get('Какие лекарственные препараты вы принимаете на постоянной основе?', '')
 
+        MedIzd = 'отсутствуют'
+        MedIzdQ = anket_dict.get('У вас имеются имплантированные медицинские изделия?', 'Нет')
+        if MedIzdQ != 'Нет':
+            MedIzd = anket_dict.get('Какие имплантированные медицинские изделия у вас имеются?', '')
+
+        Gender = anket_dict.get('Пол', '')
+
+        oGender = 'Мочеполовая система в норме'
+        if Gender == 'Женский':
+            oGender = 'Менструации регулярные, беременность отрицает'
+
+        Rost = anket_dict.get('Ваш рост (см)', '')
+        Massa = anket_dict.get('Ваш вес (кг)', '')
+        GK = anket_dict.get('Группа крови', '')
+        RH = anket_dict.get('Резус-фактор', '')
+        KELL = anket_dict.get('Келл-фактор', '')
 
         initial = {'FIO': fio,
                    'DateOfB': res_date,
@@ -390,6 +433,22 @@ def quest_view(request, ext_id):
                    'Kur': Kur,
                    'Nark': Nark,
                    'MedPrep': MedPrep,
+                   'MedIzd': MedIzd,
+                   'Rost': Rost,
+                   'Massa': Massa,
+                   'GK': GK,
+                   'RH': RH,
+                   'KELL': KELL,
+                   'Gender': Gender,
+                   'oGender': oGender,
+                   'veSub': '',
+                   'veRn': '',
+                   'veGor': '',
+                   'veNP': '',
+                   'veUl': '',
+                   'veDom': '',
+                   'veStr': '',
+                   'veKv': '',
                    }
 
         form = QuestForm(initial=initial)
