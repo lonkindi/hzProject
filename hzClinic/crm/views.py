@@ -109,9 +109,6 @@ def do_docs(query_dict):
     if anest4 and anest3 and not anest1:
         anest += ' + мониторинг'
 
-    print(f'anest = {anest}')
-
-
     docs_context['anest'] = anest
 
     docs_context['id_ext'] = query_dict.get('id_ext', False)
