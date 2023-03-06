@@ -20,7 +20,7 @@ class AnketAdmin(admin.ModelAdmin):
 @admin.register(TypeOperations)
 class TypeOperationsAdmin(admin.ModelAdmin):
     list_display = ('code', 'name', 's_name',)
-    # list_editable = ('code', 'name', 's_name',)
+    list_display_links = ('code', 'name', 's_name',)
 
 
 @admin.register(Candidate)
