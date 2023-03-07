@@ -174,6 +174,127 @@ def do_docs(query_dict):
     docs_context['peSat'] = random.choice(range(98, 101, 1))
     docs_context['peAD'] = str(random.choice(range(110, 135, 5))) + '/' + str(random.choice(range(70, 90, 5)))
 
+    zaloby = ''
+    pri_osmotre = ''
+    osn_zabol = ''
+    MKB = ''
+    plan_lech = ''
+    obosnov = ''
+    naimen_oper = ''
+    kod_usl = ''
+    plan_oper = ''
+    opis_oper = ''
+    kol_instr = 0
+    kol_salf = 0
+    krovop = 0
+    naznach = ''
+    primen_lec = ''
+    rezult = ''
+    srok_gosp = 0
+
+    for operation in selected_operations:
+        curr_operation = TypeOperations.objects.filter(code=operation)[0]
+
+        if zaloby == '':
+            selector = ''
+        else:
+            selector = ', '
+        zaloby += selector + curr_operation.zaloby
+
+        if pri_osmotre == '':
+            selector = ''
+        else:
+            selector = ', '
+        pri_osmotre += selector + curr_operation.pri_osmotre
+
+        if osn_zabol == '':
+            selector = ''
+        else:
+            selector = ', '
+        osn_zabol += selector + curr_operation.osn_zabol
+
+        if MKB == '':
+            selector = ''
+        else:
+            selector = ', '
+        MKB += selector + curr_operation.MKB
+
+        if plan_lech == '':
+            selector = ''
+        else:
+            selector = ', '
+        plan_lech += selector + curr_operation.plan_lech
+
+        if obosnov == '':
+            selector = ''
+        else:
+            selector = ', '
+        obosnov += selector + curr_operation.obosnov
+
+        if naimen_oper == '':
+            selector = ''
+        else:
+            selector = ', '
+        naimen_oper += selector + curr_operation.naimen_oper
+
+        if kod_usl == '':
+            selector = ''
+        else:
+            selector = ', '
+        kod_usl += selector + curr_operation.kod_usl
+
+        if plan_oper == '':
+            selector = ''
+        else:
+            selector = ', '
+        plan_oper += selector + curr_operation.plan_oper
+
+        if opis_oper == '':
+            selector = ''
+        else:
+            selector = ', '
+        opis_oper += selector + curr_operation.opis_oper
+
+        kol_instr += curr_operation.kol_instr
+        kol_salf += selector + curr_operation.kol_salf
+        krovop += selector + curr_operation.krovop
+
+        if primen_lec == '':
+            selector = ''
+        else:
+            selector = ', '
+        primen_lec += selector + curr_operation.primen_lec
+
+        if rezult == '':
+            selector = ''
+        else:
+            selector = ', '
+        rezult += selector + curr_operation.rezult
+
+        if curr_operation.plan_oper > srok_gosp:
+            srok_gosp = curr_operation.plan_oper
+
+
+    docs_context['zaloby'] = zaloby
+    docs_context['pri_osmotre'] = pri_osmotre
+    docs_context['osn_zabol'] = osn_zabol
+    docs_context['MKB'] = MKB
+    docs_context['plan_lech'] = plan_lech
+    docs_context['obosnov'] = obosnov
+    docs_context['naimen_oper'] = naimen_oper
+    docs_context['kod_usl'] = kod_usl
+    docs_context['plan_oper'] = plan_oper
+    docs_context['opis_oper'] = opis_oper
+    docs_context['kol_instr'] = kol_instr
+    docs_context['kol_salf'] = kol_salf
+    docs_context['krovop'] = krovop
+    docs_context['naznach'] = naznach
+    docs_context['primen_lec'] = primen_lec
+    docs_context['rezult'] = rezult
+    docs_context['srok_gosp'] = srok_gosp
+    docs_context['PZK'] = query_dict.get('id_PZK', False)
+
+    print(f'docs_context = {docs_context}')
     # fill_tmpl(selected_operations, docs_context)
 
 
