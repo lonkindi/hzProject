@@ -31,17 +31,15 @@ def fill_tmpl(oper_list, context_dict):
     # target_path = target_path_u.encode('utf-8')
     if not os.path.exists(target_path):
         os.mkdir(target_path)
-    YaD.create_folder(f'MedicalCase/{doc_folder}')
     # else:
     #     os.mkdir(docs_path)
     # os.mkdir(docs_path + doc_folder)
     for item in oper_list:
-        for type_doc in ['oh', 'pe', 'ln', 'po', 've', 's']:
-            doc = DocxTemplate(file_path + type_doc + '_' + str(item.code) + '.docx')
-            doc.render(context_dict)
-            target_str = target_path + '/' + type_doc + '_' + str(item.code) + '_' + sFIO + '.docx'
-            # target_str = target_path + target_str_r
-            doc.save(target_str)
+        doc = DocxTemplate(file_path + 's_' + str(item.code) + '.docx')
+        doc.render(context_dict)
+        target_str = target_path + '/' + 's_' + str(item.code) + '_' + sFIO + '.docx'
+        # target_str = target_path + target_str_r
+        doc.save(target_str)
             # target_str = u''.join([target_path.decode('utf-8'), target_str_r])
             # doc.save(target_str.encode('utf-8').decode('utf-8'))
 
@@ -57,11 +55,34 @@ def fill_tmpl(oper_list, context_dict):
     doc.render(context_dict)
     doc.save(docs_path + doc_folder + '/fv_' + sFIO + '.docx')
 
+    doc = DocxTemplate(file_path + 'ln.docx')
+    doc.render(context_dict)
+    doc.save(docs_path + doc_folder + '/ln_' + sFIO + '.docx')
+
+    doc = DocxTemplate(file_path + 'oh.docx')
+    doc.render(context_dict)
+    doc.save(docs_path + doc_folder + '/oh_' + sFIO + '.docx')
+
+    doc = DocxTemplate(file_path + 'pe.docx')
+    doc.render(context_dict)
+    doc.save(docs_path + doc_folder + '/pe_' + sFIO + '.docx')
+
+    doc = DocxTemplate(file_path + 'po.docx')
+    doc.render(context_dict)
+    doc.save(docs_path + doc_folder + '/po_' + sFIO + '.docx')
+
+    doc = DocxTemplate(file_path + 've.docx')
+    doc.render(context_dict)
+    doc.save(docs_path + doc_folder + '/ve_' + sFIO + '.docx')
+
     id_ext = int(context_dict.get('id_ext', 0))
-    if id_ext:
-        MyAPI.update_anket_myapi(ext_id=id_ext, state=1)
+
+    # if id_ext:
+    #     MyAPI.update_anket_myapi(ext_id=id_ext, state=1)
+
         # Anket.objects.filter(external_id=id_ext).update(state=1)
 
+    YaD.create_folder(f'MedicalCase/{doc_folder}')
     for file in os.listdir(target_path):
         upload_file = target_path + '/' + file
         YaD.upload_file(upload_file, f'MedicalCase/{doc_folder}/{file}')
@@ -77,7 +98,6 @@ def date_plus(c_date, delta):
 
 def do_docs(query_dict):
     selected_operations = []
-
     docs_context = dict()
     oper_date_str = query_dict.get('operation_date', False)
     select_date = datetime.datetime.strptime(oper_date_str, "%Y-%m-%d")
@@ -159,7 +179,7 @@ def do_docs(query_dict):
     docs_context['Massa'] = query_dict.get('id_Massa', False)
     docs_context['GK'] = query_dict.get('id_GK', False)
     docs_context['RH'] = query_dict.get('id_RH', False)
-    docs_context['veKELL'] = query_dict.get('id_KELL', False)
+    docs_context['KELL'] = query_dict.get('id_KELL', False)
 
     docs_context['oHH'] = random.choice(range(9, 11, 1))
     docs_context['oMM'] = random.choice(range(0, 55, 5))
@@ -193,8 +213,7 @@ def do_docs(query_dict):
     srok_gosp = 0
 
     for operation in selected_operations:
-        curr_operation = TypeOperations.objects.filter(code=operation)[0]
-
+        curr_operation = TypeOperations.objects.filter(code=operation.code)[0]
         if zaloby == '':
             selector = ''
         else:
@@ -246,18 +265,24 @@ def do_docs(query_dict):
         if plan_oper == '':
             selector = ''
         else:
-            selector = ', '
+            selector = '\r\n'
         plan_oper += selector + curr_operation.plan_oper
 
         if opis_oper == '':
             selector = ''
         else:
-            selector = ', '
+            selector = '\r\n'
         opis_oper += selector + curr_operation.opis_oper
 
         kol_instr += curr_operation.kol_instr
-        kol_salf += selector + curr_operation.kol_salf
-        krovop += selector + curr_operation.krovop
+        kol_salf += curr_operation.kol_salf
+        krovop += curr_operation.krovop
+
+        if naznach == '':
+            selector = ''
+        else:
+            selector = ', '
+        naznach += selector + curr_operation.naznach
 
         if primen_lec == '':
             selector = ''
@@ -271,9 +296,8 @@ def do_docs(query_dict):
             selector = ', '
         rezult += selector + curr_operation.rezult
 
-        if curr_operation.plan_oper > srok_gosp:
-            srok_gosp = curr_operation.plan_oper
-
+        if curr_operation.srok_gosp > srok_gosp:
+            srok_gosp = curr_operation.srok_gosp
 
     docs_context['zaloby'] = zaloby
     docs_context['pri_osmotre'] = pri_osmotre
@@ -292,11 +316,10 @@ def do_docs(query_dict):
     docs_context['primen_lec'] = primen_lec
     docs_context['rezult'] = rezult
     docs_context['srok_gosp'] = srok_gosp
-    docs_context['PZK'] = query_dict.get('id_PZK', False)
+    docs_context['PZK'] = query_dict.get('PZK', False)
 
-    print(f'docs_context = {docs_context}')
-    # fill_tmpl(selected_operations, docs_context)
-
+    fill_tmpl(selected_operations, docs_context)
+    # print(f'selected_operations = {selected_operations}, docs_context = {docs_context}')
 
 def main_view(request):
     if not request.user.is_authenticated:
