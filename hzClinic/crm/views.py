@@ -265,13 +265,13 @@ def do_docs(query_dict):
         if plan_oper == '':
             selector = ''
         else:
-            selector = '\r\n'
+            selector = '.\r\n'
         plan_oper += selector + curr_operation.plan_oper
 
         if opis_oper == '':
             selector = ''
         else:
-            selector = '\r\n'
+            selector = '.\r\n'
         opis_oper += selector + curr_operation.opis_oper
 
         kol_instr += curr_operation.kol_instr
@@ -287,7 +287,7 @@ def do_docs(query_dict):
         if primen_lec == '':
             selector = ''
         else:
-            selector = ', '
+            selector = '; '
         primen_lec += selector + curr_operation.primen_lec
 
         if rezult == '':
@@ -313,13 +313,14 @@ def do_docs(query_dict):
     docs_context['kol_salf'] = kol_salf
     docs_context['krovop'] = krovop
     docs_context['naznach'] = naznach
-    docs_context['primen_lec'] = primen_lec
+    docs_context['primen_lec'] = primen_lec.format(Date0=docs_context['Date0'], Date1=docs_context['Date1'],
+                                                   Date2=docs_context['Date2'], Date5=docs_context['Date5'])
     docs_context['rezult'] = rezult
     docs_context['srok_gosp'] = srok_gosp
     docs_context['PZK'] = query_dict.get('PZK', False)
 
-    fill_tmpl(selected_operations, docs_context)
-    # print(f'selected_operations = {selected_operations}, docs_context = {docs_context}')
+    # fill_tmpl(selected_operations, docs_context)
+    print(f'selected_operations = {selected_operations}, docs_context = {docs_context}')
 
 def main_view(request):
     if not request.user.is_authenticated:
