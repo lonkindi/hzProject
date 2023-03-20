@@ -82,12 +82,12 @@ def fill_tmpl(oper_list, context_dict):
 
         # Anket.objects.filter(external_id=id_ext).update(state=1)
 
-    YaD.create_folder(f'MedicalCase/{doc_folder}')
-    for file in os.listdir(target_path):
-        upload_file = target_path + '/' + file
-        YaD.upload_file(upload_file, f'MedicalCase/{doc_folder}/{file}')
-
-    return doc_folder
+    # YaD.create_folder(f'MedicalCase/{doc_folder}')
+    # for file in os.listdir(target_path):
+    #     upload_file = target_path + '/' + file
+    #     YaD.upload_file(upload_file, f'MedicalCase/{doc_folder}/{file}')
+    #
+    # return doc_folder
 
 
 def date_plus(c_date, delta):
@@ -102,8 +102,8 @@ def do_docs(query_dict):
     oper_date_str = query_dict.get('operation_date', False)
     select_date = datetime.datetime.strptime(oper_date_str, "%Y-%m-%d")
     today = datetime.datetime.today().date()
-
-    for item in [0, 1, 2, 3, 5, 6, 7, 14, 15, 29]:
+    day_list = [0, 1, 2, 3, 5, 6, 7, 14, 15, 29]
+    for item in day_list:
         docs_context['Date' + str(item)] = date_plus(select_date, item)
     delta_ambul = -random.choice(range(3, 30, 1))
 
@@ -208,7 +208,9 @@ def do_docs(query_dict):
     kol_salf = 0
     krovop = 0
     naznach = ''
+    naznach_set = set()
     primen_lec = ''
+    primen_lec_set = set()
     rezult = ''
     srok_gosp = 0
 
@@ -312,15 +314,20 @@ def do_docs(query_dict):
     docs_context['kol_instr'] = kol_instr
     docs_context['kol_salf'] = kol_salf
     docs_context['krovop'] = krovop
-    docs_context['naznach'] = naznach
-    docs_context['primen_lec'] = primen_lec.format(Date0=docs_context['Date0'], Date1=docs_context['Date1'],
-                                                   Date2=docs_context['Date2'], Date5=docs_context['Date5'])
+    naznach_set = set(naznach.split(','))
+    docs_context['naznach'] = ",".join(naznach_set)
+    primen_lec_set = set(primen_lec.split(';'))
+    primen_lec = ";".join(primen_lec_set)
+    for item in day_list:
+        primen_lec_str = primen_lec.replace(f'{"{Date"+str(item)+"}"}', docs_context['Date' + str(item)])
+        primen_lec = primen_lec_str
+    docs_context['primen_lec'] = primen_lec
     docs_context['rezult'] = rezult
     docs_context['srok_gosp'] = srok_gosp
     docs_context['PZK'] = query_dict.get('PZK', False)
 
-    # fill_tmpl(selected_operations, docs_context)
-    print(f'selected_operations = {selected_operations}, docs_context = {docs_context}')
+    fill_tmpl(selected_operations, docs_context)
+    # print(f'selected_operations = {selected_operations}, docs_context = {docs_context}')
 
 def main_view(request):
     if not request.user.is_authenticated:
@@ -560,7 +567,7 @@ def quest_view(request, ext_id):
         initial = {'FIO': fio,
                    'DateOfB': res_date,
                    'Address': anket_dict['Адрес места жительства (регистрации)'],
-                   'Job': anket_dict['Место работы, должность'],
+                   # 'Job': anket_dict['Место работы, должность'],
                    'PerZ': PerZ,
                    'PerO': PerO,
                    'PerT': PerT,
