@@ -47,33 +47,42 @@ def fill_tmpl(oper_list, context_dict):
     # doc.render(context_dict)
     # doc.save(docs_path + doc_folder + '/d_' + sFIO + '.docx')
 
-    doc = DocxTemplate(file_path + 'ids.docx')
-    doc.render(context_dict)
-    doc.save(docs_path + doc_folder + '/ids_' + sFIO + '.docx')
+    for item in ['ids', 'fv', 'ln', 'oh', 'pe', 'po', 've', 'otkaz']:
+        doc = DocxTemplate(file_path + item + '.docx')
+        doc.render(context_dict)
+        doc.save(docs_path + doc_folder + '/' + item + '_' + sFIO + '.docx')
 
-    doc = DocxTemplate(file_path + 'fv.docx')
-    doc.render(context_dict)
-    doc.save(docs_path + doc_folder + '/fv_' + sFIO + '.docx')
-
-    doc = DocxTemplate(file_path + 'ln.docx')
-    doc.render(context_dict)
-    doc.save(docs_path + doc_folder + '/ln_' + sFIO + '.docx')
-
-    doc = DocxTemplate(file_path + 'oh.docx')
-    doc.render(context_dict)
-    doc.save(docs_path + doc_folder + '/oh_' + sFIO + '.docx')
-
-    doc = DocxTemplate(file_path + 'pe.docx')
-    doc.render(context_dict)
-    doc.save(docs_path + doc_folder + '/pe_' + sFIO + '.docx')
-
-    doc = DocxTemplate(file_path + 'po.docx')
-    doc.render(context_dict)
-    doc.save(docs_path + doc_folder + '/po_' + sFIO + '.docx')
-
-    doc = DocxTemplate(file_path + 've.docx')
-    doc.render(context_dict)
-    doc.save(docs_path + doc_folder + '/ve_' + sFIO + '.docx')
+    # doc = DocxTemplate(file_path + 'ids.docx')
+    # doc.render(context_dict)
+    # doc.save(docs_path + doc_folder + '/ids_' + sFIO + '.docx')
+    #
+    # doc = DocxTemplate(file_path + 'fv.docx')
+    # doc.render(context_dict)
+    # doc.save(docs_path + doc_folder + '/fv_' + sFIO + '.docx')
+    #
+    # doc = DocxTemplate(file_path + 'ln.docx')
+    # doc.render(context_dict)
+    # doc.save(docs_path + doc_folder + '/ln_' + sFIO + '.docx')
+    #
+    # doc = DocxTemplate(file_path + 'oh.docx')
+    # doc.render(context_dict)
+    # doc.save(docs_path + doc_folder + '/oh_' + sFIO + '.docx')
+    #
+    # doc = DocxTemplate(file_path + 'pe.docx')
+    # doc.render(context_dict)
+    # doc.save(docs_path + doc_folder + '/pe_' + sFIO + '.docx')
+    #
+    # doc = DocxTemplate(file_path + 'po.docx')
+    # doc.render(context_dict)
+    # doc.save(docs_path + doc_folder + '/po_' + sFIO + '.docx')
+    #
+    # doc = DocxTemplate(file_path + 've.docx')
+    # doc.render(context_dict)
+    # doc.save(docs_path + doc_folder + '/ve_' + sFIO + '.docx')
+    #
+    # doc = DocxTemplate(file_path + 'otkaz.docx')
+    # doc.render(context_dict)
+    # doc.save(docs_path + doc_folder + '/otkaz_' + sFIO + '.docx')
 
     id_ext = int(context_dict.get('id_ext', 0))
 
@@ -128,7 +137,6 @@ def do_docs(query_dict):
         anest = 'местная анестезия'
     if anest4 and anest3 and not anest1:
         anest += ' + мониторинг'
-
     docs_context['anest'] = anest
 
     docs_context['id_ext'] = query_dict.get('id_ext', False)
@@ -180,9 +188,14 @@ def do_docs(query_dict):
     docs_context['GK'] = query_dict.get('id_GK', False)
     docs_context['RH'] = query_dict.get('id_RH', False)
     docs_context['KELL'] = query_dict.get('id_KELL', False)
-
-    docs_context['oHH'] = random.choice(range(9, 11, 1))
-    docs_context['oMM'] = random.choice(range(0, 55, 5))
+    oHH = str(random.choice(range(9, 11, 1)))
+    if len(oHH) == 1:
+        oHH = '0' + oHH
+    docs_context['oHH'] = oHH
+    oMM = str(random.choice(range(0, 55, 5)))
+    if len(oMM) == 1:
+        oMM = '0' + oMM
+    docs_context['oMM'] = oMM
     docs_context['oTemp'] = 36.0 + random.choice(range(3, 9, 1)) / 10
     docs_context['oCDD'] = random.choice(range(16, 20, 1))
     docs_context['oCSS'] = random.choice(range(64, 98, 1))
@@ -322,8 +335,22 @@ def do_docs(query_dict):
         primen_lec_str = primen_lec.replace(f'{"{Date"+str(item)+"}"}', docs_context['Date' + str(item)])
         primen_lec = primen_lec_str
     docs_context['primen_lec'] = primen_lec
+    # print('primen_lec=', primen_lec)
+    for index, value in enumerate(primen_lec.split(';')):
+        ln_lp = re.search(r'(.*?) с ', value)
+        ln_Date_n = re.search(r'с (\d\d.\d\d.*?) г.', value)
+        ln_Date_o = re.search(r'по (\d\d.\d\d.*?) г.', value)
+        docs_context['ln_lp' + str(index+1)] = ln_lp.group(1)
+        docs_context['ln_Date' + str(index+1) + '_n'] = ln_Date_n.group(1)+' г.\r\n\r\n_____________'
+        docs_context['ln_Date' + str(index+1) + '_o'] = ln_Date_o.group(1)+' г.\r\n\r\n_____________'
+
     docs_context['rezult'] = rezult
-    docs_context['srok_gosp'] = srok_gosp
+    propis = {1: 'одни', 2: 'двое', 3: 'трое', 4: 'четверо', 5: 'пятеро', 6: 'шестеро', 7: 'семеро', 8: 'восемь', }
+    if srok_gosp == '1':
+        sutok = ' сутки'
+    else:
+        sutok = ' суток'
+    docs_context['srok_gosp'] = str(srok_gosp) + f' ({propis.get(srok_gosp, False)}) ' + sutok
     docs_context['PZK'] = query_dict.get('PZK', False)
 
     fill_tmpl(selected_operations, docs_context)
