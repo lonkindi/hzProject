@@ -24,28 +24,19 @@ def fill_tmpl(oper_list, context_dict):
     sFIO = translit(context_dict['sFIO'], 'ru', reversed=True)
     sOpers = translit(context_dict['sOpers'], 'ru', reversed=True)
     doc_folder = sFIO + '_' + sOpers + '_' + context_dict['sDate0']
-    # doc_folder = translit(doc_folder_ru, 'ru', reversed=True)
     base_dir = settings.BASE_DIR
     file_path = os.path.join(base_dir, 'crm/docs/tmpls/')
     docs_path = os.path.join(base_dir, 'crm/docs/')
-    # target_path = u' '.join(docs_path, doc_folder).encode('utf-8').strip()
     target_path = docs_path + doc_folder
-    # target_path = target_path_u.encode('utf-8')
+
     if not os.path.exists(target_path):
         os.mkdir(target_path)
-    # else:
-    #     os.mkdir(docs_path)
-    # os.mkdir(docs_path + doc_folder)
+
     for item in oper_list:
         doc = DocxTemplate(file_path + 's_' + str(item.code) + '.docx')
         doc.render(context_dict)
         target_str = target_path + '/' + 's_' + str(item.code) + '_' + sFIO + '.docx'
-        # target_str = target_path + target_str_r
         doc.save(target_str)
-            # target_str = u''.join([target_path.decode('utf-8'), target_str_r])
-            # doc.save(target_str.encode('utf-8').decode('utf-8'))
-
-
 
     for item in ['ids', 'fv', 'ln', 'oh', 'pe', 'po', 've', 'otkaz']:
         doc = DocxTemplate(file_path + item + '.docx')
@@ -53,11 +44,8 @@ def fill_tmpl(oper_list, context_dict):
         doc.save(docs_path + doc_folder + '/' + item + '_' + sFIO + '.docx')
 
     id_ext = int(context_dict.get('id_ext', 0))
-
     if id_ext:
         MyAPI.update_anket_myapi(ext_id=id_ext, state=1)
-
-        # Anket.objects.filter(external_id=id_ext).update(state=1)
 
     YaD.create_folder(f'MedicalCase/{doc_folder}')
     for file in os.listdir(target_path):
@@ -288,7 +276,8 @@ def do_docs(query_dict):
     docs_context['MKB'] = MKB
     docs_context['plan_lech'] = plan_lech
     docs_context['obosnov'] = obosnov
-    docs_context['naimen_oper'] = naimen_oper
+    naimen_oper_set = set(naimen_oper.split(','))
+    docs_context['naimen_oper'] = ",".join(naimen_oper_set)
     docs_context['kod_usl'] = kod_usl
     docs_context['plan_oper'] = plan_oper
     docs_context['opis_oper'] = opis_oper
