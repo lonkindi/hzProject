@@ -36,7 +36,7 @@ class QuestForm(forms.Form):
     veRn = forms.CharField(max_length=100, label='Район субъекта')
     veGor = forms.CharField(max_length=100, label='Город')
     veNP = forms.CharField(max_length=100, label='Населённый пункт')
-    veUl = forms.CharField(max_length=100, label='Улица')
+    veUl = forms.CharField(max_length=100, label='Улица (без ул.)')
     veDom = forms.CharField(max_length=100, label='Номер дома')
     veStr = forms.CharField(max_length=100, label='Строение/Корпус/Владение и т.д.')
     veKv = forms.CharField(max_length=100, label='Квартира')

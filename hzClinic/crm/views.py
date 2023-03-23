@@ -17,6 +17,8 @@ from crm import YaD, MyAPI
 
 from hzClinic import settings, settings_local
 
+def page_not_found_view(request, exception):
+    return render(request, 'crm/404.html', status=404)
 
 def fill_tmpl(oper_list, context_dict):
     sFIO = translit(context_dict['sFIO'], 'ru', reversed=True)
@@ -43,60 +45,26 @@ def fill_tmpl(oper_list, context_dict):
             # target_str = u''.join([target_path.decode('utf-8'), target_str_r])
             # doc.save(target_str.encode('utf-8').decode('utf-8'))
 
-    # doc = DocxTemplate(file_path + 'd.docx')
-    # doc.render(context_dict)
-    # doc.save(docs_path + doc_folder + '/d_' + sFIO + '.docx')
+
 
     for item in ['ids', 'fv', 'ln', 'oh', 'pe', 'po', 've', 'otkaz']:
         doc = DocxTemplate(file_path + item + '.docx')
         doc.render(context_dict)
         doc.save(docs_path + doc_folder + '/' + item + '_' + sFIO + '.docx')
 
-    # doc = DocxTemplate(file_path + 'ids.docx')
-    # doc.render(context_dict)
-    # doc.save(docs_path + doc_folder + '/ids_' + sFIO + '.docx')
-    #
-    # doc = DocxTemplate(file_path + 'fv.docx')
-    # doc.render(context_dict)
-    # doc.save(docs_path + doc_folder + '/fv_' + sFIO + '.docx')
-    #
-    # doc = DocxTemplate(file_path + 'ln.docx')
-    # doc.render(context_dict)
-    # doc.save(docs_path + doc_folder + '/ln_' + sFIO + '.docx')
-    #
-    # doc = DocxTemplate(file_path + 'oh.docx')
-    # doc.render(context_dict)
-    # doc.save(docs_path + doc_folder + '/oh_' + sFIO + '.docx')
-    #
-    # doc = DocxTemplate(file_path + 'pe.docx')
-    # doc.render(context_dict)
-    # doc.save(docs_path + doc_folder + '/pe_' + sFIO + '.docx')
-    #
-    # doc = DocxTemplate(file_path + 'po.docx')
-    # doc.render(context_dict)
-    # doc.save(docs_path + doc_folder + '/po_' + sFIO + '.docx')
-    #
-    # doc = DocxTemplate(file_path + 've.docx')
-    # doc.render(context_dict)
-    # doc.save(docs_path + doc_folder + '/ve_' + sFIO + '.docx')
-    #
-    # doc = DocxTemplate(file_path + 'otkaz.docx')
-    # doc.render(context_dict)
-    # doc.save(docs_path + doc_folder + '/otkaz_' + sFIO + '.docx')
-
     id_ext = int(context_dict.get('id_ext', 0))
 
-    # if id_ext:
-    #     MyAPI.update_anket_myapi(ext_id=id_ext, state=1)
+    if id_ext:
+        MyAPI.update_anket_myapi(ext_id=id_ext, state=1)
 
         # Anket.objects.filter(external_id=id_ext).update(state=1)
 
-    # YaD.create_folder(f'MedicalCase/{doc_folder}')
-    # for file in os.listdir(target_path):
-    #     upload_file = target_path + '/' + file
-    #     YaD.upload_file(upload_file, f'MedicalCase/{doc_folder}/{file}')
-    #
-    # return doc_folder
+    YaD.create_folder(f'MedicalCase/{doc_folder}')
+    for file in os.listdir(target_path):
+        upload_file = target_path + '/' + file
+        YaD.upload_file(upload_file, f'MedicalCase/{doc_folder}/{file}')
+
+    return doc_folder
 
 
 def date_plus(c_date, delta):
@@ -330,19 +298,19 @@ def do_docs(query_dict):
     naznach_set = set(naznach.split(','))
     docs_context['naznach'] = ",".join(naznach_set)
     primen_lec_set = set(primen_lec.split(';'))
+    primen_lec_set.discard(' ')
     primen_lec = ";".join(primen_lec_set)
     for item in day_list:
         primen_lec_str = primen_lec.replace(f'{"{Date"+str(item)+"}"}', docs_context['Date' + str(item)])
         primen_lec = primen_lec_str
     docs_context['primen_lec'] = primen_lec
-    # print('primen_lec=', primen_lec)
     for index, value in enumerate(primen_lec.split(';')):
         ln_lp = re.search(r'(.*?) с ', value)
         ln_Date_n = re.search(r'с (\d\d.\d\d.*?) г.', value)
         ln_Date_o = re.search(r'по (\d\d.\d\d.*?) г.', value)
-        docs_context['ln_lp' + str(index+1)] = ln_lp.group(1)
-        docs_context['ln_Date' + str(index+1) + '_n'] = ln_Date_n.group(1)+' г.\r\n\r\n_____________'
-        docs_context['ln_Date' + str(index+1) + '_o'] = ln_Date_o.group(1)+' г.\r\n\r\n_____________'
+        docs_context['ln_lp' + str(index+1)] = ln_lp.group(1) if ln_lp else ''
+        docs_context['ln_Date' + str(index+1) + '_n'] = ln_Date_n.group(1)+' г.\r\n\r\n_____________' if ln_Date_n else ''
+        docs_context['ln_Date' + str(index+1) + '_o'] = ln_Date_o.group(1)+' г.\r\n\r\n_____________' if ln_Date_o else ''
 
     docs_context['rezult'] = rezult
     propis = {1: 'одни', 2: 'двое', 3: 'трое', 4: 'четверо', 5: 'пятеро', 6: 'шестеро', 7: 'семеро', 8: 'восемь', }
