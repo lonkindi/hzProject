@@ -38,7 +38,7 @@ def fill_tmpl(oper_list, context_dict):
         target_str = target_path + '/' + 's_' + str(item.code) + '_' + sFIO + '.docx'
         doc.save(target_str)
 
-    for item in ['ids', 'fv', 'ln', 'oh', 'pe', 'po', 've', 'otkaz']:
+    for item in ['ids', 'fv', 'ln', 'oh', 'pe', 'po', 've', 'otkaz', 'svod']:
         doc = DocxTemplate(file_path + item + '.docx')
         doc.render(context_dict)
         doc.save(docs_path + doc_folder + '/' + item + '_' + sFIO + '.docx')
@@ -59,6 +59,13 @@ def date_plus(c_date, delta):
     new_date = c_date + datetime.timedelta(days=delta)
     res_date = new_date.strftime('%d.%m.%Y')
     return res_date
+
+
+def del_duplicates(original_str, spliter=';'):
+    original_set = set(original_str.split(spliter))
+    original_set.discard(' ')
+    rez_str = ";".join(original_set)
+    return rez_str
 
 
 def do_docs(query_dict):
@@ -188,49 +195,49 @@ def do_docs(query_dict):
         if zaloby == '':
             selector = ''
         else:
-            selector = ', '
+            selector = '; '
         zaloby += selector + curr_operation.zaloby
 
         if pri_osmotre == '':
             selector = ''
         else:
-            selector = ', '
+            selector = '; '
         pri_osmotre += selector + curr_operation.pri_osmotre
 
         if osn_zabol == '':
             selector = ''
         else:
-            selector = ', '
+            selector = '; '
         osn_zabol += selector + curr_operation.osn_zabol
 
         if MKB == '':
             selector = ''
         else:
-            selector = ', '
+            selector = '; '
         MKB += selector + curr_operation.MKB
 
         if plan_lech == '':
             selector = ''
         else:
-            selector = ', '
+            selector = '; '
         plan_lech += selector + curr_operation.plan_lech
 
         if obosnov == '':
             selector = ''
         else:
-            selector = ', '
+            selector = '; '
         obosnov += selector + curr_operation.obosnov
 
         if naimen_oper == '':
             selector = ''
         else:
-            selector = ', '
+            selector = '; '
         naimen_oper += selector + curr_operation.naimen_oper
 
         if kod_usl == '':
             selector = ''
         else:
-            selector = ', '
+            selector = '; '
         kod_usl += selector + curr_operation.kod_usl
 
         if plan_oper == '':
@@ -252,7 +259,7 @@ def do_docs(query_dict):
         if naznach == '':
             selector = ''
         else:
-            selector = ', '
+            selector = '; '
         naznach += selector + curr_operation.naznach
 
         if primen_lec == '':
@@ -264,28 +271,26 @@ def do_docs(query_dict):
         if rezult == '':
             selector = ''
         else:
-            selector = ', '
+            selector = '; '
         rezult += selector + curr_operation.rezult
 
         if curr_operation.srok_gosp > srok_gosp:
             srok_gosp = curr_operation.srok_gosp
 
-    docs_context['zaloby'] = zaloby
+    docs_context['zaloby'] = del_duplicates(zaloby)
     docs_context['pri_osmotre'] = pri_osmotre
     docs_context['osn_zabol'] = osn_zabol
-    docs_context['MKB'] = MKB
+    docs_context['MKB'] = del_duplicates(MKB)
     docs_context['plan_lech'] = plan_lech
     docs_context['obosnov'] = obosnov
-    naimen_oper_set = set(naimen_oper.split(','))
-    docs_context['naimen_oper'] = ",".join(naimen_oper_set)
-    docs_context['kod_usl'] = kod_usl
+    docs_context['naimen_oper'] = del_duplicates(naimen_oper)
+    docs_context['kod_usl'] = del_duplicates(kod_usl)
     docs_context['plan_oper'] = plan_oper
     docs_context['opis_oper'] = opis_oper
     docs_context['kol_instr'] = kol_instr
     docs_context['kol_salf'] = kol_salf
     docs_context['krovop'] = krovop
-    naznach_set = set(naznach.split(','))
-    docs_context['naznach'] = ",".join(naznach_set)
+    docs_context['naznach'] = del_duplicates(naznach)
     primen_lec_set = set(primen_lec.split(';'))
     primen_lec_set.discard(' ')
     primen_lec = ";".join(primen_lec_set)
@@ -303,7 +308,7 @@ def do_docs(query_dict):
 
     docs_context['rezult'] = rezult
     propis = {1: 'одни', 2: 'двое', 3: 'трое', 4: 'четверо', 5: 'пятеро', 6: 'шестеро', 7: 'семеро', 8: 'восемь', }
-    if srok_gosp == '1':
+    if srok_gosp == 1:
         sutok = ' сутки'
     else:
         sutok = ' суток'
