@@ -44,13 +44,13 @@ def fill_tmpl(oper_list, context_dict):
         doc.save(docs_path + doc_folder + '/' + item + '_' + sFIO + '.docx')
 
     id_ext = int(context_dict.get('id_ext', 0))
-    if id_ext:
-        MyAPI.update_anket_myapi(ext_id=id_ext, state=1)
-
-    YaD.create_folder(f'MedicalCase/{doc_folder}')
-    for file in os.listdir(target_path):
-        upload_file = target_path + '/' + file
-        YaD.upload_file(upload_file, f'MedicalCase/{doc_folder}/{file}')
+    # if id_ext:
+    #     MyAPI.update_anket_myapi(ext_id=id_ext, state=1)
+    #
+    # YaD.create_folder(f'MedicalCase/{doc_folder}')
+    # for file in os.listdir(target_path):
+    #     upload_file = target_path + '/' + file
+    #     YaD.upload_file(upload_file, f'MedicalCase/{doc_folder}/{file}')
 
     return doc_folder
 

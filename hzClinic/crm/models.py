@@ -91,7 +91,7 @@ class TypeOperations(models.Model):
     MKB = models.CharField(max_length=20, null=True, blank=True, verbose_name='Код МКБ')
     plan_lech = models.TextField(max_length=255, null=True, blank=True, verbose_name='План лечения')
     obosnov = models.TextField(max_length=255, null=True, blank=True, verbose_name='Обоснование')
-    # LTR = models.CharField(max_length=2048, null=True, blank=True, verbose_name='Лечебные и трудовые рекомендации ')
+    # LTR = models.TextField(max_length=2048, null=True, blank=True, verbose_name='Лечебные и трудовые рекомендации ')
     naimen_oper = models.CharField(max_length=100, null=True, blank=True, verbose_name='Наименование операции')
     kod_usl = models.CharField(max_length=20, null=True, blank=True, verbose_name='Код услуги')
     plan_oper = models.TextField(max_length=255, null=True, blank=True, verbose_name='План операции')
