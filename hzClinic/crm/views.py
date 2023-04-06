@@ -64,7 +64,8 @@ def date_plus(c_date, delta):
 def del_duplicates(original_str, spliter=';'):
     original_set = set(original_str.split(spliter))
     original_set.discard(' ')
-    rez_str = ";".join(original_set)
+    rez_str = spliter.join(original_set)
+    rez_str = rez_str.replace(spliter, spliter+' ')
     return rez_str
 
 
@@ -195,55 +196,55 @@ def do_docs(query_dict):
         if zaloby == '':
             selector = ''
         else:
-            selector = '; '
+            selector = ';'
         zaloby += selector + curr_operation.zaloby
 
         if pri_osmotre == '':
             selector = ''
         else:
-            selector = '; '
+            selector = ';'
         pri_osmotre += selector + curr_operation.pri_osmotre
 
         if osn_zabol == '':
             selector = ''
         else:
-            selector = '; '
+            selector = ';'
         osn_zabol += selector + curr_operation.osn_zabol
 
         if MKB == '':
             selector = ''
         else:
-            selector = '; '
+            selector = ';'
         MKB += selector + curr_operation.MKB
 
         if plan_lech == '':
             selector = ''
         else:
-            selector = '; '
+            selector = ';'
         plan_lech += selector + curr_operation.plan_lech
 
         if obosnov == '':
             selector = ''
         else:
-            selector = '; '
+            selector = ';'
         obosnov += selector + curr_operation.obosnov
 
         if naimen_oper == '':
             selector = ''
         else:
-            selector = '; '
+            selector = ';'
         naimen_oper += selector + curr_operation.naimen_oper
 
         if kod_usl == '':
             selector = ''
         else:
-            selector = '; '
+            selector = ';'
         kod_usl += selector + curr_operation.kod_usl
 
         if plan_oper == '':
             selector = ''
         else:
-            selector = '.\r\n'
+            selector = ';\r\n'
         plan_oper += selector + curr_operation.plan_oper
 
         if opis_oper == '':
@@ -259,30 +260,30 @@ def do_docs(query_dict):
         if naznach == '':
             selector = ''
         else:
-            selector = '; '
+            selector = ','
         naznach += selector + curr_operation.naznach
 
         if primen_lec == '':
             selector = ''
         else:
-            selector = '; '
+            selector = ';'
         primen_lec += selector + curr_operation.primen_lec
 
         if rezult == '':
             selector = ''
         else:
-            selector = '; '
+            selector = ';'
         rezult += selector + curr_operation.rezult
 
         if curr_operation.srok_gosp > srok_gosp:
             srok_gosp = curr_operation.srok_gosp
 
     docs_context['zaloby'] = del_duplicates(zaloby)
-    docs_context['pri_osmotre'] = pri_osmotre
-    docs_context['osn_zabol'] = osn_zabol
+    docs_context['pri_osmotre'] = del_duplicates(pri_osmotre)
+    docs_context['osn_zabol'] = del_duplicates(osn_zabol)
     docs_context['MKB'] = del_duplicates(MKB)
-    docs_context['plan_lech'] = plan_lech
-    docs_context['obosnov'] = obosnov
+    docs_context['plan_lech'] = del_duplicates(plan_lech)
+    docs_context['obosnov'] = del_duplicates(obosnov)
     docs_context['naimen_oper'] = del_duplicates(naimen_oper)
     docs_context['kod_usl'] = del_duplicates(kod_usl)
     docs_context['plan_oper'] = plan_oper
@@ -290,14 +291,14 @@ def do_docs(query_dict):
     docs_context['kol_instr'] = kol_instr
     docs_context['kol_salf'] = kol_salf
     docs_context['krovop'] = krovop
-    docs_context['naznach'] = del_duplicates(naznach)
-    primen_lec_set = set(primen_lec.split(';'))
-    primen_lec_set.discard(' ')
-    primen_lec = ";".join(primen_lec_set)
+    docs_context['naznach'] = del_duplicates(naznach, ',')
+    primen_lec = del_duplicates(primen_lec, ';')
     for item in day_list:
         primen_lec_str = primen_lec.replace(f'{"{Date"+str(item)+"}"}', docs_context['Date' + str(item)])
         primen_lec = primen_lec_str
-    docs_context['primen_lec'] = primen_lec
+    docs_context['primen_lec'] = primen_lec.replace(';', '; ')
+    for i in range(1, 5):
+        docs_context['ln_lp' + str(i)] = '\r\n\r\n\r\n'
     for index, value in enumerate(primen_lec.split(';')):
         ln_lp = re.search(r'(.*?) с ', value)
         ln_Date_n = re.search(r'с (\d\d.\d\d.*?) г.', value)
@@ -306,7 +307,7 @@ def do_docs(query_dict):
         docs_context['ln_Date' + str(index+1) + '_n'] = ln_Date_n.group(1)+' г.\r\n\r\n_____________' if ln_Date_n else ''
         docs_context['ln_Date' + str(index+1) + '_o'] = ln_Date_o.group(1)+' г.\r\n\r\n_____________' if ln_Date_o else ''
 
-    docs_context['rezult'] = rezult
+    docs_context['rezult'] = del_duplicates(rezult)
     propis = {1: 'одни', 2: 'двое', 3: 'трое', 4: 'четверо', 5: 'пятеро', 6: 'шестеро', 7: 'семеро', 8: 'восемь', }
     if srok_gosp == 1:
         sutok = ' сутки'
