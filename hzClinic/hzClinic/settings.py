@@ -124,7 +124,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_DIR = os.path.join(BASE_DIR, 'hzClinic/crm/static/')
+STATIC_DIR = os.path.join(BASE_DIR, 'hzClinic/static/')
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'hzClinic/media/')

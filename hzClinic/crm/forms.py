@@ -41,7 +41,7 @@ class QuestForm(forms.Form):
     veStr = forms.CharField(max_length=100, label='Строение/Корпус/Владение и т.д.')
     veKv = forms.CharField(max_length=100, label='Квартира')
     PerZ = forms.CharField(max_length=100, label='Перенесённые и хронические заболевания?')
-    PerO = forms.CharField(max_length=100, label='Перенесённые операции')
+    PerO = forms.CharField(max_length=100, label='Перенесённые пластические операции')
     PerT = forms.CharField(max_length=100, label='Перенесённые травмы')
     PerG = forms.CharField(max_length=100, label='Перенесённые гемотрансфузии')
     Allerg = forms.CharField(max_length=100, label='Аллергии')

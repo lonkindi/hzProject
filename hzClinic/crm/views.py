@@ -373,7 +373,7 @@ def logout_view(request):
     # return render(request, template_name, context=context)
 
 
-def quests_view(request, state_id=-1):
+def quests_view(request, state_id=9):
     if not request.user.is_authenticated:
         return redirect(reverse(login_view))
     template_name = 'crm/_quests.html'
@@ -422,10 +422,10 @@ def quests_view(request, state_id=-1):
             item_dict['DOB'] = datetime.datetime.strptime(item['content']['Дата рождения'], "%Y-%m-%d").strftime(
                 '%d.%m.%Y')
             item_dict['tel'] = item['content']['Ваш контактный телефон']
-            item_dict['addr'] = item['content']['Адрес места жительства (регистрации)']
+            # item_dict['addr'] = item['content']['Адрес места жительства (регистрации)']
             anket_list.append(item_dict)
         anket_list.sort(key=lambda anket: anket['FIO'])
-        paginator = Paginator(anket_list, 9)
+        paginator = Paginator(anket_list, 12)
         current_page = request.GET.get('page', 1)
         b_ankets = paginator.get_page(current_page)
         # print('anket_list = ', anket_list)
