@@ -38,7 +38,7 @@ def fill_tmpl(oper_list, context_dict):
         target_str = target_path + '/' + 's_' + str(item.code) + '_' + sFIO + '.docx'
         doc.save(target_str)
 
-    for item in ['ids', 'fv', 'ln', 'oh', 'pe', 'po', 've', 'otkaz', 'svod']:
+    for item in ['ids', 'fv', 'ln', 'oh', 'pe', 'po', 've', 'otkaz', 'svod', 'memo']:
         doc = DocxTemplate(file_path + item + '.docx')
         doc.render(context_dict)
         doc.save(docs_path + doc_folder + '/' + item + '_' + sFIO + '.docx')
@@ -78,6 +78,7 @@ def do_docs(query_dict):
     day_list = [0, 1, 2, 3, 5, 6, 7, 14, 15, 29]
     for item in day_list:
         docs_context['Date' + str(item)] = date_plus(select_date, item)
+    docs_context['Nakanune'] = date_plus(select_date, -1)
     delta_ambul = -random.choice(range(3, 30, 1))
 
     docs_context['DateAZ'] = date_plus(select_date, delta_ambul)
@@ -122,6 +123,7 @@ def do_docs(query_dict):
     docs_context['sDate0'] = re.sub('\D', '', docs_context['Date0'])
     docs_context['FIO'] = query_dict.get('id_FIO', False)
     docs_context['sFIO'] = re.sub(r'\b(\w+)\b\s+\b(\w)\w*\b\s+\b(\w)\w*\b', r'\1\2\3', docs_context['FIO'])
+    docs_context['IO'] = re.sub(r'\b(\w+)\b\s+\b(\w*)\w*\b\s+\b(\w*)\w*\b', r'\2 \3', docs_context['FIO'])
 
     sum_opers = '-'
     # for item in selected_operations:
