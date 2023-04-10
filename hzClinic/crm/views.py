@@ -303,7 +303,7 @@ def do_docs(query_dict):
         ln_lp = re.search(r'(.*?) с ', value)
         ln_Date_n = re.search(r'с (\d\d.\d\d.*?) г.', value)
         ln_Date_o = re.search(r'по (\d\d.\d\d.*?) г.', value)
-        docs_context['ln_lp' + str(index+1)] = ln_lp.group(1) if ln_lp else ''
+        docs_context['ln_lp' + str(index+1)] = ln_lp.group(1) if ln_lp else '\r\n\r\n\r\n'
         docs_context['ln_Date' + str(index+1) + '_n'] = ln_Date_n.group(1)+' г.\r\n\r\n_____________' if ln_Date_n else ''
         docs_context['ln_Date' + str(index+1) + '_o'] = ln_Date_o.group(1)+' г.\r\n\r\n_____________' if ln_Date_o else ''
 
