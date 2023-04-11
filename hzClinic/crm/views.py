@@ -657,3 +657,25 @@ def recording_view(request):
                'today': today,
                }
     return render(request, template_name=template_name, context=context)
+
+def timeline_view(request):
+    if not request.user.is_authenticated:
+        return redirect(reverse(login_view))
+    template_name = 'crm/_timeline.html'
+
+    today = datetime.datetime.today().date().strftime("%Y-%m-%d")
+    hzuser = request.user
+    hzuser_info = hzUserInfo.objects.filter(hz_user=hzuser)
+
+    # if request.method == 'POST':
+    #     return redirect(reverse(quests_view))
+    # else:
+    #     return redirect(reverse(recording_view))
+
+    context = {'form': '',
+               'title': 'Расписание операций',
+               'user': hzuser,
+               'user_info': hzuser_info[0],
+               'today': today,
+               }
+    return render(request, template_name=template_name, context=context)
