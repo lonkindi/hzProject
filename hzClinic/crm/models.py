@@ -125,6 +125,7 @@ class Candidate(models.Model):
     Name  = models.CharField(max_length=25, verbose_name='Имя (Name)')
     Mname = models.CharField(max_length=25, verbose_name='Отчество (Mname)', blank=True)
     typeOpers = models.ManyToManyField(TypeOperations, verbose_name='Операции (typeOpers)', related_name='operations')
+    notes = models.CharField(max_length=255, verbose_name='Примечания (notes)')
 
 
 

@@ -671,11 +671,62 @@ def timeline_view(request):
     #     return redirect(reverse(quests_view))
     # else:
     #     return redirect(reverse(recording_view))
+    records = Candidate.objects.all().order_by('date_oper')
+    # print(type(records))
+    first_rec = records[0].date_oper
+    last_rec = records.reverse()[0].date_oper
+    weekday = first_rec.weekday()
+    start_delta = datetime.timedelta(days=weekday)
+    start_of_week = first_rec - start_delta
+    first_week = [start_of_week + datetime.timedelta(days=i) for i in range(7)]
+    start_date = first_week[0]
+    weekday = last_rec.weekday()
+    start_delta = datetime.timedelta(days=weekday)
+    start_of_week = last_rec - start_delta
+    end_week = [start_of_week + datetime.timedelta(days=i) for i in range(7)]
+    end_date = end_week[6]
+    rec_list = []
+    # delta time
+    delta = datetime.timedelta(days=1)
+    # iterate over range of dates
+    while start_date <= end_date:
+        rec_list.append(start_date)
+        # print(start_date, end="\n")
+        start_date += delta
 
-    context = {'form': '',
+    paginator = Paginator(rec_list, 7)
+    current_page = request.GET.get('page', 1)
+    b_rec = paginator.get_page(current_page)
+    # print('anket_list = ', anket_list)
+    # print('sorted anket_list = ', sorted(anket_list, key=lambda anket: anket['FIO']))
+    # prev_page, next_page = None, None
+    if b_rec.has_previous():
+        prev_page = b_rec.previous_page_number
+        prev_page = prev_page()
+    else:
+        prev_page = 1
+    if b_rec.has_next():
+        next_page = b_rec.next_page_number
+        next_page = next_page()
+    else:
+        next_page = paginator.num_pages
+        # return render(request, template_name='index_bus.html', context={
+
+        # })
+    num_week = b_rec[0].isocalendar()[1]
+    print('records=', records)
+    print('b_rec=', b_rec[6])
+    print('current_page=', current_page)
+
+    context = {
                'title': 'Расписание операций',
                'user': hzuser,
                'user_info': hzuser_info[0],
                'today': today,
+               'num_week': num_week,
+               'b_rec': b_rec,
+               'current_page': current_page,
+               'prev_page_url': f'{reverse("timeline")}?page={prev_page}',
+               'next_page_url': f'{reverse("timeline")}?page={next_page}',
                }
     return render(request, template_name=template_name, context=context)

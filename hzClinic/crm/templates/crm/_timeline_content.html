@@ -12,14 +12,33 @@
               <li class="breadcrumb-item active">Расписание операций</li>
             </div>
     </ul>
-    <section class="forms">
+    <!-- Paginator Section-->
+        <section class="dashboard-counts no-padding-bottom">
+            <div class="container-fluid">
+                <div class="row bg-white has-shadow">
+                    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                        <div class="btn-group mr-2" role="group" aria-label="First group">
+                            {% if prev_page_url %}<a class="btn btn-secondary"
+                                                     href="{{ prev_page_url }}">⟵</a>{% endif %}
+                            <a class="btn btn-secondary disabled" role="button" aria-disabled="true"
+                               href="">Страница {{ current_page }} из {{ b_rec.paginator.num_pages }}</a>
+                            {% if next_page_url %}<a class="btn btn-secondary"
+                                                     href="{{ next_page_url }}">⟶</a>{% endif %}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    <section class="tables">
         <div class="container-fluid">
             <div class="row">
                 <!-- Candidate Form-->
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-header d-flex align-items-center">
-                            <h3 class="h4">Расписание операций с 10.04.2023 г. по 10.04.2023 г. </h3>
+                            <h3 class="h4">Расписание операций с {{ b_rec.0|date:"d.m.Y" }} г. по {{ b_rec.6|date:"d.m.Y" }} г. (неделя :
+                                {{ num_week }})</h3>
                         </div>
                         <div class="card-body">
 <main>
@@ -169,13 +188,12 @@
     </div>
     -->
     <div class="container">
-        <h3 class="card-title">неделя : 18</h3>
         <div class="row">
             <div class="col-md-12">
                 <div class="main-timeline4">
                     <div class="timeline">
                         <span class="timeline-icon"></span>
-                        <span class="year">Пн 10.04.23</span>
+                        <span class="year">Пн {{ b_rec.0|date:"d.m.Y" }}</span>
                         <div class="timeline-content">
                             <h3 class="title">Web Desginer</h3>
                             <p class="description">
@@ -185,7 +203,7 @@
                     </div>
                     <div class="timeline">
                         <span class="timeline-icon"></span>
-                        <span class="year">Вт 11.04.23</span>
+                        <span class="year">Вт {{ b_rec.1|date:"d.m.Y" }}</span>
                         <div class="timeline-content">
                             <h3 class="title">Web Developer</h3>
                             <p class="description">
@@ -195,7 +213,7 @@
                     </div>
                     <div class="timeline">
                         <span class="timeline-icon"></span>
-                        <span class="year">Ср 12.04.23</span>
+                        <span class="year">Ср {{ b_rec.2|date:"d.m.Y" }}</span>
                         <div class="timeline-content">
                             <h3 class="title">Web Desginer</h3>
                             <p class="description">
@@ -205,7 +223,7 @@
                     </div>
                     <div class="timeline">
                         <span class="timeline-icon"></span>
-                        <span class="year">Чт 13.04.23</span>
+                        <span class="year">Чт {{ b_rec.3|date:"d.m.Y" }}</span>
                         <div class="timeline-content">
                             <h3 class="title">Web Developer</h3>
                             <p class="description">
@@ -215,7 +233,7 @@
                     </div>
                     <div class="timeline">
                         <span class="timeline-icon"></span>
-                        <span class="year">Пт 14.04.23</span>
+                        <span class="year">Пт {{ b_rec.4|date:"d.m.Y" }}</span>
                         <div class="timeline-content">
                             <h3 class="title">Web Developer</h3>
                             <p class="description">
@@ -225,7 +243,7 @@
                     </div>
                     <div class="timeline">
                         <span class="timeline-icon"></span>
-                        <span class="year">Сб 15.04.23</span>
+                        <span class="year">Сб {{ b_rec.05|date:"d.m.Y" }}</span>
                         <div class="timeline-content">
                             <h3 class="title">Web Developer</h3>
                             <p class="description">
@@ -235,7 +253,7 @@
                     </div>
                     <div class="timeline">
                         <span class="timeline-icon"></span>
-                        <span class="year">Вс 16.04.23</span>
+                        <span class="year">Вс {{ b_rec.6|date:"d.m.Y" }}</span>
                         <div class="timeline-content">
                             <h3 class="title">Web Developer</h3>
                             <p class="description">
