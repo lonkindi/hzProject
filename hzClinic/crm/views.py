@@ -671,8 +671,10 @@ def timeline_view(request):
     #     return redirect(reverse(quests_view))
     # else:
     #     return redirect(reverse(recording_view))
+
+    # выбираем все записи на операции, сортируя по возрастанию
     records = Candidate.objects.all().order_by('date_oper')
-    # print(type(records))
+
     first_rec = records[0].date_oper
     last_rec = records.reverse()[0].date_oper
     weekday = first_rec.weekday()
@@ -686,14 +688,18 @@ def timeline_view(request):
     end_week = [start_of_week + datetime.timedelta(days=i) for i in range(7)]
     end_date = end_week[6]
     rec_list = []
-    # delta time
+    rec_dict = dict()
+    # делаем последовательность дат записей, кратно неделе
     delta = datetime.timedelta(days=1)
-    # iterate over range of dates
     while start_date <= end_date:
-        rec_list.append(start_date)
-        # print(start_date, end="\n")
+        date_rec = records.filter(date_oper=start_date)
+        rec_list.append([start_date, date_rec if len(date_rec) > 0 else ''])
+        rec_dict[start_date] = ''
         start_date += delta
 
+    # print('records=', records)
+    print('rec_list=', rec_list)
+    
     paginator = Paginator(rec_list, 7)
     current_page = request.GET.get('page', 1)
     b_rec = paginator.get_page(current_page)
@@ -713,10 +719,10 @@ def timeline_view(request):
         # return render(request, template_name='index_bus.html', context={
 
         # })
-    num_week = b_rec[0].isocalendar()[1]
-    print('records=', records)
-    print('b_rec=', b_rec[6])
-    print('current_page=', current_page)
+    num_week = b_rec[0][0].isocalendar()[1]
+
+    # print('b_rec=', b_rec[6])
+    # print('current_page=', current_page)
 
     context = {
                'title': 'Расписание операций',

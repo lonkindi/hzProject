@@ -37,228 +37,148 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-header d-flex align-items-center">
-                            <h3 class="h4">Расписание операций с {{ b_rec.0|date:"d.m.Y" }} г. по {{ b_rec.6|date:"d.m.Y" }} г. (неделя :
+                            <h3 class="h4">Расписание операций с {{ b_rec.0.0|date:"d.m.Y" }} г. по {{ b_rec.6.0|date:"d.m.Y" }} г. (неделя :
                                 {{ num_week }})</h3>
                         </div>
                         <div class="card-body">
 <main>
-    <!--
-    <div class="container">
-        <h3 class="card-title">Timeline Style : Demo-1</h3>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="main-timeline">
-                    <a href="#" class="timeline">
-                        <div class="timeline-icon"><i class="fa fa-globe"></i></div>
-                        <div class="timeline-content">
-                            <h3 class="title">2018</h3>
-                            <p class="description">
-                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cupiditate ducimus officiis quod! Aperiam eveniet nam nostrum odit quasi ullam voluptatum.
-                            </p>
-                        </div>
-                    </a>
-                    <a href="#" class="timeline">
-                        <div class="timeline-icon"><i class="fa fa-rocket"></i></div>
-                        <div class="timeline-content">
-                            <h3 class="title">2015</h3>
-                            <p class="description">
-                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cupiditate ducimus officiis quod! Aperiam eveniet nam nostrum odit quasi ullam voluptatum.
-                            </p>
-                        </div>
-                    </a>
-                    <a href="#" class="timeline">
-                        <div class="timeline-icon"><i class="fa fa-briefcase"></i></div>
-                        <div class="timeline-content">
-                            <h3 class="title">2012</h3>
-                            <p class="description">
-                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cupiditate ducimus officiis quod! Aperiam eveniet nam nostrum odit quasi ullam voluptatum.
-                            </p>
-                        </div>
-                    </a>
-                    <a href="#" class="timeline">
-                        <div class="timeline-icon"><i class="fa fa-mobile"></i></div>
-                        <div class="timeline-content">
-                            <h3 class="title">2009</h3>
-                            <p class="description">
-                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cupiditate ducimus officiis quod! Aperiam eveniet nam nostrum odit quasi ullam voluptatum.
-                            </p>
-                        </div>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="container">
-        <h3 class="card-title">Timeline Style : Demo-2</h3>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="main-timeline2">
-                    <div class="timeline">
-                        <a href="#" class="timeline-content">
-                            <span class="year">2018</span>
-                            <div class="inner-content">
-                                <h3 class="title">Web Designer</h3>
-                                <p class="description">
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ex odio, rhoncus sit amet tincidunt eu, suscipit a orci. In suscipit quam eget dui auctor.
-                                </p>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="timeline">
-                        <a href="#" class="timeline-content">
-                            <span class="year">2017</span>
-                            <div class="inner-content">
-                                <h3 class="title">Web Developer</h3>
-                                <p class="description">
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ex odio, rhoncus sit amet tincidunt eu, suscipit a orci. In suscipit quam eget dui auctor.
-                                </p>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="timeline">
-                        <a href="#" class="timeline-content">
-                            <span class="year">2016</span>
-                            <div class="inner-content">
-                                <h3 class="title">Web Designer</h3>
-                                <p class="description">
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ex odio, rhoncus sit amet tincidunt eu, suscipit a orci. In suscipit quam eget dui auctor.
-                                </p>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="timeline">
-                        <a href="#" class="timeline-content">
-                            <span class="year">2015</span>
-                            <div class="inner-content">
-                                <h3 class="title">Web Developer</h3>
-                                <p class="description">
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ex odio, rhoncus sit amet tincidunt eu, suscipit a orci. In suscipit quam eget dui auctor.
-                                </p>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="container">
-        <h3 class="card-title">Timeline Style : Demo-3</h3>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="main-timeline3">
-                    <div class="timeline">
-                        <div class="timeline-icon"><span class="year">2018</span></div>
-                        <div class="timeline-content">
-                            <h3 class="title">Web Desginer</h3>
-                            <p class="description">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec lacinia mi ultrices, luctus nunc ut, commodo enim. Vivamus sem erat.
-                            </p>
-                        </div>
-                    </div>
-                    <div class="timeline">
-                        <div class="timeline-icon"><span class="year">2017</span></div>
-                        <div class="timeline-content">
-                            <h3 class="title">Web Developer</h3>
-                            <p class="description">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec lacinia mi ultrices, luctus nunc ut, commodo enim. Vivamus sem erat.
-                            </p>
-                        </div>
-                    </div>
-                    <div class="timeline">
-                        <div class="timeline-icon"><span class="year">2016</span></div>
-                        <div class="timeline-content">
-                            <h3 class="title">Web Desginer</h3>
-                            <p class="description">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec lacinia mi ultrices, luctus nunc ut, commodo enim. Vivamus sem erat.
-                            </p>
-                        </div>
-                    </div>
-                    <div class="timeline">
-                        <div class="timeline-icon"><span class="year">2015</span></div>
-                        <div class="timeline-content">
-                            <h3 class="title">Web Developer</h3>
-                            <p class="description">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec lacinia mi ultrices, luctus nunc ut, commodo enim. Vivamus sem erat.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    -->
     <div class="container">
         <div class="row">
             <div class="col-md-12">
                 <div class="main-timeline4">
                     <div class="timeline">
                         <span class="timeline-icon"></span>
-                        <span class="year">Пн {{ b_rec.0|date:"d.m.Y" }}</span>
+                        <span class="year">Пн {{ b_rec.0.0|date:"d.m.Y" }}</span>
                         <div class="timeline-content">
-                            <h3 class="title">Web Desginer</h3>
+                            {% if b_rec.0.1 %}
+                            <h3 class="title">{{ b_rec.0.1.0.Sname }} {{ b_rec.0.1.0.Name }} {{ b_rec.0.1.0.Mname }}</h3>
                             <p class="description">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus mattis justo id pulvinar suscipit. Pellentesque rutrum vehicula erat sed dictum. Integer quis turpis magna. Suspendisse tincidunt elit at erat tincidunt, vel vulputate arcu dapibus. Etiam accumsan ornare posuere. Nullam est.
+                            Телефон: {{ b_rec.0.1.0.phoneNumber }}<br>
+                                {% for oper in b_rec.0.1.0.typeOpers.all %}
+                                {{ oper }}<br>{% endfor %}
+                            {{ b_rec.0.1.0.notes }}
+                                <hr>
                             </p>
+                            {% else %}
+                            <h3 class="title">Записей нет</h3>
+                            <p class="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec lacinia mi ultrices, luctus nunc ut, commodo enim. Vivamus sem erat.</p>
+                            {% endif %}
                         </div>
                     </div>
                     <div class="timeline">
                         <span class="timeline-icon"></span>
-                        <span class="year">Вт {{ b_rec.1|date:"d.m.Y" }}</span>
+                        <span class="year">Вт {{ b_rec.1.0|date:"d.m.Y" }}</span>
                         <div class="timeline-content">
-                            <h3 class="title">Web Developer</h3>
+                            {% if b_rec.1.1 %}
+                            <h3 class="title">{{ b_rec.1.1.0.Sname }} {{ b_rec.1.1.0.Name }} {{ b_rec.1.1.0.Mname }}</h3>
                             <p class="description">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus mattis justo id pulvinar suscipit. Pellentesque rutrum vehicula erat sed dictum. Integer quis turpis magna. Suspendisse tincidunt elit at erat tincidunt, vel vulputate arcu dapibus. Etiam accumsan ornare posuere. Nullam est.
+                            Телефон: {{ b_rec.1.1.0.phoneNumber }}<br>
+                                {% for oper in b_rec.1.1.0.typeOpers.all %}
+                                {{ oper }}<br>{% endfor %}
+                            {{ b_rec.1.1.0.notes }}
+                                <hr>
                             </p>
+                            {% else %}
+                            <h3 class="title">Записей нет</h3>
+                            <p class="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec lacinia mi ultrices, luctus nunc ut, commodo enim. Vivamus sem erat.</p>
+                            {% endif %}
                         </div>
                     </div>
                     <div class="timeline">
                         <span class="timeline-icon"></span>
-                        <span class="year">Ср {{ b_rec.2|date:"d.m.Y" }}</span>
+                        <span class="year">Ср {{ b_rec.2.0|date:"d.m.Y" }}</span>
                         <div class="timeline-content">
-                            <h3 class="title">Web Desginer</h3>
+                            {% if b_rec.2.1 %}
+                            {% for candidat in b_rec.2.1 %}
+                            <h3 class="title">{{ candidat.Sname }} {{ candidat.Name }} {{ candidat.Mname }}</h3>
                             <p class="description">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus mattis justo id pulvinar suscipit. Pellentesque rutrum vehicula erat sed dictum. Integer quis turpis magna. Suspendisse tincidunt elit at erat tincidunt, vel vulputate arcu dapibus. Etiam accumsan ornare posuere. Nullam est.
+                            Телефон: {{ candidat.phoneNumber }}<br>
+                                {% for oper in candidat.typeOpers.all %}
+                                {{ oper }}<br>{% endfor %}
+                            {{ candidat.notes }}
+                                <hr>
+                            {% endfor %}
                             </p>
+                            {% else %}
+                            <h3 class="title">Записей нет</h3>
+                            <p class="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec lacinia mi ultrices, luctus nunc ut, commodo enim. Vivamus sem erat.</p>
+                            {% endif %}
                         </div>
                     </div>
                     <div class="timeline">
                         <span class="timeline-icon"></span>
-                        <span class="year">Чт {{ b_rec.3|date:"d.m.Y" }}</span>
+                        <span class="year">Чт {{ b_rec.3.0|date:"d.m.Y" }}</span>
                         <div class="timeline-content">
-                            <h3 class="title">Web Developer</h3>
+                            {% if b_rec.3.1 %}
+                            <h3 class="title">{{ b_rec.3.1.0.Sname }} {{ b_rec.3.1.0.Name }} {{ b_rec.3.1.0.Mname }}</h3>
                             <p class="description">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus mattis justo id pulvinar suscipit. Pellentesque rutrum vehicula erat sed dictum. Integer quis turpis magna. Suspendisse tincidunt elit at erat tincidunt, vel vulputate arcu dapibus. Etiam accumsan ornare posuere. Nullam est.
+                            Телефон: {{ b_rec.3.1.0.phoneNumber }}<br>
+                                {% for oper in b_rec.3.1.0.typeOpers.all %}
+                                {{ oper }}<br>{% endfor %}
+                            {{ b_rec.3.1.0.notes }}
+                                <hr>
                             </p>
+                            {% else %}
+                            <h3 class="title">Записей нет</h3>
+                            <p class="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec lacinia mi ultrices, luctus nunc ut, commodo enim. Vivamus sem erat.</p>
+                            {% endif %}
                         </div>
                     </div>
                     <div class="timeline">
                         <span class="timeline-icon"></span>
-                        <span class="year">Пт {{ b_rec.4|date:"d.m.Y" }}</span>
+                        <span class="year">Пт {{ b_rec.4.0|date:"d.m.Y" }}</span>
                         <div class="timeline-content">
-                            <h3 class="title">Web Developer</h3>
+                            {% if b_rec.4.1 %}
+                            <h3 class="title">{{ b_rec.4.1.0.Sname }} {{ b_rec.4.1.0.Name }} {{ b_rec.4.1.0.Mname }}</h3>
                             <p class="description">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus mattis justo id pulvinar suscipit. Pellentesque rutrum vehicula erat sed dictum. Integer quis turpis magna. Suspendisse tincidunt elit at erat tincidunt, vel vulputate arcu dapibus. Etiam accumsan ornare posuere. Nullam est.
+                            Телефон: {{ b_rec.4.1.0.phoneNumber }}<br>
+                                {% for oper in b_rec.4.1.0.typeOpers.all %}
+                                {{ oper }}<br>{% endfor %}
+                            {{ b_rec.4.1.0.notes }}
+                                <hr>
                             </p>
+                            {% else %}
+                            <h3 class="title">Записей нет</h3>
+                            <p class="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec lacinia mi ultrices, luctus nunc ut, commodo enim. Vivamus sem erat.</p>
+                            {% endif %}
                         </div>
                     </div>
                     <div class="timeline">
                         <span class="timeline-icon"></span>
-                        <span class="year">Сб {{ b_rec.05|date:"d.m.Y" }}</span>
+                        <span class="year">Сб {{ b_rec.5.0|date:"d.m.Y" }}</span>
                         <div class="timeline-content">
-                            <h3 class="title">Web Developer</h3>
+                            {% if b_rec.5.1 %}
+                            <h3 class="title">{{ b_rec.5.1.0.Sname }} {{ b_rec.5.1.0.Name }} {{ b_rec.5.1.0.Mname }}</h3>
                             <p class="description">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus mattis justo id pulvinar suscipit. Pellentesque rutrum vehicula erat sed dictum. Integer quis turpis magna. Suspendisse tincidunt elit at erat tincidunt, vel vulputate arcu dapibus. Etiam accumsan ornare posuere. Nullam est.
+                            Телефон: {{ b_rec.5.1.0.phoneNumber }}<br>
+                                {% for oper in b_rec.5.1.0.typeOpers.all %}
+                                {{ oper }}<br>{% endfor %}
+                            {{ b_rec.5.1.0.notes }}
+                                <hr>
                             </p>
+                            {% else %}
+                            <h3 class="title">Записей нет</h3>
+                            <p class="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec lacinia mi ultrices, luctus nunc ut, commodo enim. Vivamus sem erat.</p>
+                            {% endif %}
                         </div>
                     </div>
                     <div class="timeline">
                         <span class="timeline-icon"></span>
-                        <span class="year">Вс {{ b_rec.6|date:"d.m.Y" }}</span>
+                        <span class="year">Вс {{ b_rec.6.0|date:"d.m.Y" }}</span>
                         <div class="timeline-content">
-                            <h3 class="title">Web Developer</h3>
+                            {% if b_rec.6.1 %}
+                            <h3 class="title">{{ b_rec.6.1.0.Sname }} {{ b_rec.6.1.0.Name }} {{ b_rec.6.1.0.Mname }}</h3>
                             <p class="description">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus mattis justo id pulvinar suscipit. Pellentesque rutrum vehicula erat sed dictum. Integer quis turpis magna. Suspendisse tincidunt elit at erat tincidunt, vel vulputate arcu dapibus. Etiam accumsan ornare posuere. Nullam est.
+                            Телефон: {{ b_rec.6.1.0.phoneNumber }}<br>
+                                {% for oper in b_rec.6.1.0.typeOpers.all %}
+                                {{ oper }}<br>{% endfor %}
+                            {{ b_rec.6.1.0.notes }}
+                                <hr>
                             </p>
+                            {% else %}
+                            <h3 class="title">Записей нет</h3>
+                            <p class="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec lacinia mi ultrices, luctus nunc ut, commodo enim. Vivamus sem erat.</p>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -266,6 +186,8 @@
         </div>
     </div>
 </main>
+</div>
+
                         </div>
                     </div>
                 </div>
