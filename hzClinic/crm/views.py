@@ -3,6 +3,7 @@ import datetime
 import os
 import random
 import re
+from pprint import pprint
 
 from django.core.paginator import Paginator
 from docxtpl import DocxTemplate
@@ -62,9 +63,13 @@ def date_plus(c_date, delta):
 
 
 def del_duplicates(original_str, spliter=';'):
-    original_set = set(original_str.split(spliter))
-    original_set.discard(' ')
-    rez_str = spliter.join(original_set)
+    original_lst = list(original_str.split(spliter))
+    strip_list = list()
+    for item in original_lst:
+        if item != '':
+            strip_list.append(str(item).strip())
+    mod_list = list(dict.fromkeys(strip_list))
+    rez_str = spliter.join(mod_list)
     rez_str = rez_str.replace(spliter, spliter+' ')
     return rez_str
 
@@ -294,11 +299,12 @@ def do_docs(query_dict):
     docs_context['kol_salf'] = kol_salf
     docs_context['krovop'] = krovop
     docs_context['naznach'] = del_duplicates(naznach, ',')
+    # print(del_duplicates(naznach, ','))
     primen_lec = del_duplicates(primen_lec, ';')
     for item in day_list:
         primen_lec_str = primen_lec.replace(f'{"{Date"+str(item)+"}"}', docs_context['Date' + str(item)])
         primen_lec = primen_lec_str
-    docs_context['primen_lec'] = primen_lec.replace(';', '; ')
+    docs_context['primen_lec'] = primen_lec#[:-1] #.replace(';', '; ')
     for i in range(1, 5):
         docs_context['ln_lp' + str(i)] = '\r\n\r\n\r\n'
     for index, value in enumerate(primen_lec.split(';')):
