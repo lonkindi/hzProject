@@ -5,6 +5,7 @@ import random
 import re
 from pprint import pprint
 
+import requests
 from django.core.paginator import Paginator
 from docxtpl import DocxTemplate
 
@@ -54,6 +55,23 @@ def fill_tmpl(oper_list, context_dict):
     #     YaD.upload_file(upload_file, f'MedicalCase/{doc_folder}/{file}')
 
     return doc_folder
+
+def send_telegram(text: str):
+    token = settings_local.botTOKEN
+    url = "https://api.telegram.org/bot"
+    channel_id = "360620990"
+    url += token
+    method = url + "/sendMessage"
+
+    r = requests.post(method, data={
+         "chat_id": channel_id,
+         "text": text
+          })
+
+    if r.status_code != 200:
+        print(r.text)
+        raise Exception("post_text error")
+
 
 
 def date_plus(c_date, delta):
@@ -299,7 +317,6 @@ def do_docs(query_dict):
     docs_context['kol_salf'] = kol_salf
     docs_context['krovop'] = krovop
     docs_context['naznach'] = del_duplicates(naznach, ',')
-    # print(del_duplicates(naznach, ','))
     primen_lec = del_duplicates(primen_lec, ';')
     for item in day_list:
         primen_lec_str = primen_lec.replace(f'{"{Date"+str(item)+"}"}', docs_context['Date' + str(item)])
@@ -326,6 +343,7 @@ def do_docs(query_dict):
 
     fill_tmpl(selected_operations, docs_context)
     # print(f'selected_operations = {selected_operations}, docs_context = {docs_context}')
+    # send_telegram('Hello BOT!')
 
 def main_view(request):
     if not request.user.is_authenticated:
@@ -402,6 +420,7 @@ def quests_view(request, state_id=9):
     # ankets = Anket.objects.filter(state_filter)
     anket_list = list()
     b_ankets = ''
+    e_ankets = ''
     current_page = ''
     prev_page = ''
     next_page = ''
@@ -436,6 +455,7 @@ def quests_view(request, state_id=9):
         paginator = Paginator(anket_list, 12)
         current_page = request.GET.get('page', 1)
         b_ankets = paginator.get_page(current_page)
+        e_ankets = paginator.get_elided_page_range(current_page, on_each_side=2, on_ends=1)
         # print('anket_list = ', anket_list)
         # print('sorted anket_list = ', sorted(anket_list, key=lambda anket: anket['FIO']))
         # prev_page, next_page = None, None
@@ -461,8 +481,9 @@ def quests_view(request, state_id=9):
                'stat_ankets': stat_ankets,
                'state_id': state_id,
                'anket_list': b_ankets, #anket_list,
-               'b_ankets': b_ankets,
-               'current_page': current_page,
+               'e_ankets': e_ankets,
+               'f_ankets': e_ankets,
+               'current_page': int(current_page),
                'prev_page_url': f'{reverse("quests", args=[state_id])}?page={prev_page}',
                'next_page_url': f'{reverse("quests", args=[state_id])}?page={next_page}',
                }
@@ -664,7 +685,8 @@ def recording_view(request):
                }
     return render(request, template_name=template_name, context=context)
 
-def timeline_view(request):
+
+def timeline_view(request, current_page=1):
     if not request.user.is_authenticated:
         return redirect(reverse(login_view))
     template_name = 'crm/_timeline.html'
@@ -704,10 +726,10 @@ def timeline_view(request):
         start_date += delta
 
     # print('records=', records)
-    print('rec_list=', rec_list)
-    
+    # print('rec_list=', rec_list)
+
     paginator = Paginator(rec_list, 7)
-    current_page = request.GET.get('page', 1)
+    current_page = request.GET.get('page', current_page)
     b_rec = paginator.get_page(current_page)
     # print('anket_list = ', anket_list)
     # print('sorted anket_list = ', sorted(anket_list, key=lambda anket: anket['FIO']))

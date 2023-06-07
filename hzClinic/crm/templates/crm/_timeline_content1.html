@@ -77,6 +77,7 @@
  <!-- Item 1 -->
   <li>
     <div class="direction-l">
+        <a href="" uk-icon="icon: plus-circle"></a>
       <div class="flag-wrapper">
         <span class="hexa"></span>
         <span class="flag">Вторник</span>
@@ -85,7 +86,10 @@
         <div class="desc">
             {% if b_rec.1.1 %}
             {% for candidat in b_rec.1.1 %}
-            <h3 class="title">{{ candidat.Sname }} {{ candidat.Name }} {{ candidat.Mname }}</h3>
+            <h4 class="title">{{ candidat.Sname }} {{ candidat.Name }} {{ candidat.Mname }}
+                <a href="{{candidat.pk}}" uk-icon="icon: pencil"></a>
+                <a href="{{candidat.pk}}" uk-icon="icon: trash"></a>
+            </h4>
             <p class="description">
             Телефон: {{ candidat.phoneNumber }}<br>
                 <h5><i>/ {% for oper in candidat.typeOpers.all %}
@@ -113,8 +117,10 @@
         <div class="desc">
             {% if b_rec.2.1 %}
             {% for candidat in b_rec.2.1 %}
-            <h4>{{ candidat.Sname }} {{ candidat.Name }} {{ candidat.Mname }}<a href="{{candidat.pk}}" uk-icon="icon: pencil"></a>
-                <a href="{{candidat.pk}}" uk-icon="icon: trash"></a></h4>
+            <h4>{{ candidat.Sname }} {{ candidat.Name }} {{ candidat.Mname }}
+                <a href="{{candidat.pk}}" uk-icon="icon: pencil"></a>
+                <a href="{{candidat.pk}}" uk-icon="icon: trash"></a>
+            </h4>
             <p class="description">
             Телефон: {{ candidat.phoneNumber }}<br>
                 <h5><i>/ {% for oper in candidat.typeOpers.all %}

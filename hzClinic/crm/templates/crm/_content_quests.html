@@ -10,26 +10,30 @@
         <div class="container-fluid">
             <li class="breadcrumb-item"><a href="../">Начало</a></li>
             <li class="breadcrumb-item"><a href="../quests/{{state_id}}">Анкеты</a></li>
-            <li class="breadcrumb-item active">{{ stat_ankets }}</li>
+            <li class="breadcrumb-item active">{{ stat_ankets }} (страница {{ current_page }} из {{ anket_list.paginator.num_pages }})</li>
         </div>
     </ul>
     <!-- Paginator Section-->
         <section class="dashboard-counts no-padding-bottom">
             <div class="container-fluid">
-                <div class="row bg-white has-shadow">
-                    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-                        <div class="btn-group mr-2" role="group" aria-label="First group">
-                            {% if prev_page_url %}<a class="btn btn-secondary"
-                                                     href="{{ prev_page_url }}">⟵</a>{% endif %}
-                            <a class="btn btn-secondary disabled" role="button" aria-disabled="true"
-                               href="">Страница {{ current_page }} из {{ anket_list.paginator.num_pages }}</a>
-                            {% if next_page_url %}<a class="btn btn-secondary"
-                                                     href="{{ next_page_url }}">⟶</a>{% endif %}
-                        </div>
-                    </div>
 
+                    <nav aria-label="Paginator">
+                      <ul class="pagination pagination-sm justify-content-center">
+                        <li class="page-item {% if not anket_list.has_previous %} disabled {% endif %}">
+                            <a class="page-link" href="{{ prev_page_url }}">&laquo;</a></li>
+                          {% for e_item in e_ankets %}
+                          <li class="page-item
+                            {% if e_item == current_page %} active disabled {% endif %}
+                            {% if e_item == '…' %} disabled {% endif %}">
+                              <a class="page-link" href="?page={{ e_item }}">{{e_item}}</a>
+                          </li>
+                          {% endfor %}
+                        <li class="page-item {% if not anket_list.has_next %} disabled {% endif %}">
+                            <a class="page-link" href="{{ next_page_url }}">&raquo;</a></li>
+                      </ul>
+                    </nav>
                 </div>
-            </div>
+
         </section>
 
     <!-- Forms Section-->
@@ -60,7 +64,7 @@
                                 </div>&nbsp;&nbsp;&nbsp;
                                 {% else %}
                                 <div class="badge badge-rounded bg-green">
-                                    Оформленная
+                                    Оформлена
                                 </div>&nbsp;&nbsp;&nbsp;
                                 {% endif %}
 
@@ -95,7 +99,7 @@
         <!-- Paginator Section-->
         <section class="dashboard-counts no-padding-bottom">
             <div class="container-fluid">
-                <div class="row bg-white has-shadow">
+
 
                     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
                         <div class="btn-group mr-2" role="group" aria-label="First group">
@@ -103,14 +107,23 @@
                                                      href="{{ prev_page_url }}">⟵</a>{% endif %}
                             <a class="btn btn-secondary disabled" role="button" aria-disabled="true"
                                href="">Страница {{ current_page }} из {{ anket_list.paginator.num_pages }}</a>
+                            {% for c_item in f_ankets %}
+                            <a class="btn btn-secondary
+                            {% if c_item == current_page %} active disabled {% endif %}
+                            {% if c_item == '…' %} disabled {% endif %}"
+                               href="?page={{ c_item }}">{{ c_item }}</a>
+                            {% endfor %}
+
                             {% if next_page_url %}<a class="btn btn-secondary"
                                                      href="{{ next_page_url }}">⟶</a>{% endif %}
                         </div>
                     </div>
 
-                </div>
+
             </div>
         </section>
+
+
     </section>
 
 </div>
