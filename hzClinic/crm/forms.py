@@ -31,7 +31,8 @@ class CustomUserChangeForm(UserChangeForm):
 class QuestForm(forms.Form):
     FIO = forms.CharField(max_length=100, label='Ф.И.О.')
     DateOfB = forms.DateField(input_formats=['%d.%m.%Y', '%Y-%m-%d'], label='Дата рождения')
-    Address = forms.CharField(max_length=255, label='Адрес места жительства')
+    AddressRow = forms.CharField(max_length=255, label='Адрес места жительства из анкеты')
+    Address = forms.CharField(max_length=255, label='Адрес обработанный (будет использован в документах)')
     veSub = forms.CharField(max_length=100, label='Субъект (Республика/Край/Область)')
     veRn = forms.CharField(max_length=100, label='Район субъекта')
     veGor = forms.CharField(max_length=100, label='Город')
@@ -63,12 +64,10 @@ class QuestForm(forms.Form):
     RH = forms.CharField(max_length=100, label='Резус-фактор (+, -)')
     KELL = forms.CharField(max_length=100, label='Келл-фактор (отрицательный, положительный)')
 
-
-
     # class Meta:
-    #     model = hzUserInfo
-    #     exclude = ['hz_user', 'type', ]
-    #     widgets = {'DOB': SelectDateWidget(),
+    #     # model = hzUserInfo
+    #     # exclude = ['hz_user', 'type', ]
+    #     widgets = {'AddressRow': forms.Textarea,
     #                #'reg_address': Textarea(),
     #                }
 
@@ -76,6 +75,7 @@ class QuestForm(forms.Form):
 class CandidateForm(ModelForm):
     error_css_class = 'has-danger'
     # required_css_class = 'has-warning'
+
     class Meta:
         error_messages = {'typeOpers': {'required': 'Не выбраны виды планируемых операций!'},
                           'phoneNumber': {'unique': 'Кандидат с таким номером телефона уже записан!'}

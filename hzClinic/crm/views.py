@@ -3,7 +3,7 @@ import datetime
 import os
 import random
 import re
-from pprint import pprint
+from dadata import Dadata
 
 import requests
 from django.core.paginator import Paginator
@@ -504,6 +504,22 @@ def quest_view(request, ext_id):
         anket_dict = anket_qs['content']  # anket[0].content
 
         fio = anket_dict['Фамилия'] + ' ' + anket_dict['Имя'] + ' ' + anket_dict['Отчество']
+        AddressRow = anket_dict['Адрес места жительства (регистрации)']
+        token = settings_local.DaDaAPI
+        secret = settings_local.DaDaSecret
+        dadata = Dadata(token, secret)
+        result = dadata.clean("address", AddressRow)
+
+        Address = result['result']
+        veSub = (result['region_type_full'] + ' ' + result['region']) if result['region_type_full'] == 'республика' else (result['region'] + ' ' + result['region_type_full'])
+        veRn = result['area'] if result['area'] else ' - '
+        veGor = result['city'] if result['city'] else ' - '
+        veNP = (result['settlement_type_full'] + ' ' + result['settlement']) if result['settlement'] else ' - '
+        veUl = (result['street_type_full'] + ' ' + result['street']) if result['street_type_full'] != 'улица' else result['street']
+        veDom = result['house'] if result['house'] else ' - '
+        veStr = result['block'] if result['block'] else ' - '
+        veKv = result['flat'] if result['flat'] else ' - '
+
         res_date = datetime.datetime.strptime(anket_dict['Дата рождения'], "%Y-%m-%d").strftime('%d.%m.%Y')
 
         PerZ = 'ОРВИ'
@@ -585,8 +601,8 @@ def quest_view(request, ext_id):
 
         initial = {'FIO': fio,
                    'DateOfB': res_date,
-                   'Address': anket_dict['Адрес места жительства (регистрации)'],
-                   # 'Job': anket_dict['Место работы, должность'],
+                   'Address': Address,
+                   'AddressRow': AddressRow,
                    'PerZ': PerZ,
                    'PerO': PerO,
                    'PerT': PerT,
@@ -609,14 +625,14 @@ def quest_view(request, ext_id):
                    'KELL': KELL,
                    'Gender': Gender,
                    'oGender': oGender,
-                   'veSub': '',
-                   'veRn': '',
-                   'veGor': '',
-                   'veNP': '',
-                   'veUl': '',
-                   'veDom': '',
-                   'veStr': '',
-                   'veKv': '',
+                   'veSub': veSub,
+                   'veRn': veRn,
+                   'veGor': veGor,
+                   'veNP': veNP,
+                   'veUl': veUl,
+                   'veDom': veDom,
+                   'veStr': veStr,
+                   'veKv': veKv,
                    }
 
         form = QuestForm(initial=initial)
