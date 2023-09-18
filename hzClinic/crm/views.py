@@ -511,14 +511,18 @@ def quest_view(request, ext_id):
         result = dadata.clean("address", AddressRow)
 
         Address = result['result']
-        veSub = (result['region_type_full'] + ' ' + result['region']) if result['region_type_full'] == 'республика' else (result['region'] + ' ' + result['region_type_full'])
-        veRn = result['area'] if result['area'] else ' - '
-        veGor = result['city'] if result['city'] else ' - '
-        veNP = (result['settlement_type_full'] + ' ' + result['settlement']) if result['settlement'] else ' - '
-        veUl = (result['street_type_full'] + ' ' + result['street']) if result['street_type_full'] != 'улица' else result['street']
-        veDom = result['house'] if result['house'] else ' - '
-        veStr = result['block'] if result['block'] else ' - '
-        veKv = result['flat'] if result['flat'] else ' - '
+
+        if Address:
+            veSub = (result['region_type_full'] + ' ' + result['region']) if result['region_type_full'] == 'республика' else (result['region'] + ' ' + result['region_type_full'])
+            veRn = result['area'] if result['area'] else ' - '
+            veGor = result['city'] if result['city'] else ' - '
+            veNP = (result['settlement_type_full'] + ' ' + result['settlement']) if result['settlement'] else ' - '
+            veUl = (result['street_type_full'] + ' ' + result['street']) if result['street_type_full'] != 'улица' else result['street']
+            veDom = result['house'] if result['house'] else ' - '
+            veStr = result['block'] if result['block'] else ' - '
+            veKv = result['flat'] if result['flat'] else ' - '
+        else:
+            Address = veSub = veRn = veGor = veNP = veUl = veDom = veStr = veKv = 'не удалось определить'
 
         res_date = datetime.datetime.strptime(anket_dict['Дата рождения'], "%Y-%m-%d").strftime('%d.%m.%Y')
 
