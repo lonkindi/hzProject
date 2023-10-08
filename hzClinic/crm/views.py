@@ -39,8 +39,12 @@ def fill_tmpl(oper_list, context_dict):
         doc.render(context_dict)
         target_str = target_path + '/' + 's_' + str(item.code) + '_' + sFIO + '.docx'
         doc.save(target_str)
-
-    for item in ['ids', 'fv', 'ln', 'oh', 'pe', 'po', 've', 'otkaz', 'svod', 'memo']:
+    items = ['ids', 'fv', 'ln', 'oh', 'pe', 'po', 've', 'otkaz', 'svod', 'memo']
+    if context_dict['scheme1']:
+        items.append('schemeG')
+    if context_dict['scheme2']:
+        items.append('schemeT')
+    for item in items:
         doc = DocxTemplate(file_path + item + '.docx')
         doc.render(context_dict)
         doc.save(docs_path + doc_folder + '/' + item + '_' + sFIO + '.docx')
@@ -126,6 +130,9 @@ def do_docs(query_dict):
     if anest4 and anest3 and not anest1:
         anest += ' + мониторинг'
     docs_context['anest'] = anest
+
+    docs_context['scheme1'] = query_dict.get('scheme1', False)
+    docs_context['scheme2'] = query_dict.get('scheme2', False)
 
     docs_context['id_ext'] = query_dict.get('id_ext', False)
     docs_context['PerZ'] = query_dict.get('id_PerZ', False)
@@ -509,7 +516,7 @@ def quest_view(request, ext_id):
         secret = settings_local.DaDaSecret
         dadata = Dadata(token, secret)
         result = dadata.clean("address", AddressRow)
-
+        # print(result)
         Address = result['result']
 
         if Address:
@@ -517,7 +524,10 @@ def quest_view(request, ext_id):
             veRn = result['area'] if result['area'] else ' - '
             veGor = result['city'] if result['city'] else ' - '
             veNP = (result['settlement_type_full'] + ' ' + result['settlement']) if result['settlement'] else ' - '
-            veUl = (result['street_type_full'] + ' ' + result['street']) if result['street_type_full'] != 'улица' else result['street']
+            if result['street']:
+                veUl = (result['street_type_full'] + ' ' + result['street']) if result['street_type_full'] != 'улица' else result['street']
+            else:
+                veUl = '-'
             veDom = result['house'] if result['house'] else ' - '
             veStr = result['block'] if result['block'] else ' - '
             veKv = result['flat'] if result['flat'] else ' - '
@@ -594,7 +604,7 @@ def quest_view(request, ext_id):
         Gender = anket_dict.get('Пол', '')
 
         oGender = 'Мочеполовая система в норме'
-        if Gender == 'Женский':
+        if Gender == 'женский':
             oGender = 'Менструации регулярные, беременность отрицает'
 
         Rost = anket_dict.get('Ваш рост (см)', '')
