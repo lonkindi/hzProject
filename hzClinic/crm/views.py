@@ -39,7 +39,7 @@ def fill_tmpl(oper_list, context_dict):
         doc.render(context_dict)
         target_str = target_path + '/' + 's_' + str(item.code) + '_' + sFIO + '.docx'
         doc.save(target_str)
-    items = ['ids', 'fv', 'ln', 'oh', 'pe', 'po', 've', 'otkaz', 'svod', 'memo']
+    items = ['ids', 'fv', 'ln', 'oh', 'pe', 'po', 've', 'otkaz', 'svod', 'memo', 'napr', 'VTEO']
     if context_dict['scheme1']:
         items.append('schemeG')
     if context_dict['scheme2']:
@@ -360,11 +360,33 @@ def main_view(request):
     hzuser_info = hzUserInfo.objects.filter(hz_user=hzuser)
     type = hzuser_info[0].type
     type_lbl = hzuser_info[0].UserTypeChoices[type].label
+    analizes_list = list()
+    files_list = list()
+    analizes = MyAPI.get_analyzes_myapi('79200228333')
+    for item_row in analizes:
+        item_raw = item_row.replace("'", '`')
+        item = ast.literal_eval(item_raw.replace('"', "'") + '}')
+        item_dict = dict()
+        item_dict['state'] = item['state']
+        item_dict['external_id'] = item['external_id']
+        item_dict['date_filling'] = datetime.datetime.strptime(item['date_filling'], "%Y-%m-%d").strftime(
+            '%d.%m.%Y')
+        item_dict['FIO'] = item['f'] + ' ' + item['i'] + ' ' + item['o']
+        item_dict['date_oper'] = datetime.datetime.strptime(item['date_oper'], "%Y-%m-%d").strftime(
+            '%d.%m.%Y')
+        item_dict['phone'] = item['phone']
+        files_list = item['files'].split(',')
+        item_file_list = list()
+        for item_file in files_list:
+            item_file_list.append([item_file[item_file.find('_')+1:], item_file])
+        item_dict['files'] = item_file_list
+        analizes_list.append(item_dict)
+
     context = {'title': 'Главная страница',
                'user': hzuser,
                'user_info': hzuser_info[0],
                'type_lbl': type_lbl,
-
+               'analizes': analizes_list,
                }
     return render(request, template_name=template_name, context=context)
 
@@ -431,6 +453,7 @@ def quests_view(request, state_id=9):
     current_page = ''
     prev_page = ''
     next_page = ''
+    current_page = 1
 
     if ankets != ['']:
         for item_row in ankets:
@@ -509,8 +532,12 @@ def quest_view(request, ext_id):
         anket_str = anket[0].replace("'", '`')
         anket_qs = ast.literal_eval(anket_str.replace('"', "'") + '}')
         anket_dict = anket_qs['content']  # anket[0].content
-
-        fio = anket_dict['Фамилия'] + ' ' + anket_dict['Имя'] + ' ' + anket_dict['Отчество']
+        f = anket_dict.get('Фамилия', 'НЕТ')
+        i = anket_dict.get('Имя', 'НЕТ')
+        o = anket_dict.get('Отчество', '')
+        fio = f + ' ' + i + ' ' + o
+        raw_phone = anket_dict.get('Ваш контактный телефон', '')
+        phone = re.sub('[\D]+','', raw_phone)
         AddressRow = anket_dict['Адрес места жительства (регистрации)']
         token = settings_local.DaDaAPI
         secret = settings_local.DaDaSecret
@@ -614,6 +641,7 @@ def quest_view(request, ext_id):
         KELL = anket_dict.get('Келл-фактор', '')
 
         initial = {'FIO': fio,
+                   'phone': phone,
                    'DateOfB': res_date,
                    'Address': Address,
                    'AddressRow': AddressRow,

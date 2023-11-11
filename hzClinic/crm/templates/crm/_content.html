@@ -77,7 +77,7 @@
                       <h3 class="h4">Запись на операцию</h3>
                     </div>
                     <div class="card-body">
-                      <p>Lorem ipsum dolor sit amet consectetur.</p>
+                      <p> analizes !</p>
                       <form id="RecordForm" method="post">
                                 {%csrf_token%}
                                 {{form}}
@@ -96,6 +96,13 @@
             <div class="container-fluid">
               <div class="row bg-white has-shadow">
                 <div class="container">
+                    {% for item in analizes %}
+                    Дата загрузки {{item.date_filling}}
+                        {% for f_item in item.files %}
+                    <p><a href="{{ f_item.1 }}" target="_blank"> {{ f_item.0 }}</a></p>
+                    {% endfor %}
+                    <hr>
+                    {% endfor %}
                 <div class="timetable-img text-center">
                     <img src="img/content/timetable.png" alt="">
                 </div>

@@ -29,6 +29,7 @@ class CustomUserChangeForm(UserChangeForm):
 
 
 class QuestForm(forms.Form):
+    phone = forms.CharField(max_length=16, label='Номер телефона')
     FIO = forms.CharField(max_length=100, label='Ф.И.О.')
     DateOfB = forms.DateField(input_formats=['%d.%m.%Y', '%Y-%m-%d'], label='Дата рождения')
     AddressRow = forms.CharField(max_length=255, label='Адрес места жительства из анкеты')
@@ -83,15 +84,17 @@ class CandidateForm(ModelForm):
         labels = {'typeOpers': 'Операции (обязательное*)', 'date_oper': 'Дата операции (обязательное*)',
                   'phoneNumber': 'Номер телефона (обязательное*)', 'Sname': 'Фамилия (обязательное*)',
                   'Name': 'Имя (обязательное*)', 'Mname': 'Отчество (необязательное)',
+                  'notes': 'Примечания (необязательное)',
                   }
         model = Candidate
-        fields = ['date_oper', 'phoneNumber', 'Sname', 'Name', 'Mname', 'typeOpers']
+        fields = ['date_oper', 'phoneNumber', 'Sname', 'Name', 'Mname', 'notes', 'typeOpers']
         widgets = {
             'typeOpers': CheckboxSelectMultiple(attrs={'class': 'form-control-label'}),
             'date_oper': DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'phoneNumber': TextInput(attrs={'placeholder': 'формат ввода +79998887766', 'class': 'form-control', 'pattern': '^\+?1?\d{8,15}$'}),
+            'phoneNumber': TextInput(attrs={'placeholder': 'формат ввода 79998887766', 'class': 'form-control', 'pattern': '^\+?1?\d{8,15}$'}),
             'Sname': TextInput(attrs={'help_text': 'help_text', 'placeholder': 'Фамилия', 'class': 'form-control'}),
             'Name': TextInput(attrs={'placeholder': 'Имя', 'class': 'form-control'}),
             'Mname': TextInput(attrs={'placeholder': 'Отчество', 'class': 'form-control'}),
+            'notes': TextInput(attrs={'placeholder': 'Примечания', 'class': 'form-control'}),
         }
 

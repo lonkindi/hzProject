@@ -27,6 +27,7 @@ class TypeOperationsAdmin(admin.ModelAdmin):
 @admin.register(Candidate)
 class CandidateAdmin(admin.ModelAdmin):
     formfield_overrides = {models.ManyToManyField: {'widget': CheckboxSelectMultiple}, }
+    search_fields = ['Sname', 'phoneNumber']
     date_hierarchy = 'date_oper'
     list_display = ('date_oper', 'phoneNumber', 'Sname', 'Name', 'Mname')
     list_display_links = ('date_oper', 'phoneNumber', 'Sname', 'Name', 'Mname')
