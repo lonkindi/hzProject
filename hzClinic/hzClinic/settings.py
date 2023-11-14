@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import os
+
 from pathlib import Path
 
 from hzClinic.settings_local import SECRET_KEY as SK
@@ -43,6 +44,12 @@ INSTALLED_APPS = [
     'rest_framework',
     'crm',
     'hzapi',
+    'django_tables2',
+    'htmx',
+    'django_htmx',
+    'crispy_forms',
+    'crispy_bootstrap4',
+
 ]
 
 MIDDLEWARE = [
@@ -53,6 +60,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_htmx.middleware.HtmxMiddleware',
 ]
 
 ROOT_URLCONF = 'hzClinic.urls'
@@ -74,7 +82,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'hzClinic.wsgi.application'
-
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases

@@ -1,0 +1,73 @@
+{% load static %}
+<div class="content-inner" xmlns="http://www.w3.org/1999/html">
+    <!-- Page Header-->
+    <header class="page-header">
+        <div class="container-fluid">
+            <h2 class="no-margin-bottom">Просмотр результатов анализов</h2>
+        </div>
+    </header>
+    <ul class="breadcrumb">
+        <div class="container-fluid">
+            <li class="breadcrumb-item"><a href="../">Начало</a></li>
+            <li class="breadcrumb-item"><a href="../analyzes/">Загруженные анализы</a></li>
+            <li class="breadcrumb-item active">(страница {{ current_page }} из {{analizes.paginator.num_pages }})
+            </li>
+        </div>
+    </ul>
+    <!-- Paginator Section-->
+    <section class="dashboard-counts no-padding-bottom">
+        <div class="container-fluid">
+
+            <nav aria-label="Paginator">
+                <ul class="pagination pagination-sm justify-content-center">
+                    <li class="page-item {% if not anket_list.has_previous %} disabled {% endif %}">
+                        <a class="page-link" href="{{ prev_page_url }}">&laquo;</a></li>
+                    {% for e_item in e_analyzes %}
+                    <li class="page-item
+                            {% if e_item == current_page %} active disabled {% endif %}
+                            {% if e_item == '…' %} disabled {% endif %}">
+                        <a class="page-link" href="?page={{ e_item }}">{{e_item}}</a>
+                    </li>
+                    {% endfor %}
+                    <li class="page-item {% if not anket_list.has_next %} disabled {% endif %}">
+                        <a class="page-link" href="{{ next_page_url }}">&raquo;</a></li>
+                </ul>
+            </nav>
+        </div>
+
+    </section>
+    <!-- Cards Section-->
+    <section class="forms">
+        <div class="container-fluid">
+            {% if analyzes %}
+            {% for item in analyzes %}
+            <!-- Card-->
+            <div class="project">
+                <div class="row bg-white has-shadow">
+                    <div class="left-col col-lg-6 d-flex align-items-center justify-content-between">
+                        <div class="project-title d-flex align-items-center">
+                            <div class="text">
+                                <h3 class="h4">{{ item.FIO }}</h3><small>ID: {{ item.external_id }} / {{item.date_filling }}</small>
+                            </div>
+                        </div>
+                        <div class="project-date"><span class="hidden-sm-down">Загружено: {{ item.date_filling }}</span>
+                        </div>
+                    </div>
+                    <div class="right-col col-lg-6 d-flex align-items-center">
+                        <div class="card-body no-padding">
+                            {% for f_item in item.files %}
+                            <div class="item d-flex">
+                                <div class="icon"><i class="icon-flask"></i></div>
+                                <a href="{{ f_item.1 }}" target="_blank"> {{ f_item.0 }}</a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </section>
+</div>
+

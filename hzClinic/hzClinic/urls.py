@@ -30,7 +30,8 @@ urlpatterns = [
     path('quests/', views.quests_view, name='quests'),
     path('quests/<int:state_id>', views.quests_view, name='quests'),
     path('quest/<int:ext_id>', views.quest_view, name='quest'),
-
+    path('analyzes/', views.analyzes_view, name='analyzes'),
+    # path('xtimeline/', views.CandidateHTMxTableView.as_view(), name='xtimeline'),
 ]
 
 handler404 = views.page_not_found_view

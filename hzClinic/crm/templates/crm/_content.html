@@ -96,13 +96,19 @@
             <div class="container-fluid">
               <div class="row bg-white has-shadow">
                 <div class="container">
+
+
                     {% for item in analizes %}
                     Дата загрузки {{item.date_filling}}
                         {% for f_item in item.files %}
-                    <p><a href="{{ f_item.1 }}" target="_blank"> {{ f_item.0 }}</a></p>
+                    <p>
+                        <input id="" name="" type="checkbox" value="1">
+                        <a href="{{ f_item.1 }}" target="_blank"> {{ f_item.0 }}</a></p>
                     {% endfor %}
                     <hr>
                     {% endfor %}
+
+
                 <div class="timetable-img text-center">
                     <img src="img/content/timetable.png" alt="">
                 </div>

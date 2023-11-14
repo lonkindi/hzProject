@@ -41,12 +41,23 @@ def update_anket_myapi(ext_id, state):
     return lst_req
 
 
-def get_analyzes_myapi(PHONE):
+def get_analyzes_myapi(PHONE=''):
     req_data = settings_local.LoginAPI
     req_login = requests.post('https://hzapi.hotyanznaet.ru/login', data=req_data)
     token = json.loads(req_login.text)['Token']
     headers = {'Authorization': 'Token ' + token, 'PHONE': PHONE}
     req_ankets = requests.post('https://hzapi.hotyanznaet.ru/getanalyzes', headers=headers)
     str_dict = req_ankets.text[1:-2]
+    lst_req = str_dict.split(sep='},')
+    return lst_req
+
+
+def update_analyzes_myapi(PHONE, STATE):
+    req_data = settings_local.LoginAPI
+    req_login = requests.post('https://hzapi.hotyanznaet.ru/login', data=req_data)
+    token = json.loads(req_login.text)['Token']
+    headers = {'Authorization': 'Token ' + token, 'PHONE': PHONE, 'STATE': STATE}
+    req_anket = requests.post(f'https://hzapi.hotyanznaet.ru/updanalyzes', headers=headers)
+    str_dict = req_anket.text[1:-2]
     lst_req = str_dict.split(sep='},')
     return lst_req

@@ -139,3 +139,5 @@ class Candidate(models.Model):
     def __str__(self):
         return str(self.date_oper) + '-' + self.Sname + ' ' + self.Name + ' ' + self.Mname
 
+
+

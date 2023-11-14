@@ -9,6 +9,13 @@ import requests
 from django.core.paginator import Paginator
 from docxtpl import DocxTemplate
 
+from django_tables2 import SingleTableMixin
+from django_filters.views import FilterView
+
+from crm.models import Candidate
+from crm.filters import CandidateFilter
+from crm.tables import CandidateTable
+
 from transliterate import translit
 from crm.forms import LoginForm, QuestForm, CandidateForm
 from crm.models import hzUserInfo, Anket, TypeOperations, Candidate
@@ -18,6 +25,23 @@ from django.shortcuts import render, redirect, reverse
 from crm import YaD, MyAPI
 
 from hzClinic import settings, settings_local
+
+
+
+# class CandidateHTMxTableView(SingleTableMixin, FilterView):
+#     table_class = CandidateHTMxTable
+#     queryset = Candidate.objects.all()
+#     filterset_class = CandidateFilter
+#     paginate_by = 15
+#
+#     def get_template_names(self):
+#         print(self.request)
+#         if self.request.htmx:
+#             template_name = "crm/candidate_table_partial.html"
+#         else:
+#             template_name = "crm/candidate_table_htmx.html"
+#
+#         return template_name
 
 def page_not_found_view(request, exception):
     return render(request, 'crm/404.html', status=404)
@@ -390,6 +414,61 @@ def main_view(request):
                }
     return render(request, template_name=template_name, context=context)
 
+
+def analyzes_view(request):
+    if not request.user.is_authenticated:
+        return redirect(reverse(login_view))
+    template_name = 'crm/_analyzes.html'
+    hzuser = request.user
+    hzuser_info = hzUserInfo.objects.filter(hz_user=hzuser)
+    type = hzuser_info[0].type
+    type_lbl = hzuser_info[0].UserTypeChoices[type].label
+    analizes_list = list()
+    files_list = list()
+    analizes = MyAPI.get_analyzes_myapi('0')
+    for item_row in analizes:
+        item_raw = item_row.replace("'", '`')
+        item = ast.literal_eval(item_raw.replace('"', "'") + '}')
+        item_dict = dict()
+        item_dict['state'] = item['state']
+        item_dict['external_id'] = item['external_id']
+        item_dict['date_filling'] = datetime.datetime.strptime(item['date_filling'], "%Y-%m-%d").strftime(
+            '%d.%m.%Y')
+        item_dict['FIO'] = item['f'] + ' ' + item['i'] + ' ' + item['o']
+        item_dict['date_oper'] = datetime.datetime.strptime(item['date_oper'], "%Y-%m-%d").strftime(
+            '%d.%m.%Y')
+        item_dict['phone'] = item['phone']
+        files_list = item['files'].split(',')
+        item_file_list = list()
+        for item_file in files_list:
+            item_file_list.append([item_file[item_file.find('_') + 1:], item_file])
+        item_dict['files'] = item_file_list
+        analizes_list.append(item_dict)
+    paginator = Paginator(analizes_list, 12)
+    current_page = request.GET.get('page', 1)
+    b_analyzes = paginator.get_page(current_page)
+    e_analyzes = paginator.get_elided_page_range(current_page, on_each_side=2, on_ends=1)
+    if b_analyzes.has_previous():
+        prev_page = b_analyzes.previous_page_number
+        prev_page = prev_page()
+    else:
+        prev_page = 1
+    if b_analyzes.has_next():
+        next_page = b_analyzes.next_page_number
+        next_page = next_page()
+    else:
+        next_page = paginator.num_pages
+    context = {'title': 'Главная страница',
+               'user': hzuser,
+               'user_info': hzuser_info[0],
+               'type_lbl': type_lbl,
+               'analyzes': b_analyzes,
+               'e_analyzes': e_analyzes,
+               'current_page': int(current_page),
+               'prev_page_url': f'{reverse("analyzes")}?page={prev_page}',
+               'next_page_url': f'{reverse("analyzes")}?page={next_page}',
+               }
+    return render(request, template_name=template_name, context=context)
 
 def login_view(request):
     if request.user.is_authenticated:
@@ -789,7 +868,8 @@ def timeline_view(request, current_page=1):
     paginator = Paginator(rec_list, 7)
     current_page = request.GET.get('page', current_page)
     b_rec = paginator.get_page(current_page)
-    # print('anket_list = ', anket_list)
+    enum_rec = paginator.get_elided_page_range(current_page, on_each_side=1, on_ends=1)
+
     # print('sorted anket_list = ', sorted(anket_list, key=lambda anket: anket['FIO']))
     # prev_page, next_page = None, None
     if b_rec.has_previous():
@@ -806,18 +886,20 @@ def timeline_view(request, current_page=1):
 
         # })
     num_week = b_rec[0][0].isocalendar()[1]
-
+    table = CandidateTable(Candidate.objects.all())
     # print('b_rec=', b_rec[6])
     # print('current_page=', current_page)
 
     context = {
+               'table': table,
                'title': 'Расписание операций',
                'user': hzuser,
                'user_info': hzuser_info[0],
                'today': today,
                'num_week': num_week,
                'b_rec': b_rec,
-               'current_page': current_page,
+               'enum_rec': enum_rec,
+               'current_page': int(current_page),
                'prev_page_url': f'{reverse("timeline")}?page={prev_page}',
                'next_page_url': f'{reverse("timeline")}?page={next_page}',
                }

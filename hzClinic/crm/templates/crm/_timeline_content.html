@@ -1,4 +1,6 @@
 {% load static %}
+{% load render_table from django_tables2 %}
+
 <div class="content-inner">
     <!-- Page Header-->
     <header class="page-header">
@@ -7,29 +9,35 @@
         </div>
     </header>
     <ul class="breadcrumb">
-            <div class="container-fluid">
-              <li class="breadcrumb-item"><a href="../">Главная</a></li>
-              <li class="breadcrumb-item active">Расписание операций</li>
-            </div>
+        <div class="container-fluid">
+            <li class="breadcrumb-item"><a href="../">Главная</a></li>
+            <li class="breadcrumb-item active">Расписание операций (Страница {{ current_page }} из
+                {{b_rec.paginator.num_pages }})
+            </li>
+        </div>
     </ul>
-    <!-- Paginator Section-->
-        <section class="dashboard-counts no-padding-bottom">
-            <div class="container-fluid">
-                <div class="row bg-white has-shadow">
-                    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-                        <div class="btn-group mr-2" role="group" aria-label="First group">
-                            {% if prev_page_url %}<a class="btn btn-secondary"
-                                                     href="{{ prev_page_url }}">⟵</a>{% endif %}
-                            <a class="btn btn-secondary disabled" role="button" aria-disabled="true"
-                               href="">Страница {{ current_page }} из {{ b_rec.paginator.num_pages }}</a>
-                            {% if next_page_url %}<a class="btn btn-secondary"
-                                                     href="{{ next_page_url }}">⟶</a>{% endif %}
-                        </div>
-                    </div>
 
-                </div>
-            </div>
-        </section>
+    <!-- Paginator Section-->
+    <section class="dashboard-counts no-padding-bottom">
+        <div class="container-fluid">
+            <nav aria-label="Paginator">
+                <ul class="pagination pagination-sm justify-content-center">
+                    <li class="page-item {% if not b.rec.has_previous %} disabled {% endif %}">
+                        <a class="page-link" href="{{ prev_page_url }}">&laquo;</a></li>
+                    {% for e_item in enum_rec %}
+                    <li class="page-item
+                            {% if e_item == current_page %} disabled {% endif %}
+                            {% if e_item == '…' %} disabled {% endif %}">
+                        <a class="page-link" href="?page={{ e_item }}">{{e_item}}</a>
+                    </li>
+                    {% endfor %}
+                    <li class="page-item {% if not b_rec.has_next %} disabled {% endif %}">
+                        <a class="page-link" href="{{ next_page_url }}">&raquo;</a></li>
+                </ul>
+            </nav>
+        </div>
+    </section>
+    <!-- Forms Section-->
     <section class="tables">
         <div class="container-fluid">
             <div class="row">
@@ -37,167 +45,134 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-header d-flex align-items-center">
-                            <h3 class="h4">Расписание операций с {{ b_rec.0.0|date:"d.m.Y" }} г. по {{ b_rec.6.0|date:"d.m.Y" }} г. (неделя :
+                            <h3 class="h4">Расписание операций с {{ b_rec.0.0|date:"d.m.Y" }} г. по
+                                {{b_rec.6.0|date:"d.m.Y" }} г. (неделя :
                                 {{ num_week }})</h3>
+
+         <!-- Paginator Section-->
+        <div class="container-fluid">
+            <nav aria-label="Paginator">
+                <ul class="pagination pagination-sm justify-content-center">
+                    <li class="page-item {% if not b.rec.has_previous %} disabled {% endif %}">
+                        <a class="page-link" href="{{ prev_page_url }}">&laquo;</a></li>
+                    {% for e_item in enum_rec %}
+                    <li class="page-item
+                            {% if e_item == current_page %} disabled {% endif %}
+                            {% if e_item == '…' %} disabled {% endif %}">
+                        <a class="page-link" href="?page={{ e_item }}">{{e_item}}</a>
+                    </li>
+                    {% endfor %}
+                    <li class="page-item {% if not b_rec.has_next %} disabled {% endif %}">
+                        <a class="page-link" href="{{ next_page_url }}">&raquo;</a></li>
+                </ul>
+            </nav>
+        </div>
+
+
                         </div>
                         <div class="card-body">
-<main>
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="main-timeline4">
-                    <div class="timeline">
-                        <span class="timeline-icon"></span>
-                        <span class="year">Пн {{ b_rec.0.0|date:"d.m.Y" }}</span>
-                        <div class="timeline-content">
-                            {% if b_rec.0.1 %}
-                            <h3 class="title">{{ b_rec.0.1.0.Sname }} {{ b_rec.0.1.0.Name }} {{ b_rec.0.1.0.Mname }}</h3>
-                            <p class="description">
-                            Телефон: {{ b_rec.0.1.0.phoneNumber }}<br>
-                                {% for oper in b_rec.0.1.0.typeOpers.all %}
-                                {{ oper }}<br>{% endfor %}
-                            {{ b_rec.0.1.0.notes }}
-                                <hr>
-                            </p>
-                            {% else %}
-                            <h3 class="title">Записей нет</h3>
-                            <p class="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec lacinia mi ultrices, luctus nunc ut, commodo enim. Vivamus sem erat.</p>
-                            {% endif %}
-                        </div>
-                    </div>
-                    <div class="timeline">
-                        <span class="timeline-icon"></span>
-                        <span class="year">Вт {{ b_rec.1.0|date:"d.m.Y" }}</span>
-                        <div class="timeline-content">
-                            {% if b_rec.1.1 %}
-                            <h3 class="title">{{ b_rec.1.1.0.Sname }} {{ b_rec.1.1.0.Name }} {{ b_rec.1.1.0.Mname }}</h3>
-                            <p class="description">
-                            Телефон: {{ b_rec.1.1.0.phoneNumber }}<br>
-                                {% for oper in b_rec.1.1.0.typeOpers.all %}
-                                {{ oper }}<br>{% endfor %}
-                            {{ b_rec.1.1.0.notes }}
-                                <hr>
-                            </p>
-                            {% else %}
-                            <h3 class="title">Записей нет</h3>
-                            <p class="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec lacinia mi ultrices, luctus nunc ut, commodo enim. Vivamus sem erat.</p>
-                            {% endif %}
-                        </div>
-                    </div>
-                    <div class="timeline">
-                        <span class="timeline-icon"></span>
-                        <span class="year">Ср {{ b_rec.2.0|date:"d.m.Y" }}</span>
-                        <div class="timeline-content">
-                            {% if b_rec.2.1 %}
-                            {% for candidat in b_rec.2.1 %}
-                            <h3 class="title">{{ candidat.Sname }} {{ candidat.Name }} {{ candidat.Mname }}</h3>
-                            <p class="description">
-                            Телефон: {{ candidat.phoneNumber }}<br>
-                                {% for oper in candidat.typeOpers.all %}
-                                {{ oper }}<br>{% endfor %}
-                            {{ candidat.notes }}
-                                <hr>
-                            {% endfor %}
-                            </p>
-                            {% else %}
-                            <h3 class="title">Записей нет</h3>
-                            <p class="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec lacinia mi ultrices, luctus nunc ut, commodo enim. Vivamus sem erat.</p>
-                            {% endif %}
-                        </div>
-                    </div>
-                    <div class="timeline">
-                        <span class="timeline-icon"></span>
-                        <span class="year">Чт {{ b_rec.3.0|date:"d.m.Y" }}</span>
-                        <div class="timeline-content">
-                            {% if b_rec.3.1 %}
-                            <h3 class="title">{{ b_rec.3.1.0.Sname }} {{ b_rec.3.1.0.Name }} {{ b_rec.3.1.0.Mname }}</h3>
-                            <p class="description">
-                            Телефон: {{ b_rec.3.1.0.phoneNumber }}<br>
-                                {% for oper in b_rec.3.1.0.typeOpers.all %}
-                                {{ oper }}<br>{% endfor %}
-                            {{ b_rec.3.1.0.notes }}
-                                <hr>
-                            </p>
-                            {% else %}
-                            <h3 class="title">Записей нет</h3>
-                            <p class="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec lacinia mi ultrices, luctus nunc ut, commodo enim. Vivamus sem erat.</p>
-                            {% endif %}
-                        </div>
-                    </div>
-                    <div class="timeline">
-                        <span class="timeline-icon"></span>
-                        <span class="year">Пт {{ b_rec.4.0|date:"d.m.Y" }}</span>
-                        <div class="timeline-content">
-                            {% if b_rec.4.1 %}
-                            <h3 class="title">{{ b_rec.4.1.0.Sname }} {{ b_rec.4.1.0.Name }} {{ b_rec.4.1.0.Mname }}</h3>
-                            <p class="description">
-                            Телефон: {{ b_rec.4.1.0.phoneNumber }}<br>
-                                {% for oper in b_rec.4.1.0.typeOpers.all %}
-                                {{ oper }}<br>{% endfor %}
-                            {{ b_rec.4.1.0.notes }}
-                                <hr>
-                            </p>
-                            {% else %}
-                            <h3 class="title">Записей нет</h3>
-                            <p class="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec lacinia mi ultrices, luctus nunc ut, commodo enim. Vivamus sem erat.</p>
-                            {% endif %}
-                        </div>
-                    </div>
-                    <div class="timeline">
-                        <span class="timeline-icon"></span>
-                        <span class="year">Сб {{ b_rec.5.0|date:"d.m.Y" }}</span>
-                        <div class="timeline-content">
-                            {% if b_rec.5.1 %}
-                            <h3 class="title">{{ b_rec.5.1.0.Sname }} {{ b_rec.5.1.0.Name }} {{ b_rec.5.1.0.Mname }}</h3>
-                            <p class="description">
-                            Телефон: {{ b_rec.5.1.0.phoneNumber }}<br>
-                                {% for oper in b_rec.5.1.0.typeOpers.all %}
-                                {{ oper }}<br>{% endfor %}
-                            {{ b_rec.5.1.0.notes }}
-                                <hr>
-                            </p>
-                            {% else %}
-                            <h3 class="title">Записей нет</h3>
-                            <p class="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec lacinia mi ultrices, luctus nunc ut, commodo enim. Vivamus sem erat.</p>
-                            {% endif %}
-                        </div>
-                    </div>
-                    <div class="timeline">
-                        <span class="timeline-icon"></span>
-                        <span class="year">Вс {{ b_rec.6.0|date:"d.m.Y" }}</span>
-                        <div class="timeline-content">
-                            {% if b_rec.6.1 %}
-                            <h3 class="title">{{ b_rec.6.1.0.Sname }} {{ b_rec.6.1.0.Name }} {{ b_rec.6.1.0.Mname }}</h3>
-                            <p class="description">
-                            Телефон: {{ b_rec.6.1.0.phoneNumber }}<br>
-                                {% for oper in b_rec.6.1.0.typeOpers.all %}
-                                {{ oper }}<br>{% endfor %}
-                            {{ b_rec.6.1.0.notes }}
-                                <hr>
-                            </p>
-                            {% else %}
-                            <h3 class="title">Записей нет</h3>
-                            <p class="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec lacinia mi ultrices, luctus nunc ut, commodo enim. Vivamus sem erat.</p>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</main>
-</div>
+
+
+                            <div class="col-lg-15">
+                                <div class="card">
+                                    <div class="card-close">
+                                        <div class="dropdown">
+                                            <button type="button" id="closeCard" data-toggle="dropdown"
+                                                    aria-haspopup="true" aria-expanded="false" class="dropdown-toggle">
+                                                <i class="fa fa-ellipsis-v"></i></button>
+                                            <div aria-labelledby="closeCard" class="dropdown-menu has-shadow"><a
+                                                    href="#" class="dropdown-item remove"> <i class="fa fa-times"></i>Close</a><a
+                                                    href="#" class="dropdown-item edit"> <i class="fa fa-gear"></i>Edit</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-header d-flex align-items-center">
+                                        <h3 class="h4">Расписание операций с {{ b_rec.0.0|date:"d.m.Y" }} г.
+                                            по {{b_rec.6.0|date:"d.m.Y" }} г. (неделя :
+                                            {{ num_week }})</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <table class="table table-striped table-sm">
+                                            <thead>
+                                            <tr>
+                                                <th>№ п.п.</th>
+                                                <th>Дата операции</th>
+                                                <th>Ф.И.О.</th>
+                                                <th>Операции</th>
+                                                <th>Примечания</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr>
+                                                <th scope="row">1</th>
+                                                <td>30.10.2023</td>
+                                                <td>Мамбетова Зульфия Нажиповна</td>
+                                                <td>@mdo</td>
+                                                <td>@mdo</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">2</th>
+                                                <td>30.10.2023</td>
+                                                <td>Мамбетова Зульфия Нажиповна</td>
+                                                <td>@fat</td>
+                                                <td>@mdo</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">3</th>
+                                                <td>30.10.2023</td>
+                                                <td>Мамбетова Зульфия Нажиповна</td>
+                                                <td>@twitter</td>
+                                                <td>@mdo</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">4</th>
+                                                <td>30.10.2023</td>
+                                                <td>Константинопольский Константин Константинович</td>
+                                                <td>@mdo</td>
+                                                <td>@mdo</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">5</th>
+                                                <td>30.10.2023</td>
+                                                <td>Константинопольский Константин Константинович</td>
+                                                <td>@fat</td>
+                                                <td>@mdo</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">6</th>
+                                                <td>30.10.2023</td>
+                                                <td>Константинопольский Константин Константинович</td>
+                                                <td>@twitter</td>
+                                                <td>@mdo</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">7</th>
+                                                <td>30.10.2023</td>
+                                                <td>Константинопольский Константин Константинович</td>
+                                                <td>@twitter</td>
+                                                <td>@mdo</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
 
                         </div>
                     </div>
                 </div>
-                <!-- End Form-->
-            </div>
+
+
         </div>
+</div>
+
+<!-- End Form-->
+
+
     </section>
 </div>
-</div>
-</div>
+
+
 <!-- Javascript files-->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script src={% static "CRM/js/tether.min.js" %}></script>
