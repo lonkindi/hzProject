@@ -863,7 +863,7 @@ def timeline_view(request, current_page=1):
         start_date += delta
 
     # print('records=', records)
-    # print('rec_list=', rec_list)
+    print('rec_list=', rec_list)
 
     paginator = Paginator(rec_list, 7)
     current_page = request.GET.get('page', current_page)
