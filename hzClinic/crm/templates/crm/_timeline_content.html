@@ -26,7 +26,7 @@
                         <a class="page-link" href="{{ prev_page_url }}">&laquo;</a></li>
                     {% for e_item in enum_rec %}
                     <li class="page-item
-                            {% if e_item == current_page %} disabled {% endif %}
+                            {% if e_item == current_page %} active {% endif %}
                             {% if e_item == '…' %} disabled {% endif %}">
                         <a class="page-link" href="?page={{ e_item }}">{{e_item}}</a>
                     </li>
@@ -43,28 +43,15 @@
             <div class="row">
             </div>
             <div class="col-lg-15">
-                <div class="card">
-                    <div class="card-close">
-                        <div class="dropdown">
-                            <button type="button" id="closeCard" data-toggle="dropdown"
-                                    aria-haspopup="true" aria-expanded="false" class="dropdown-toggle">
-                                <i class="fa fa-ellipsis-v"></i></button>
-                            <div aria-labelledby="closeCard" class="dropdown-menu has-shadow"><a
-                                    href="#" class="dropdown-item remove"> <i class="fa fa-times"></i>Close</a><a
-                                    href="#" class="dropdown-item edit"> <i class="fa fa-gear"></i>Edit</a>
-                            </div>
-                        </div>
-                    </div>
+                <div class="card ">
                     <div class="card-header d-flex align-items-center">
-                        <h3 class="h4">Расписание операций с {{ b_rec.0.0|date:"d.m.Y" }} г.
-                            по {{b_rec.6.0|date:"d.m.Y" }} г. (неделя :
-                            {{ num_week }})</h3>
+                        <h3 class="h4">Расписание операций на {{ b_rec.0.0.0|date:"F" }}
+                            {{b_rec.0.0.0|date:"Y" }} г. </h3>
                     </div>
                     <div class="card-body">
                         <table class="table table-bordered table-hover table-striped table-sm">
                             <thead>
                             <tr>
-                                <th>№ п.п.</th>
                                 <th>Дата операции</th>
                                 <th>Ф.И.О.</th>
                                 <th>Операции</th>
@@ -72,39 +59,47 @@
                             </tr>
                             </thead>
                             <tbody>
-                            {% for item in b_rec %}
-                            {% if item.1 %}
-                            {% for candidat in item.1 %}
-                            <tr >
-                                <td scope="row">{{ candidat.phoneNumber }}</td>
-                                <td><a href="" class="text-primary" uk-icon="icon: plus-circle"></a>
-                                    {{ item.0|date:"d.m.Y" }}
+                            {% for item in b_rec.0 %}
+                            {% if item.1 == '' %}
+                            <tr>
+                                <td rowspan="{{item.1.count}}"><a href="" class="text-primary" uk-icon="icon: plus-circle"></a>
+                                    <a href="" class="text-primary">{{ item.0|date:"d.m.Y" }}</a><br>
+                                    {{ item.0|date:"l" }}
                                 </td>
+                             <td>Операции не запланированы</td>
+                                <td>-</td>
+                                <td>-</td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td rowspan="{{item.1.count}}"><a href="" class="text-primary" uk-icon="icon: plus-circle"></a>
+                                    <a href="" class="text-primary">{{ item.0|date:"d.m.Y" }}</a><br>
+                                    {{ item.0|date:"l" }}
+                                </td>
+                            {% for candidat in item.1 %}
+
                                 <td>
                                     <a href="{{candidat.pk}}" class="text-success" uk-icon="icon: pencil"></a>
                                     <a href="{{candidat.pk}}" class="text-danger" uk-icon="icon: trash"></a>
-                                    {{ candidat.Sname }} {{ candidat.Name }} {{ candidat.Mname }}
+                                    {{ candidat.Sname }} {{ candidat.Name }} {{ candidat.Mname }}<br>
+                                    {{ candidat.phoneNumber }}
                                 </td>
-                                <td><ul>
+                                <td>
+                                    <ul class="p-3">
                                     {% for oper in candidat.typeOpers.all %}
-                                    <li>{{ oper }}</li>
+                                    <li >{{ oper }}</li>
                                     {% endfor %}
                                     </ul>
                                 </td>
-                                <td>{{ candidat.notes }}</td>
+                                <td>
+                                    {{ candidat.notes }}
+                                </td>
                             </tr>
-                            {% endfor %}
-                            {% else %}
-                            <tr>
-                                <td>-</td>
-                                <td class="table-danger"><a href="" uk-icon="icon: plus-circle"></a>{{ item.0|date:"d.m.Y" }}</td>
-                                <td>Записи на операции нет</td>
-                                <td>-</td>
-                                <td>-</td>
-                            </tr>
-                            {% endif %}
                             {% endfor %}
 
+                            {% endif %}
+                            {% endfor %}
+                             </tr>
                             </tbody>
                         </table>
                     </div>

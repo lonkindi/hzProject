@@ -799,7 +799,7 @@ def recording_view(request):
             # new_candidate.Mname = form.cleaned_data['Mname']
             # new_candidate.typeOpers = form.cleaned_data['typeOpers']
             # new_candidate.save()
-            return redirect(reverse(quests_view))
+            return redirect(reverse(timeline_view))
     else:
         form = CandidateForm()
         #     print(form.errors)
@@ -815,7 +815,7 @@ def recording_view(request):
         #            'today': today,
         #            }
     context = {'form': form,
-               'title': 'Анкета',
+               'title': 'Запись на операцию',
                'user': hzuser,
                'user_info': hzuser_info[0],
                'today': today,
@@ -840,32 +840,37 @@ def timeline_view(request, current_page=1):
     # выбираем все записи на операции, сортируя по возрастанию
     records = Candidate.objects.all().order_by('date_oper')
 
-    first_rec = records[0].date_oper
-    last_rec = records.reverse()[0].date_oper
-    weekday = first_rec.weekday()
-    start_delta = datetime.timedelta(days=weekday)
-    start_of_week = first_rec - start_delta
-    first_week = [start_of_week + datetime.timedelta(days=i) for i in range(7)]
-    start_date = first_week[0]
-    weekday = last_rec.weekday()
-    start_delta = datetime.timedelta(days=weekday)
-    start_of_week = last_rec - start_delta
-    end_week = [start_of_week + datetime.timedelta(days=i) for i in range(7)]
-    end_date = end_week[6]
+    first_rec = records[0].date_oper  # первая запись
+    last_rec = records.reverse()[0].date_oper  # последняя запись
+    start_date = datetime.datetime(first_rec.year, first_rec.month, 1)
+    end_date = datetime.datetime(last_rec.year+1, 12, 31)
+    start_weekday = start_date.weekday()
+    end_weekday = end_date.weekday()
+    start_delta = datetime.timedelta(days=start_weekday)
+    end_delta = datetime.timedelta(days=(6-end_weekday))
+    start_of_records = start_date - start_delta
+    end_of_records = end_date + end_delta
+    current_date = start_of_records
+    current_month = 0
     rec_list = []
-    rec_dict = dict()
-    # делаем последовательность дат записей, кратно неделе
+    rec_month = []
+    # делаем последовательность дат записей для каждого месяца
     delta = datetime.timedelta(days=1)
-    while start_date <= end_date:
-        date_rec = records.filter(date_oper=start_date)
-        rec_list.append([start_date, date_rec if len(date_rec) > 0 else ''])
-        rec_dict[start_date] = ''
-        start_date += delta
+    while current_date <= end_of_records:
+        if current_month == current_date.month:
+            date_rec = records.filter(date_oper=current_date)
+            rec_month.append([current_date, date_rec if len(date_rec) > 0 else ''])
+            current_date += delta
+        else:
+            rec_list.append(rec_month)
+            rec_month = []
+            current_month = current_date.month
+
 
     # print('records=', records)
-    print('rec_list=', rec_list)
+    # print('rec_list=', rec_list)
 
-    paginator = Paginator(rec_list, 7)
+    paginator = Paginator(rec_list, 1)
     current_page = request.GET.get('page', current_page)
     b_rec = paginator.get_page(current_page)
     enum_rec = paginator.get_elided_page_range(current_page, on_each_side=1, on_ends=1)
@@ -885,11 +890,13 @@ def timeline_view(request, current_page=1):
         # return render(request, template_name='index_bus.html', context={
 
         # })
-    num_week = b_rec[0][0].isocalendar()[1]
+    num_week = 1  #b_rec[0][0].isocalendar()[1]
     table = CandidateTable(Candidate.objects.all())
     # print('b_rec=', b_rec[6])
     # print('current_page=', current_page)
-
+    # print(b_rec[0])
+    # for item in b_rec:
+    #     print('item =', item[0])
     context = {
                'table': table,
                'title': 'Расписание операций',
