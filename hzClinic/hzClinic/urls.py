@@ -26,12 +26,16 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
     path('recording/', views.recording_view, name='recording'),
+    path('recording/<str:date>', views.recording_view, name='recording'),
+    path('recording/<str:date>/<int:pk>', views.recording_view, name='recording'),
+    path('delrecord/', views.delrecord_view, name='delrecord'),
+    path('delrecord/<str:date>/<int:pk>', views.delrecord_view, name='delrecord'),
     path('timeline/', views.timeline_view, name='timeline'),
+    path('timeline/<str:set_date>', views.timeline_view, name='timeline'),
     path('quests/', views.quests_view, name='quests'),
     path('quests/<int:state_id>', views.quests_view, name='quests'),
     path('quest/<int:ext_id>', views.quest_view, name='quest'),
     path('analyzes/', views.analyzes_view, name='analyzes'),
-    # path('xtimeline/', views.CandidateHTMxTableView.as_view(), name='xtimeline'),
 ]
 
 handler404 = views.page_not_found_view

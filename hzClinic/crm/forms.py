@@ -12,21 +12,8 @@ class LoginForm(forms.Form):
     user_login = forms.CharField(label='', max_length=50)
     user_password = forms.CharField(label='', max_length=10, widget=forms.PasswordInput())
 
-    user_login.widget.attrs.update({'class': 'input-material', 'placeholder': 'введите логин'})
+    user_login.widget.attrs.update({'class': 'input-material', 'placeholder': 'введите логин (79998887755)'})
     user_password.widget.attrs.update({'class': 'input-material', 'placeholder': 'введите пароль'})
-
-
-class CustomUserCreationForm(UserCreationForm):
-    class Meta(UserCreationForm):
-        model = CustomUser
-        fields = ('username', 'email')
-
-
-class CustomUserChangeForm(UserChangeForm):
-    class Meta(UserChangeForm):
-        model = CustomUser
-        fields = ('username', 'email', 'is_staff')
-
 
 class QuestForm(forms.Form):
     phone = forms.CharField(max_length=16, label='Номер телефона')
@@ -90,7 +77,7 @@ class CandidateForm(ModelForm):
         fields = ['date_oper', 'phoneNumber', 'Sname', 'Name', 'Mname', 'notes', 'typeOpers']
         widgets = {
             'typeOpers': CheckboxSelectMultiple(attrs={'class': 'form-control-label'}),
-            'date_oper': DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'date_oper': TextInput(attrs={'type': 'date', 'class': 'form-control'}),
             'phoneNumber': TextInput(attrs={'placeholder': 'формат ввода 79998887766', 'class': 'form-control', 'pattern': '^\+?1?\d{8,15}$'}),
             'Sname': TextInput(attrs={'help_text': 'help_text', 'placeholder': 'Фамилия', 'class': 'form-control'}),
             'Name': TextInput(attrs={'placeholder': 'Имя', 'class': 'form-control'}),

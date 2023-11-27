@@ -2,10 +2,11 @@ from django.contrib import admin
 
 from .models import CustomUser
 from django.contrib.auth.admin import UserAdmin
+from django.utils.translation import gettext_lazy as _
 
 from crm.models import hzUserInfo, hzUserEvents
 
-from crm.forms import CustomUserCreationForm, CustomUserChangeForm
+from users.forms import CustomUserCreationForm, CustomUserChangeForm
 
 
 class InlinehzUserInfo(admin.StackedInline):
@@ -19,9 +20,11 @@ class InlinehzUserEvents(admin.StackedInline):
 class CustomUserAdmin(UserAdmin):
     add_form = CustomUserCreationForm
     form = CustomUserChangeForm
-    list_display = ('username', 'email', 'is_staff', 'is_superuser')
+    fieldsets = (
+        (_("Personal info"), {"fields": ("first_name", "last_name", "phone", "email", "user_type")}),
+    )
+    list_display = ('username', 'phone', 'email', 'user_type', 'is_staff', 'is_superuser')
     inlines = [InlinehzUserInfo, InlinehzUserEvents, ]
-
 
 
 admin.site.register(CustomUser, CustomUserAdmin)
@@ -36,4 +39,3 @@ class hzUserInfoAdmin(admin.ModelAdmin):
 class hzUserEventsAdmin(admin.ModelAdmin):
     list_display = ('date_time', 'title', 'hz_user')
     # list_editable = ('external_id', 'state',)
-

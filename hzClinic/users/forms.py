@@ -6,25 +6,29 @@ from django.forms import SelectDateWidget, Textarea
 
 from crm.models import hzUserInfo, Candidate
 
+from users.models import CustomUser
+
 
 class LoginForm(forms.Form):
     user_login = forms.CharField(label='', max_length=50)
     user_password = forms.CharField(label='', max_length=10, widget=forms.PasswordInput())
 
-    user_login.widget.attrs.update({'class': 'input-material', 'placeholder': 'введите логин'})
-    user_password.widget.attrs.update({'class': 'input-material', 'placeholder': 'введите пароль'})
+    user_login.widget.attrs.update({'class': 'input-material', 'placeholder': 'введите логин LoginForm'})
+    user_password.widget.attrs.update({'class': 'input-material', 'placeholder': 'введите пароль LoginForm'})
 
 
-#class CustomUserCreationForm(UserCreationForm):
-#    class Meta(UserCreationForm):
-#        model = CustomUser
-#        fields = ('username', 'email')
+class CustomUserCreationForm(UserCreationForm):
+    class Meta(UserCreationForm):
+        model = CustomUser
+        fields = ('username', 'phone', 'email', 'password')
 
 
-#class CustomUserChangeForm(UserChangeForm):
-#    class Meta(UserChangeForm):
-#        model = CustomUser
-#        fields = ('username', 'email', 'is_staff')
+class CustomUserChangeForm(UserChangeForm):
+    class Meta(UserChangeForm):
+        model = CustomUser
+        fields = ('username', 'phone', 'email', 'is_staff')
+
+
 
 
 class QuestForm(forms.Form):

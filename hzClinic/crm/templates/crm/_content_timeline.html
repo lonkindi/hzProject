@@ -21,8 +21,8 @@
     <section class="dashboard-counts no-padding-bottom">
         <div class="container-fluid">
             <nav aria-label="Paginator">
-                <ul class="pagination pagination-sm justify-content-center">
-                    <li class="page-item {% if not b.rec.has_previous %} disabled {% endif %}">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item {% if not b_rec.has_previous %} disabled {% endif %}">
                         <a class="page-link" href="{{ prev_page_url }}">&laquo;</a></li>
                     {% for e_item in enum_rec %}
                     <li class="page-item
@@ -49,10 +49,10 @@
                             {{b_rec.0.0.0|date:"Y" }} г. </h3>
                     </div>
                     <div class="card-body">
-                        <table class="table table-bordered table-hover table-striped table-sm">
+                        <table class="table table-bordered table-striped table-responsive-lg">
                             <thead>
                             <tr>
-                                <th>Дата операции</th>
+                                <th>Дата</th>
                                 <th>Ф.И.О.</th>
                                 <th>Операции</th>
                                 <th>Примечания</th>
@@ -62,27 +62,29 @@
                             {% for item in b_rec.0 %}
                             {% if item.1 == '' %}
                             <tr {% if item.0|date:"l" == 'Суббота' or item.0|date:"l" == 'Воскресенье' %}
-                            class="table-danger"
+                            class="table-info"
                             {% endif %}>
-                                <td rowspan="{{item.1.count}}"><a href="" class="text-primary" uk-icon="icon: plus-circle"></a>
-                                    <a href="" class="text-primary">{{ item.0|date:"d.m.Y" }}</a><br>
+                                <td rowspan="{{item.1.count}}">
+                                    <a href="../recording/?date={{ item.0|date:"Y-m-d"}}" class="text-primary" uk-icon="icon: plus-circle"></a>
+                                    <a href="../recording/?date={{ item.0|date:"Y-m-d"}}" class="text-primary" class="text-primary">{{ item.0|date:"d.m.Y" }}</a><br>
                                     {{ item.0|date:"l" }}
                                 </td>
-                             <td>Операции не запланированы</td>
+                             <td>Операций нет</td>
                                 <td>-</td>
                                 <td>-</td>
                             </tr>
                             {% else %}
                             <tr>
-                                <td class="table-success" rowspan="{{item.1.count}}"><a href="" class="text-primary" uk-icon="icon: plus-circle"></a>
-                                    <a href="" class="text-primary">{{ item.0|date:"d.m.Y" }}</a><br>
+                                <td class="table-success" rowspan="{{item.1.count}}">
+                                    <a href="../recording/?date={{ item.0|date:"Y-m-d"}}" class="text-primary" uk-icon="icon: plus-circle"></a>
+                                    <a href="../recording/?date={{ item.0|date:"Y-m-d"}}" class="text-primary">{{ item.0|date:"d.m.Y" }}</a><br>
                                     {{ item.0|date:"l" }}
                                 </td>
                             {% for candidat in item.1 %}
 
                                 <td>
-                                    <a href="{{candidat.pk}}" class="text-success" uk-icon="icon: pencil"></a>
-                                    <a href="{{candidat.pk}}" class="text-danger" uk-icon="icon: trash"></a>
+                                    <a href="../recording/?date={{ item.0|date:"Y-m-d"}}&pk={{candidat.pk}}" class="text-success" uk-icon="icon: pencil"></a>
+                                    <a data-toggle="modal" data-target="#delModal" class="text-danger" uk-icon="icon: trash"></a>
                                     {{ candidat.Sname }} {{ candidat.Name }} {{ candidat.Mname }}<br>
                                     {{ candidat.phoneNumber }}
                                 </td>
@@ -109,12 +111,39 @@
             </div>
 
         </div>
-</div>
-</div>
+<!-- Modal-->
+  <div id="delModal" tabindex="-1" role="dialog" aria-labelledby="leModalLabel"
+       aria-hidden="true"
+       class="modal fade text-left">
+      <div class="modal-dialog modal-dialog-centered" role="document" >
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h4 id="exampleModalLabel" class="modal-title text-danger"> Удаление кандидата на операцию <em>{{candidat.pk}}</em>
+                  </h4>
+                  <button type="button" data-dismiss="modal" aria-label="Close"
+                          class="close"><span
+                          aria-hidden="true">×</span></button>
+              </div>
+              <div class="modal-body">
+                  <p>После удаления восстановить запись будет невозможно!</p>
+                  <p><a href="../delrecord/?date={{ item.0|date:"Y-m-d"}}&pk={{candidat.pk}}">DEL</a>
+                      Дождитесь возврата к списку кандидатов на операции.</p>
+              </div>
+              <div class="modal-footer">
+                  <button type="button" data-dismiss="modal"
+                          class="btn btn-secondary">Отмена
+                  </button>
+                  <a class="btn btn-danger" href="../delrecord/?date={{ item.0|date:"Y-m-d"}}&pk={{candidat.pk}}">Удалить</a>
+
+              </div>
+          </div>
+      </div>
+  </div>
 
 
-</div>
-</div>
+
+
+
 
 <!-- End Form-->
 

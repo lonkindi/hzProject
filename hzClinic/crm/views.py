@@ -21,7 +21,7 @@ from crm.forms import LoginForm, QuestForm, CandidateForm
 from crm.models import hzUserInfo, Anket, TypeOperations, Candidate
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
-from django.shortcuts import render, redirect, reverse
+from django.shortcuts import render, redirect, reverse, get_object_or_404
 from crm import YaD, MyAPI
 
 from hzClinic import settings, settings_local
@@ -564,7 +564,7 @@ def quests_view(request, state_id=9):
         paginator = Paginator(anket_list, 12)
         current_page = request.GET.get('page', 1)
         b_ankets = paginator.get_page(current_page)
-        e_ankets = paginator.get_elided_page_range(current_page, on_each_side=2, on_ends=1)
+        e_ankets = paginator.get_elided_page_range(current_page, on_each_side=1, on_ends=1)
         # print('anket_list = ', anket_list)
         # print('sorted anket_list = ', sorted(anket_list, key=lambda anket: anket['FIO']))
         # prev_page, next_page = None, None
@@ -775,33 +775,40 @@ def quest_view(request, ext_id):
     return render(request, template_name=template_name, context=context)
 
 
-def recording_view(request):
+def recording_view(request, date='', pk=0):
     if not request.user.is_authenticated:
         return redirect(reverse(login_view))
     template_name = 'crm/_record.html'
+    today = None
 
-    today = datetime.datetime.today().date().strftime("%Y-%m-%d")
+    date = request.GET.get('date', None)
+
+    if not date:
+        today = datetime.datetime.today().date()
+    else:
+        today = datetime.datetime.strptime(date, "%Y-%m-%d").date()
+
     hzuser = request.user
     hzuser_info = hzUserInfo.objects.filter(hz_user=hzuser)
 
     if request.method == 'POST':
-        # Создаём экземпляр формы и заполняем данными из запроса (связывание, binding):
-        form = CandidateForm(request.POST)
-        # print('form= ', form)
-        # Проверка валидности данных формы:
+        # Создаём экземпляр формы и заполняем данными из запроса
+        req_pk = request.GET.get('pk', '')
+        find_candidate = get_object_or_404(Candidate, pk=req_pk)
+        form = CandidateForm(request.POST or None, instance=find_candidate)
+        # Проверка валидности данных и сохранение формы
         if form.is_valid():
-            new_candidate = form.save()
-            # new_candidate = Candidate
-            # new_candidate.phoneNumber = form.cleaned_data['phoneNumber']
-            # new_candidate.date_oper = form.cleaned_data['date_oper']
-            # new_candidate.Sname = form.cleaned_data['Sname']
-            # new_candidate.Name = form.cleaned_data['Name']
-            # new_candidate.Mname = form.cleaned_data['Mname']
-            # new_candidate.typeOpers = form.cleaned_data['typeOpers']
-            # new_candidate.save()
-            return redirect(reverse(timeline_view))
+            new_date = form.cleaned_data['date_oper']
+            form.save()
+            return redirect(reverse(timeline_view, args=(new_date,)))
     else:
-        form = CandidateForm()
+        req_pk = request.GET.get('pk', '')
+        if req_pk:
+            current_candidate = get_object_or_404(Candidate, pk=req_pk)
+            # print(datetime.datetime.strptime(current_candidate.date_oper, "%Y-%m-%d"))
+            form = CandidateForm(instance=current_candidate)
+        else:
+            form = CandidateForm(initial={'date_oper': today})
         #     print(form.errors)
         # template_name = 'crm/_record.html'
         #
@@ -823,12 +830,29 @@ def recording_view(request):
     return render(request, template_name=template_name, context=context)
 
 
-def timeline_view(request, current_page=1):
+def delrecord_view(request, date='', pk=0):
+    if not request.user.is_authenticated:
+        return redirect(reverse(login_view))
+    req_pk = request.GET.get('pk', None)
+    req_date = request.GET.get('date', None)
+    if req_pk and req_date:
+        current_date = datetime.datetime.strptime(req_date, "%Y-%m-%d").date()
+        current_candidate = get_object_or_404(Candidate, pk=req_pk)
+        current_candidate.delete()
+        return redirect(reverse(timeline_view, args=(current_date,)))
+
+        # print(datetime.datetime.strptime(current_candidate.date_oper, "%Y-%m-%d"))
+
+
+def timeline_view(request, set_date=''):
     if not request.user.is_authenticated:
         return redirect(reverse(login_view))
     template_name = 'crm/_timeline.html'
 
-    today = datetime.datetime.today().date().strftime("%Y-%m-%d")
+    if not set_date:
+        set_date = datetime.datetime.today().date()
+    else:
+        set_date = datetime.datetime.strptime(set_date, "%Y-%m-%d")
     hzuser = request.user
     hzuser_info = hzUserInfo.objects.filter(hz_user=hzuser)
 
@@ -842,16 +866,11 @@ def timeline_view(request, current_page=1):
 
     first_rec = records[0].date_oper  # первая запись
     last_rec = records.reverse()[0].date_oper  # последняя запись
-    start_date = datetime.datetime(first_rec.year, first_rec.month, 1)
-    end_date = datetime.datetime(last_rec.year+1, 12, 31)
-    start_weekday = start_date.weekday()
-    end_weekday = end_date.weekday()
-    start_delta = datetime.timedelta(days=start_weekday)
-    end_delta = datetime.timedelta(days=(6-end_weekday))
-    start_of_records = start_date - start_delta
-    end_of_records = end_date + end_delta
+    start_of_records = datetime.datetime(first_rec.year, first_rec.month, 1)
+    end_of_records = datetime.datetime(last_rec.year+2, 1, 31)
     current_date = start_of_records
-    current_month = 0
+    current_month = 1
+    today_page = ''
     rec_list = []
     rec_month = []
     # делаем последовательность дат записей для каждого месяца
@@ -866,17 +885,17 @@ def timeline_view(request, current_page=1):
             rec_month = []
             current_month = current_date.month
 
-
-    # print('records=', records)
-    # print('rec_list=', rec_list)
-
     paginator = Paginator(rec_list, 1)
-    current_page = request.GET.get('page', current_page)
+    current_page = request.GET.get('page', None)
+    if not current_page:
+        for page in paginator:
+            first_day_on_page = page.object_list[0][0][0]
+            if (first_day_on_page.year == set_date.year) and (first_day_on_page.month == set_date.month):
+                current_page = page.number
     b_rec = paginator.get_page(current_page)
     enum_rec = paginator.get_elided_page_range(current_page, on_each_side=1, on_ends=1)
 
-    # print('sorted anket_list = ', sorted(anket_list, key=lambda anket: anket['FIO']))
-    # prev_page, next_page = None, None
+
     if b_rec.has_previous():
         prev_page = b_rec.previous_page_number
         prev_page = prev_page()
@@ -887,23 +906,15 @@ def timeline_view(request, current_page=1):
         next_page = next_page()
     else:
         next_page = paginator.num_pages
-        # return render(request, template_name='index_bus.html', context={
 
-        # })
-    num_week = 1  #b_rec[0][0].isocalendar()[1]
+    num_week = 1
     table = CandidateTable(Candidate.objects.all())
-    # print('b_rec=', b_rec[6])
-    # print('current_page=', current_page)
-    # print(b_rec[0])
-    # for item in b_rec:
-    #     print('item =', item[0])
+
     context = {
                'table': table,
                'title': 'Расписание операций',
                'user': hzuser,
                'user_info': hzuser_info[0],
-               'today': today,
-               'num_week': num_week,
                'b_rec': b_rec,
                'enum_rec': enum_rec,
                'current_page': int(current_page),
