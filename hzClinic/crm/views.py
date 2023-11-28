@@ -841,8 +841,6 @@ def delrecord_view(request, date='', pk=0):
         current_candidate.delete()
         return redirect(reverse(timeline_view, args=(current_date,)))
 
-        # print(datetime.datetime.strptime(current_candidate.date_oper, "%Y-%m-%d"))
-
 
 def timeline_view(request, set_date=''):
     if not request.user.is_authenticated:
@@ -856,18 +854,13 @@ def timeline_view(request, set_date=''):
     hzuser = request.user
     hzuser_info = hzUserInfo.objects.filter(hz_user=hzuser)
 
-    # if request.method == 'POST':
-    #     return redirect(reverse(quests_view))
-    # else:
-    #     return redirect(reverse(recording_view))
-
     # выбираем все записи на операции, сортируя по возрастанию
     records = Candidate.objects.all().order_by('date_oper')
 
     first_rec = records[0].date_oper  # первая запись
     last_rec = records.reverse()[0].date_oper  # последняя запись
-    start_of_records = datetime.datetime(first_rec.year, first_rec.month, 1)
-    end_of_records = datetime.datetime(last_rec.year+2, 1, 31)
+    start_of_records = datetime.datetime(first_rec.year, first_rec.month, 1)  #определяем начало месяца первой записи
+    end_of_records = datetime.datetime(last_rec.year+2, 1, 31)  #определяем конец диапазона на основании последней записи
     current_date = start_of_records
     current_month = 1
     today_page = ''
