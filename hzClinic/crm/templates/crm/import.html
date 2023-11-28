@@ -1,0 +1,9 @@
+<!-- import.html -->
+<form method="post" enctype="multipart/form-data" action="{% url 'loadrec' %}">
+{% csrf_token %}
+{{ form.as_p }}
+<button type="submit">Импорт</button>
+</form>
+
+<!-- success.html -->
+<p>Данные успешно импортированы.</p></html>

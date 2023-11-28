@@ -36,6 +36,8 @@ urlpatterns = [
     path('quests/<int:state_id>', views.quests_view, name='quests'),
     path('quest/<int:ext_id>', views.quest_view, name='quest'),
     path('analyzes/', views.analyzes_view, name='analyzes'),
+    path('loadrec/', views.loadrec_view, name='loadrec'),
+
 ]
 
 handler404 = views.page_not_found_view

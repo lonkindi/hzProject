@@ -85,3 +85,6 @@ class CandidateForm(ModelForm):
             'notes': TextInput(attrs={'placeholder': 'Примечания', 'class': 'form-control'}),
         }
 
+
+class UploadForm(forms.Form):
+    data_file = forms.FileField(label='Выберите файл для загрузки')

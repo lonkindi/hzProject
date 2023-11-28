@@ -62,7 +62,7 @@
                             {% for item in b_rec.0 %}
                             {% if item.1 == '' %}
                             <tr {% if item.0|date:"l" == 'Суббота' or item.0|date:"l" == 'Воскресенье' %}
-                            class="table-info"
+                            class="table-danger"
                             {% endif %}>
                                 <td rowspan="{{item.1.count}}">
                                     <a href="../recording/?date={{ item.0|date:"Y-m-d"}}" class="text-primary" uk-icon="icon: plus-circle"></a>
@@ -75,7 +75,7 @@
                             </tr>
                             {% else %}
                             <tr>
-                                <td class="table-success" rowspan="{{item.1.count}}">
+                                <td class="table-dark" rowspan="{{item.1.count}}">
                                     <a href="../recording/?date={{ item.0|date:"Y-m-d"}}" class="text-primary" uk-icon="icon: plus-circle"></a>
                                     <a href="../recording/?date={{ item.0|date:"Y-m-d"}}" class="text-primary">{{ item.0|date:"d.m.Y" }}</a><br>
                                     {{ item.0|date:"l" }}
@@ -124,7 +124,6 @@
             </div>
         </div>
                             {% endfor %}
-
                             {% endif %}
                             {% endfor %}
                              </tr>
@@ -135,20 +134,8 @@
             </div>
 
         </div>
-
-
-
-
-
-
-
-<!-- End Form-->
-
-
 </section>
 </div>
-
-
 <!-- Javascript files-->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script src={% static "CRM/js/tether.min.js" %}></script>

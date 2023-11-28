@@ -3,6 +3,7 @@ import datetime
 import os
 import random
 import re
+import csv
 from dadata import Dadata
 
 import requests
@@ -17,7 +18,7 @@ from crm.filters import CandidateFilter
 from crm.tables import CandidateTable
 
 from transliterate import translit
-from crm.forms import LoginForm, QuestForm, CandidateForm
+from crm.forms import LoginForm, QuestForm, CandidateForm, UploadForm
 from crm.models import hzUserInfo, Anket, TypeOperations, Candidate
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
@@ -25,7 +26,6 @@ from django.shortcuts import render, redirect, reverse, get_object_or_404
 from crm import YaD, MyAPI
 
 from hzClinic import settings, settings_local
-
 
 
 # class CandidateHTMxTableView(SingleTableMixin, FilterView):
@@ -915,3 +915,24 @@ def timeline_view(request, set_date=''):
                'next_page_url': f'{reverse("timeline")}?page={next_page}',
                }
     return render(request, template_name=template_name, context=context)
+
+
+def loadrec_view(request):
+    if not request.user.is_authenticated:
+        return redirect(reverse(login_view))
+    if request.method == 'POST':
+        form = UploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            data_file = os.path.join(settings.BASE_DIR, 'crm\\122023_load.csv')
+            rec_list = []
+            with open(data_file, 'r') as file:
+                csv_data = csv.reader(file, delimiter=';')
+                for row in csv_data:
+                    Candidate.objects.create(date_oper=datetime.datetime.strptime(row[0], "%d.%m.%Y"),
+                                             phoneNumber=row[5], Sname=row[2], Name=row[3], Mname=row[4],
+                                             notes=f'{row[1]} / {row[6]} / {row[7]}')
+
+        return render(request, 'crm/import.html')
+    else:
+        form = UploadForm()
+        return render(request, 'crm/import.html', {'form': form})
