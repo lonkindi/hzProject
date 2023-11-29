@@ -1,5 +1,5 @@
 {% load static %}
-{% load render_table from django_tables2 %}
+
 
 <div class="content-inner">
     <!-- Page Header-->
@@ -49,12 +49,13 @@
                             {{b_rec.0.0.0|date:"Y" }} г. </h3>
                     </div>
                     <div class="card-body">
-                        <table class="table table-bordered table-striped table-responsive-lg">
+                        <table class="table table-bordered table-striped table-responsive-md">
                             <thead>
                             <tr>
                                 <th>Дата</th>
                                 <th>Ф.И.О.</th>
                                 <th>Операции</th>
+                                <th>Хирург</th>
                                 <th>Примечания</th>
                             </tr>
                             </thead>
@@ -63,28 +64,42 @@
                             {% if item.1 == '' %}
                             <tr {% if item.0|date:"l" == 'Суббота' or item.0|date:"l" == 'Воскресенье' %}
                             class="table-danger"
-                            {% endif %}>
-                                <td rowspan="{{item.1.count}}">
+                            {% endif %}
+                            >
+                                <td>
+                                    {% if item.0|date:"Y-m-d" >= today|date:"Y-m-d" %}
                                     <a href="../recording/?date={{ item.0|date:"Y-m-d"}}" class="text-primary" uk-icon="icon: plus-circle"></a>
-                                    <a href="../recording/?date={{ item.0|date:"Y-m-d"}}" class="text-primary" class="text-primary">{{ item.0|date:"d.m.Y" }}</a><br>
+                                    <a href="../recording/?date={{ item.0|date:"Y-m-d"}}" class="text-primary">{{ item.0|date:"d.m.Y" }}</a><br>
                                     {{ item.0|date:"l" }}
+                                    {% else %}
+                                    {{ item.0|date:"d.m.Y" }}<br>
+                                    {{ item.0|date:"l" }}
+                                    {% endif %}
                                 </td>
                              <td>Операций нет</td>
+                                <td>-</td>
                                 <td>-</td>
                                 <td>-</td>
                             </tr>
                             {% else %}
                             <tr>
-                                <td class="table-dark" rowspan="{{item.1.count}}">
+                                <td class="table-dark" rowspan="{{item.1.count}}">item.1.count - {{item.1.count}}
+                                    {% if item.0|date:"Y-m-d" >= today|date:"Y-m-d" %}
                                     <a href="../recording/?date={{ item.0|date:"Y-m-d"}}" class="text-primary" uk-icon="icon: plus-circle"></a>
                                     <a href="../recording/?date={{ item.0|date:"Y-m-d"}}" class="text-primary">{{ item.0|date:"d.m.Y" }}</a><br>
                                     {{ item.0|date:"l" }}
+                                    {% else %}
+                                    {{ item.0|date:"d.m.Y" }}<br>
+                                    {{ item.0|date:"l" }}
+                                    {% endif %}
                                 </td>
                             {% for candidat in item.1 %}
 
                                 <td>
+                                    {% if item.0|date:"Y-m-d" >= today|date:"Y-m-d" %}
                                     <a href="../recording/?date={{ item.0|date:"Y-m-d"}}&pk={{candidat.pk}}" class="text-success" uk-icon="icon: pencil"></a>
                                     <a data-toggle="modal" data-target="#delModal{{candidat.pk}}" class="text-danger" uk-icon="icon: trash"></a>
+                                    {% endif %}
                                     {{ candidat.Sname }} {{ candidat.Name }} {{ candidat.Mname }}<br>
                                     {{ candidat.phoneNumber }}
                                 </td>
@@ -94,6 +109,9 @@
                                     <li >{{ oper }}</li>
                                     {% endfor %}
                                     </ul>
+                                </td>
+                                <td>
+                                    {{ candidat.Surgeon }}
                                 </td>
                                 <td>
                                     {{ candidat.notes }}

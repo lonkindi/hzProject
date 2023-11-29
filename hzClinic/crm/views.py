@@ -10,13 +10,6 @@ import requests
 from django.core.paginator import Paginator
 from docxtpl import DocxTemplate
 
-from django_tables2 import SingleTableMixin
-from django_filters.views import FilterView
-
-from crm.models import Candidate
-from crm.filters import CandidateFilter
-from crm.tables import CandidateTable
-
 from transliterate import translit
 from crm.forms import LoginForm, QuestForm, CandidateForm, UploadForm
 from crm.models import hzUserInfo, Anket, TypeOperations, Candidate
@@ -805,22 +798,10 @@ def recording_view(request, date='', pk=0):
         req_pk = request.GET.get('pk', '')
         if req_pk:
             current_candidate = get_object_or_404(Candidate, pk=req_pk)
-            # print(datetime.datetime.strptime(current_candidate.date_oper, "%Y-%m-%d"))
             form = CandidateForm(instance=current_candidate)
         else:
             form = CandidateForm(initial={'date_oper': today})
-        #     print(form.errors)
-        # template_name = 'crm/_record.html'
-        #
-        # today = datetime.datetime.today().date().strftime("%Y-%m-%d")
-        # hzuser = request.user
-        # hzuser_info = hzUserInfo.objects.filter(hz_user=hzuser)
-        # context = {'form': form,
-        #            'title': 'Анкета',
-        #            'user': hzuser,
-        #            'user_info': hzuser_info[0],
-        #            'today': today,
-        #            }
+
     context = {'form': form,
                'title': 'Запись на операцию',
                'user': hzuser,
@@ -846,9 +827,9 @@ def timeline_view(request, set_date=''):
     if not request.user.is_authenticated:
         return redirect(reverse(login_view))
     template_name = 'crm/_timeline.html'
-
+    today = datetime.datetime.today().date()
     if not set_date:
-        set_date = datetime.datetime.today().date()
+        set_date = today
     else:
         set_date = datetime.datetime.strptime(set_date, "%Y-%m-%d")
     hzuser = request.user
@@ -862,8 +843,8 @@ def timeline_view(request, set_date=''):
     start_of_records = datetime.datetime(first_rec.year, first_rec.month, 1)  #определяем начало месяца первой записи
     end_of_records = datetime.datetime(last_rec.year+2, 1, 31)  #определяем конец диапазона на основании последней записи
     current_date = start_of_records
-    current_month = 1
-    today_page = ''
+    current_month = start_of_records.month
+
     rec_list = []
     rec_month = []
     # делаем последовательность дат записей для каждого месяца
@@ -879,7 +860,7 @@ def timeline_view(request, set_date=''):
             current_month = current_date.month
 
     paginator = Paginator(rec_list, 1)
-    current_page = request.GET.get('page', None)
+    current_page = request.GET.get('page', 1)
     if not current_page:
         for page in paginator:
             first_day_on_page = page.object_list[0][0][0]
@@ -901,13 +882,14 @@ def timeline_view(request, set_date=''):
         next_page = paginator.num_pages
 
     num_week = 1
-    table = CandidateTable(Candidate.objects.all())
+    # table = CandidateTable(Candidate.objects.all())
 
     context = {
-               'table': table,
+               # 'table': table,
                'title': 'Расписание операций',
                'user': hzuser,
                'user_info': hzuser_info[0],
+               'today': today,
                'b_rec': b_rec,
                'enum_rec': enum_rec,
                'current_page': int(current_page),
@@ -925,12 +907,12 @@ def loadrec_view(request):
         if form.is_valid():
             data_file = os.path.join(settings.BASE_DIR, 'crm\\122023_load.csv')
             rec_list = []
-            with open(data_file, 'r') as file:
+            with open(data_file, encoding='utf-8') as file:
                 csv_data = csv.reader(file, delimiter=';')
                 for row in csv_data:
                     Candidate.objects.create(date_oper=datetime.datetime.strptime(row[0], "%d.%m.%Y"),
                                              phoneNumber=row[5], Sname=row[2], Name=row[3], Mname=row[4],
-                                             notes=f'{row[1]} / {row[6]} / {row[7]}')
+                                             Surgeon=row[7], notes=f'{row[1]} / {row[6]} ')
 
         return render(request, 'crm/import.html')
     else:

@@ -1,7 +1,8 @@
+import django.forms.widgets
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.core.exceptions import NON_FIELD_ERRORS
-from django.forms import SelectDateWidget, Textarea, ModelForm, CheckboxSelectMultiple, DateInput, TextInput
+from django.forms import SelectDateWidget, Textarea, ModelForm, CheckboxSelectMultiple, DateInput, TextInput, Select
 
 from users.models import CustomUser
 
@@ -74,15 +75,17 @@ class CandidateForm(ModelForm):
                   'notes': 'Примечания (необязательное)',
                   }
         model = Candidate
-        fields = ['date_oper', 'phoneNumber', 'Sname', 'Name', 'Mname', 'notes', 'typeOpers']
+        fields = ['date_oper', 'phoneNumber', 'Sname', 'Name', 'Mname', 'notes', 'typeOpers', 'Surgeon']
         widgets = {
             'typeOpers': CheckboxSelectMultiple(attrs={'class': 'form-control-label'}),
             'date_oper': TextInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'phoneNumber': TextInput(attrs={'placeholder': 'формат ввода 79998887766', 'class': 'form-control', 'pattern': '^\+?1?\d{8,15}$'}),
+            'phoneNumber': TextInput(attrs={'placeholder': 'формат ввода 79998887766', 'class': 'form-control'}),
             'Sname': TextInput(attrs={'help_text': 'help_text', 'placeholder': 'Фамилия', 'class': 'form-control'}),
             'Name': TextInput(attrs={'placeholder': 'Имя', 'class': 'form-control'}),
             'Mname': TextInput(attrs={'placeholder': 'Отчество', 'class': 'form-control'}),
+            'Surgeon': Select(attrs={'placeholder': 'Хирург', 'class': 'form-control'}),
             'notes': TextInput(attrs={'placeholder': 'Примечания', 'class': 'form-control'}),
+
         }
 
 

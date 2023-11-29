@@ -103,7 +103,7 @@ class TypeOperations(models.Model):
     rezult = models.TextField(max_length=255, null=True, blank=True, verbose_name='Результат')
     srok_gosp = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name='Срок госпитализации')
     # LTR = models.TextField(max_length=2048, null=True, blank=True, verbose_name='Лечебные и трудовые рекомендации ')
-    # dlitelnost = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name='Продолжительнсть')
+    # duration = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name='Продолжительнсть')
 
 
     class Meta:
@@ -119,17 +119,19 @@ class Candidate(models.Model):
     """
     Модель кандидата на операцию
     """
-    phoneNumberRegex = RegexValidator(regex=r"^\+?1?\d{8,15}$", message='Неверный формат ввода номера телефона!')
-    phoneNumber = models.CharField(validators=[phoneNumberRegex], max_length=16, unique=False,
-                                   verbose_name='Номер телефона (phoneNumber)')
+    class SurgeonChoices(models.TextChoices):
+        KhotyanAR = 'Хотян А.Р.', _('Хотян А.Р.'),
+        MamedovGT = 'Мамедов Г.Т.', _('Мамедов Г.Т.')
+
+    phoneNumber = models.CharField(max_length=16, unique=False, verbose_name='Номер телефона (phoneNumber)')
     date_oper = models.DateField(verbose_name='Дата операции (date_oper)', default=datetime.date.today)
     Sname = models.CharField(max_length=25, verbose_name='Фамилия (Sname)')
     Name = models.CharField(max_length=25, verbose_name='Имя (Name)')
     Mname = models.CharField(max_length=25, verbose_name='Отчество (Mname)', blank=True)
     typeOpers = models.ManyToManyField(TypeOperations, verbose_name='Операции (typeOpers)', related_name='operations')
+    Surgeon = models.CharField(verbose_name='Хирург', choices=SurgeonChoices.choices, max_length=15,
+                               default='Хотян А.Р.')
     notes = models.CharField(max_length=255, verbose_name='Примечания (notes)')
-
-
 
     class Meta:
         verbose_name = 'Кандидат'
