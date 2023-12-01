@@ -768,40 +768,23 @@ def quest_view(request, ext_id):
     return render(request, template_name=template_name, context=context)
 
 
-def recording_view(request, date='', pk=0):
+def recording_view(request, date=''):
     if not request.user.is_authenticated:
         return redirect(reverse(login_view))
-    template_name = 'crm/_record.html'
-    today = None
-
-    date = request.GET.get('date', None)
-
-    if not date:
-        today = datetime.datetime.today().date()
-    else:
-        today = datetime.datetime.strptime(date, "%Y-%m-%d").date()
-
     hzuser = request.user
     hzuser_info = hzUserInfo.objects.filter(hz_user=hzuser)
-
+    template_name = 'crm/_record.html'
+    today = datetime.datetime.today().date()
+    date = request.GET.get('date', None)
+    if date:
+        today = datetime.datetime.strptime(date, "%Y-%m-%d").date()
+    form = CandidateForm(initial={'date_oper': today})
     if request.method == 'POST':
-        # Создаём экземпляр формы и заполняем данными из запроса
-        req_pk = request.GET.get('pk', '')
-        find_candidate = get_object_or_404(Candidate, pk=req_pk)
-        form = CandidateForm(request.POST or None, instance=find_candidate)
-        # Проверка валидности данных и сохранение формы
+        form = CandidateForm(request.POST)
         if form.is_valid():
             new_date = form.cleaned_data['date_oper']
             form.save()
             return redirect(reverse(timeline_view, args=(new_date,)))
-    else:
-        req_pk = request.GET.get('pk', '')
-        if req_pk:
-            current_candidate = get_object_or_404(Candidate, pk=req_pk)
-            form = CandidateForm(instance=current_candidate)
-        else:
-            form = CandidateForm(initial={'date_oper': today})
-
     context = {'form': form,
                'title': 'Запись на операцию',
                'user': hzuser,
@@ -811,14 +794,35 @@ def recording_view(request, date='', pk=0):
     return render(request, template_name=template_name, context=context)
 
 
-def delrecord_view(request, date='', pk=0):
+def updrecord_view(request, pk):
     if not request.user.is_authenticated:
         return redirect(reverse(login_view))
-    req_pk = request.GET.get('pk', None)
-    req_date = request.GET.get('date', None)
-    if req_pk and req_date:
-        current_date = datetime.datetime.strptime(req_date, "%Y-%m-%d").date()
-        current_candidate = get_object_or_404(Candidate, pk=req_pk)
+    hzuser = request.user
+    hzuser_info = hzUserInfo.objects.filter(hz_user=hzuser)
+    template_name = 'crm/_record.html'
+    current_candidate = Candidate.objects.get(pk=pk)
+    form = CandidateForm(instance=current_candidate)
+    if request.method == 'POST':
+        form = CandidateForm(request.POST, instance=current_candidate)
+        if form.is_valid():
+            new_date = form.cleaned_data['date_oper']
+            form.save()
+            return redirect(reverse(timeline_view, args=(new_date,)))
+    context = {'form': form,
+               'title': 'Запись на операцию',
+               'user': hzuser,
+               'user_info': hzuser_info[0],
+               'current_candidate': current_candidate,
+               }
+    return render(request, template_name, context)
+
+
+def delrecord_view(request, pk):
+    if not request.user.is_authenticated:
+        return redirect(reverse(login_view))
+    if pk:
+        current_candidate = get_object_or_404(Candidate, pk=pk)
+        current_date = current_candidate.date_oper
         current_candidate.delete()
         return redirect(reverse(timeline_view, args=(current_date,)))
 
@@ -834,10 +838,8 @@ def timeline_view(request, set_date=''):
         set_date = datetime.datetime.strptime(set_date, "%Y-%m-%d")
     hzuser = request.user
     hzuser_info = hzUserInfo.objects.filter(hz_user=hzuser)
-
     # выбираем все записи на операции, сортируя по возрастанию
     records = Candidate.objects.all().order_by('date_oper')
-
     first_rec = records[0].date_oper  # первая запись
     last_rec = records.reverse()[0].date_oper  # последняя запись
     start_of_records = datetime.datetime(first_rec.year, first_rec.month, 1)  #определяем начало месяца первой записи
@@ -858,10 +860,10 @@ def timeline_view(request, set_date=''):
             rec_list.append(rec_month)
             rec_month = []
             current_month = current_date.month
-
     paginator = Paginator(rec_list, 1)
-    current_page = request.GET.get('page', 1)
-    if not current_page:
+    current_page = request.GET.get('page', 0)
+    # print(current_page)
+    if current_page == 0:
         for page in paginator:
             first_day_on_page = page.object_list[0][0][0]
             if (first_day_on_page.year == set_date.year) and (first_day_on_page.month == set_date.month):

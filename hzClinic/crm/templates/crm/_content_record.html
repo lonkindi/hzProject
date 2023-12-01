@@ -3,7 +3,7 @@
     <!-- Page Header-->
     <header class="page-header">
         <div class="container-fluid">
-            <h2 class="no-margin-bottom">_hz_ Dashboard</h2>
+            <h2 class="no-margin-bottom">Панель управления клиникой</h2>
         </div>
     </header>
     <ul class="breadcrumb">
@@ -38,7 +38,7 @@
                                 Внимательно проверьте данные перед записью кандидата!
                             </div>
                             <p></p>
-                            <form id="CandidateForm" method="post">
+                            <form id="CandidateForm" method="post" >
                                 {%csrf_token%}
                                 {{form.as_p}}
                                 <p></p>

@@ -49,7 +49,7 @@
                             {{b_rec.0.0.0|date:"Y" }} г. </h3>
                     </div>
                     <div class="card-body">
-                        <table class="table table-bordered table-striped table-responsive-md">
+                        <table class="table table-bordered table-striped table-responsive">
                             <thead>
                             <tr>
                                 <th>Дата</th>
@@ -83,7 +83,7 @@
                             </tr>
                             {% else %}
                             <tr>
-                                <td class="table-dark" rowspan="{{item.1.count}}">item.1.count - {{item.1.count}}
+                                <td class="table-dark" rowspan="{{item.1.count}}">
                                     {% if item.0|date:"Y-m-d" >= today|date:"Y-m-d" %}
                                     <a href="../recording/?date={{ item.0|date:"Y-m-d"}}" class="text-primary" uk-icon="icon: plus-circle"></a>
                                     <a href="../recording/?date={{ item.0|date:"Y-m-d"}}" class="text-primary">{{ item.0|date:"d.m.Y" }}</a><br>
@@ -97,7 +97,7 @@
 
                                 <td>
                                     {% if item.0|date:"Y-m-d" >= today|date:"Y-m-d" %}
-                                    <a href="../recording/?date={{ item.0|date:"Y-m-d"}}&pk={{candidat.pk}}" class="text-success" uk-icon="icon: pencil"></a>
+                                    <a href="../updrecord/{{candidat.pk}}" class="text-success" uk-icon="icon: pencil"></a>
                                     <a data-toggle="modal" data-target="#delModal{{candidat.pk}}" class="text-danger" uk-icon="icon: trash"></a>
                                     {% endif %}
                                     {{ candidat.Sname }} {{ candidat.Name }} {{ candidat.Mname }}<br>
@@ -136,7 +136,7 @@
                         <button type="button" data-dismiss="modal"
                                 class="btn btn-secondary">Отмена
                         </button>
-                        <a class="btn btn-danger" href="../delrecord/?date={{ item.0|date:"Y-m-d"}}&pk={{candidat.pk}}">Удалить</a>
+                        <a class="btn btn-danger" href="../delrecord/{{candidat.pk}}">Удалить</a>
                     </div>
                 </div>
             </div>

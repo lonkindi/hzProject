@@ -2,7 +2,7 @@ import django.forms.widgets
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.core.exceptions import NON_FIELD_ERRORS
-from django.forms import SelectDateWidget, Textarea, ModelForm, CheckboxSelectMultiple, DateInput, TextInput, Select
+from django.forms import SelectDateWidget, Textarea, ModelForm, CheckboxSelectMultiple, DateInput, TextInput, Select, Textarea
 
 from users.models import CustomUser
 
@@ -84,8 +84,7 @@ class CandidateForm(ModelForm):
             'Name': TextInput(attrs={'placeholder': 'Имя', 'class': 'form-control'}),
             'Mname': TextInput(attrs={'placeholder': 'Отчество', 'class': 'form-control'}),
             'Surgeon': Select(attrs={'placeholder': 'Хирург', 'class': 'form-control'}),
-            'notes': TextInput(attrs={'placeholder': 'Примечания', 'class': 'form-control'}),
-
+            'notes': Textarea(attrs={'placeholder': 'Примечания', 'class': 'form-control'}),
         }
 
 

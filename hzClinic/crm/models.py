@@ -131,7 +131,7 @@ class Candidate(models.Model):
     typeOpers = models.ManyToManyField(TypeOperations, verbose_name='Операции (typeOpers)', related_name='operations')
     Surgeon = models.CharField(verbose_name='Хирург', choices=SurgeonChoices.choices, max_length=15,
                                default='Хотян А.Р.')
-    notes = models.CharField(max_length=255, verbose_name='Примечания (notes)')
+    notes = models.TextField(max_length=255, verbose_name='Примечания (notes)', blank=True)
 
     class Meta:
         verbose_name = 'Кандидат'
