@@ -3,7 +3,7 @@ from django.db import models
 from django.forms import CheckboxSelectMultiple
 
 
-from crm.models import Anket, TypeOperations, hzUserEvents, Candidate
+from crm.models import TypeOperations, hzUserEvents, Candidate, MedCard
 
 
 class TypeOperationsInline(admin.StackedInline):
@@ -11,10 +11,11 @@ class TypeOperationsInline(admin.StackedInline):
     extra = 3
 
 
-@admin.register(Anket)
-class AnketAdmin(admin.ModelAdmin):
-    list_display = ('date_filling', 'external_id', 'state',)
-    list_editable = ('external_id', 'state',)
+@admin.register(MedCard)
+class MedCardAdmin(admin.ModelAdmin):
+    formfield_overrides = {models.ManyToManyField: {'widget': CheckboxSelectMultiple}, }
+    list_display = ('date_filling', 'anket_id', 'state',)
+    list_editable = ('anket_id', 'state',)
 
 
 @admin.register(TypeOperations)

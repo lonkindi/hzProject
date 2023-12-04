@@ -1,6 +1,5 @@
 import datetime
 
-from django.core.validators import RegexValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -60,24 +59,6 @@ class hzUserEvents(models.Model):
         return self.title
 
 
-class Anket(models.Model):
-    """
-    Модель анкеты
-    """
-    external_id = models.PositiveIntegerField(verbose_name='Внешний ИД')
-    state = models.PositiveIntegerField(verbose_name='Статус')
-    content = models.JSONField(verbose_name='Содержимое анкеты')
-    date_filling = models.DateField(verbose_name='Дата заполнения', default=datetime.datetime.today)
-
-    class Meta:
-        verbose_name = 'Анкета'
-        verbose_name_plural = "Анкеты"
-        ordering = ('-external_id',)
-
-    def __str__(self):
-        return str(self.external_id)
-
-
 class TypeOperations(models.Model):
     """
     Модель видов операций
@@ -115,6 +96,74 @@ class TypeOperations(models.Model):
         return str(self.name)
 
 
+class MedCard(models.Model):
+    """
+    Модель Медкарты
+    """
+    PZK_Choices = [(1, 'нормотрофическая'), (2, 'гипертрофическая')]
+    schema_Choices = [(1, 'Голова'), (2, 'Тело')]
+
+    anket_id = models.PositiveIntegerField(verbose_name='ИД анкеты')
+    state = models.PositiveIntegerField(verbose_name='Статус')
+    content = models.JSONField(verbose_name='Содержимое анкеты')
+    date_filling = models.DateField(verbose_name='Дата заполнения', default=datetime.datetime.today)
+    date_oper = models.DateField(verbose_name='Дата операции', default=datetime.datetime.today)
+
+    phone = models.CharField(max_length=16, verbose_name='Номер телефона')
+    FIO = models.CharField(max_length=100, verbose_name='Ф.И.О.')
+    s_name = models.CharField(max_length=25, verbose_name='Фамилия')
+    name = models.CharField(max_length=25, verbose_name='Имя')
+    m_name = models.CharField(max_length=25, verbose_name='Отчество', blank=True)
+    DateOfB = models.DateField(verbose_name='Дата рождения')
+    AddressRow = models.CharField(max_length=255, verbose_name='Адрес места жительства из анкеты')
+    Address = models.CharField(max_length=255, verbose_name='Адрес обработанный (будет использован в документах)')
+    veSub = models.CharField(max_length=100, verbose_name='Субъект (Республика/Край/Область)')
+    veRn = models.CharField(max_length=100, verbose_name='Район субъекта')
+    veGor = models.CharField(max_length=100, verbose_name='Город')
+    veNP = models.CharField(max_length=100, verbose_name='Населённый пункт')
+    veUl = models.CharField(max_length=100, verbose_name='Улица (без ул.)')
+    veDom = models.CharField(max_length=100, verbose_name='Номер дома')
+    veStr = models.CharField(max_length=100, verbose_name='Строение/Корпус/Владение и т.д.')
+    veKv = models.CharField(max_length=100, verbose_name='Квартира')
+    PerZ = models.CharField(max_length=100, verbose_name='Перенесённые и хронические заболевания?')
+    PerO = models.CharField(max_length=100, verbose_name='Перенесённые пластические операции')
+    PerT = models.CharField(max_length=100, verbose_name='Перенесённые травмы')
+    PerG = models.CharField(max_length=100, verbose_name='Перенесённые гемотрансфузии')
+    Allerg = models.CharField(max_length=100, verbose_name='Аллергии')
+    VICH = models.CharField(max_length=100, verbose_name='ВИЧ')
+    Gepatit = models.CharField(max_length=100, verbose_name='Гепатит')
+    Tub = models.CharField(max_length=100, verbose_name='Туберкулёз')
+    Diabet = models.CharField(max_length=100, verbose_name='Диабет')
+    Vener = models.CharField(max_length=100, verbose_name='Венерические заболевания')
+    Alk = models.CharField(max_length=100, verbose_name='Отношение к алкоголю')
+    Kur = models.CharField(max_length=100, verbose_name='Отношение к курению')
+    Nark = models.CharField(max_length=100, verbose_name='Отношение к наркотикам')
+    MedPrep = models.CharField(max_length=100, verbose_name='Лекарственные препараты на постоянной основе')
+    MedIzd = models.CharField(max_length=100, verbose_name='Медицинские изделия')
+    Gender = models.CharField(max_length=100, verbose_name='Пол')
+    oGender = models.CharField(max_length=100, verbose_name='Дополнительная информация для осмотра, в зависимости от пола')
+    Rost = models.CharField(max_length=100, verbose_name='Рост, см')
+    Massa = models.CharField(max_length=100, verbose_name='Вес, кг')
+    GK = models.CharField(max_length=100, verbose_name='Группа крови (O(I), A(II), B(III), AB(IV))')
+    RH = models.CharField(max_length=100, verbose_name='Резус-фактор (+, -)')
+    KELL = models.CharField(max_length=100, verbose_name='Келл-фактор (отрицательный, положительный)')
+    typeOpers = models.ManyToManyField(TypeOperations, verbose_name='Операции (typeOpers)',
+                                       related_name='medcard_operations')
+    PZK = models.CharField(max_length=100, choices=PZK_Choices, default=1, verbose_name='Состояние ПЖК')
+    anest = models.CharField(max_length=100, verbose_name='Анестезия')
+    schema = models.CharField(max_length=100, choices=schema_Choices, verbose_name='Схема к протоколу')
+
+    class Meta:
+        verbose_name = 'Медкарта'
+        verbose_name_plural = "Медкарты"
+        ordering = ('-date_oper',)
+
+    def __str__(self):
+        return str(self.anket_id)
+
+
+
+
 class Candidate(models.Model):
     """
     Модель кандидата на операцию
@@ -128,7 +177,8 @@ class Candidate(models.Model):
     Sname = models.CharField(max_length=25, verbose_name='Фамилия (Sname)')
     Name = models.CharField(max_length=25, verbose_name='Имя (Name)')
     Mname = models.CharField(max_length=25, verbose_name='Отчество (Mname)', blank=True)
-    typeOpers = models.ManyToManyField(TypeOperations, verbose_name='Операции (typeOpers)', related_name='operations')
+    typeOpers = models.ManyToManyField(TypeOperations, verbose_name='Операции (typeOpers)',
+                                       related_name='candidate_operations')
     Surgeon = models.CharField(verbose_name='Хирург', choices=SurgeonChoices.choices, max_length=15,
                                default='Хотян А.Р.')
     notes = models.TextField(max_length=255, verbose_name='Примечания (notes)', blank=True)

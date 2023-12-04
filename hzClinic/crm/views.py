@@ -11,8 +11,8 @@ from django.core.paginator import Paginator
 from docxtpl import DocxTemplate
 
 from transliterate import translit
-from crm.forms import LoginForm, QuestForm, CandidateForm, UploadForm
-from crm.models import hzUserInfo, Anket, TypeOperations, Candidate
+from crm.forms import LoginForm, QuestForm, CandidateForm, UploadForm, MedCardForm
+from crm.models import hzUserInfo, TypeOperations, Candidate, MedCard
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, reverse, get_object_or_404
@@ -766,6 +766,30 @@ def quest_view(request, ext_id):
                }
     template_name = 'crm/_quest.html'
     return render(request, template_name=template_name, context=context)
+
+
+def medcard_view(request):
+    if not request.user.is_authenticated:
+        return redirect(reverse(login_view))
+    hzuser = request.user
+    hzuser_info = hzUserInfo.objects.filter(hz_user=hzuser)
+    template_name = 'crm/_record.html'
+    # current_candidate = Candidate.objects.get(pk=1)
+    form = MedCardForm()
+    print('form =', form)
+    # if request.method == 'POST':
+    #     # form = CandidateForm(request.POST, instance=current_candidate)
+    #     if form.is_valid():
+    #         new_date = form.cleaned_data['date_oper']
+    #         form.save()
+    #         return redirect(reverse(timeline_view, args=(new_date,)))
+    context = {'form': form,
+               'title': 'Медицинская карта',
+               'user': hzuser,
+               'user_info': hzuser_info[0],
+               # 'current_candidate': current_candidate,
+               }
+    return render(request, template_name, context)
 
 
 def recording_view(request, date=''):

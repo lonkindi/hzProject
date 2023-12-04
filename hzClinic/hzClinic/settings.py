@@ -44,12 +44,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'crm',
     'hzapi',
-    'django_tables2',
-    'htmx',
-    'django_htmx',
-    'crispy_forms',
-    'crispy_bootstrap4',
-
 ]
 
 MIDDLEWARE = [
@@ -60,7 +54,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django_htmx.middleware.HtmxMiddleware',
 ]
 
 ROOT_URLCONF = 'hzClinic.urls'

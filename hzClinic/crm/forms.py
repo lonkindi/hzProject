@@ -6,7 +6,7 @@ from django.forms import SelectDateWidget, Textarea, ModelForm, CheckboxSelectMu
 
 from users.models import CustomUser
 
-from crm.models import hzUserInfo, Candidate
+from crm.models import hzUserInfo, Candidate, MedCard
 
 
 class LoginForm(forms.Form):
@@ -86,6 +86,12 @@ class CandidateForm(ModelForm):
             'Surgeon': Select(attrs={'placeholder': 'Хирург', 'class': 'form-control'}),
             'notes': Textarea(attrs={'placeholder': 'Примечания', 'class': 'form-control'}),
         }
+
+
+class MedCardForm(forms.ModelForm):
+    class Meta:
+        model = MedCard
+        fields = "__all__"
 
 
 class UploadForm(forms.Form):
