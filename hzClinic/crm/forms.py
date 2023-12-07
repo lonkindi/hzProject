@@ -2,7 +2,7 @@ import django.forms.widgets
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.core.exceptions import NON_FIELD_ERRORS
-from django.forms import SelectDateWidget, Textarea, ModelForm, CheckboxSelectMultiple, DateInput, TextInput, Select, Textarea
+from django.forms import NumberInput, HiddenInput, ModelForm, CheckboxSelectMultiple, DateInput, TextInput, Select, Textarea
 
 from users.models import CustomUser
 
@@ -15,6 +15,7 @@ class LoginForm(forms.Form):
 
     user_login.widget.attrs.update({'class': 'input-material', 'placeholder': 'введите логин (79998887755)'})
     user_password.widget.attrs.update({'class': 'input-material', 'placeholder': 'введите пароль'})
+
 
 class QuestForm(forms.Form):
     phone = forms.CharField(max_length=16, label='Номер телефона')
@@ -63,6 +64,7 @@ class QuestForm(forms.Form):
 
 class CandidateForm(ModelForm):
     error_css_class = 'has-danger'
+
     # required_css_class = 'has-warning'
 
     class Meta:
@@ -88,10 +90,58 @@ class CandidateForm(ModelForm):
         }
 
 
-class MedCardForm(forms.ModelForm):
+class MedCardForm(ModelForm):
     class Meta:
         model = MedCard
         fields = "__all__"
+        widgets = {
+            'anket_id': TextInput(attrs={'class': 'form-control', 'disabled': ''}),
+            'date_filling': TextInput(attrs={'type': 'date', 'class': 'form-control', 'disabled': ''}),
+            'date_oper': TextInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'phone': TextInput(attrs={'placeholder': 'формат ввода 79998887766', 'class': 'form-control', 'disabled': ''}),
+            's_name': TextInput(attrs={'placeholder': 'Фамилия', 'class': 'form-control'}),
+            'name': TextInput(attrs={'placeholder': 'Имя', 'class': 'form-control'}),
+            'm_name': TextInput(attrs={'placeholder': 'Отчество', 'class': 'form-control'}),
+            'DateOfB': TextInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'AddressRow': TextInput(attrs={'class': 'form-control', 'disabled': ''}),
+            'Address': TextInput(attrs={'class': 'form-control'}),
+            'veSub': TextInput(attrs={'class': 'form-control'}),
+            'veRn': TextInput(attrs={'class': 'form-control'}),
+            'veGor': TextInput(attrs={'class': 'form-control'}),
+            'veNP': TextInput(attrs={'class': 'form-control'}),
+            'veUl': TextInput(attrs={'class': 'form-control'}),
+            'veDom': TextInput(attrs={'class': 'form-control'}),
+            'veStr': TextInput(attrs={'class': 'form-control'}),
+            'veKv': TextInput(attrs={'class': 'form-control'}),
+            'PerZ': TextInput(attrs={'class': 'form-control'}),
+            'PerO': TextInput(attrs={'class': 'form-control'}),
+            'PerT': TextInput(attrs={'class': 'form-control'}),
+            'PerG': TextInput(attrs={'class': 'form-control'}),
+            'Allerg': TextInput(attrs={'class': 'form-control'}),
+            'VICH': TextInput(attrs={'class': 'form-control'}),
+            'Gepatit': TextInput(attrs={'class': 'form-control'}),
+            'Tub': TextInput(attrs={'class': 'form-control'}),
+            'Diabet': TextInput(attrs={'class': 'form-control'}),
+            'Vener': TextInput(attrs={'class': 'form-control'}),
+            'Alk': TextInput(attrs={'class': 'form-control'}),
+            'Kur': TextInput(attrs={'class': 'form-control'}),
+            'Nark': TextInput(attrs={'class': 'form-control'}),
+            'MedPrep': TextInput(attrs={'class': 'form-control'}),
+            'MedIzd': TextInput(attrs={'class': 'form-control'}),
+            'Gender': TextInput(attrs={'class': 'form-control'}),
+            'oGender': TextInput(attrs={'class': 'form-control'}),
+            'Rost': NumberInput(attrs={'class': 'form-control'}),
+            'Massa': NumberInput(attrs={'class': 'form-control'}),
+            'GK': Select(attrs={'class': 'form-control'}),
+            'RH': Select(attrs={'class': 'form-control'}),
+            'KELL': Select(attrs={'class': 'form-control'}),
+            'typeOpers': CheckboxSelectMultiple(attrs={'class': 'form-control-label'}),
+            'PZK': Select(attrs={'class': 'form-control'}),
+            'anest': Select(attrs={'class': 'form-control'}),
+            'schema': Select(attrs={'class': 'form-control'}),
+        }
+        labels = {'PZK': 'Состояние подкожно-жировой клетчатки', 'date_oper': 'Дата операции (обязательное*)',
+                  }
 
 
 class UploadForm(forms.Form):

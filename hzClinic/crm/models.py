@@ -100,17 +100,19 @@ class MedCard(models.Model):
     """
     Модель Медкарты
     """
-    PZK_Choices = [(1, 'нормотрофическая'), (2, 'гипертрофическая')]
-    schema_Choices = [(1, 'Голова'), (2, 'Тело')]
+    PZK_Choices = ((1, 'нормотрофическая'), (2, 'гипертрофическая'))
+    schema_Choices = ((1, 'голова'), (2, 'тело'), (3, 'голова + тело'))
+    anest_Choices = ((1, 'общая ингаляционная анестезия'), (2, 'общая ингаляционная анестезия + ИВЛ'),
+                     (3, 'местная анестезия'), (4, 'местная анестезия + мониторинг'))
+    gk_Choices = (('О(I)', 'О(I)'), ('A(II)', 'A(II)'), ('B(III)', 'B(III)'), ('AB(IV)', 'AB(IV)'))
+    rh_Choices = (('+', '+'), ('-', '-'))
+    kell_Choices = (('отрицательный', 'отрицательный'), ('положительный', 'положительный'))
 
-    anket_id = models.PositiveIntegerField(verbose_name='ИД анкеты')
-    state = models.PositiveIntegerField(verbose_name='Статус')
-    content = models.JSONField(verbose_name='Содержимое анкеты')
+    anket_id = models.PositiveIntegerField(verbose_name='№ анкеты')
     date_filling = models.DateField(verbose_name='Дата заполнения', default=datetime.datetime.today)
     date_oper = models.DateField(verbose_name='Дата операции', default=datetime.datetime.today)
 
     phone = models.CharField(max_length=16, verbose_name='Номер телефона')
-    FIO = models.CharField(max_length=100, verbose_name='Ф.И.О.')
     s_name = models.CharField(max_length=25, verbose_name='Фамилия')
     name = models.CharField(max_length=25, verbose_name='Имя')
     m_name = models.CharField(max_length=25, verbose_name='Отчество', blank=True)
@@ -144,13 +146,14 @@ class MedCard(models.Model):
     oGender = models.CharField(max_length=100, verbose_name='Дополнительная информация для осмотра, в зависимости от пола')
     Rost = models.CharField(max_length=100, verbose_name='Рост, см')
     Massa = models.CharField(max_length=100, verbose_name='Вес, кг')
-    GK = models.CharField(max_length=100, verbose_name='Группа крови (O(I), A(II), B(III), AB(IV))')
-    RH = models.CharField(max_length=100, verbose_name='Резус-фактор (+, -)')
-    KELL = models.CharField(max_length=100, verbose_name='Келл-фактор (отрицательный, положительный)')
+    GK = models.CharField(max_length=100, choices=gk_Choices, verbose_name='Группа крови (O(I), A(II), B(III), AB(IV))')
+    RH = models.CharField(max_length=100, choices=rh_Choices, verbose_name='Резус-фактор (+, -)')
+    KELL = models.CharField(max_length=100, choices=kell_Choices, default=1,
+                            verbose_name='Келл-фактор (отрицательный, положительный)')
     typeOpers = models.ManyToManyField(TypeOperations, verbose_name='Операции (typeOpers)',
                                        related_name='medcard_operations')
-    PZK = models.CharField(max_length=100, choices=PZK_Choices, default=1, verbose_name='Состояние ПЖК')
-    anest = models.CharField(max_length=100, verbose_name='Анестезия')
+    PZK = models.CharField(max_length=100, choices=PZK_Choices, verbose_name='Состояние ПЖК')
+    anest = models.CharField(max_length=100, choices=anest_Choices, verbose_name='Анестезия')
     schema = models.CharField(max_length=100, choices=schema_Choices, verbose_name='Схема к протоколу')
 
     class Meta:
