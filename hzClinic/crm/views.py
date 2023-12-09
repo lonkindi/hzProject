@@ -107,7 +107,7 @@ def analyzes_view(request):
         next_page = next_page()
     else:
         next_page = paginator.num_pages
-    context = {'title': 'Главная страница',
+    context = {'title': 'Результаты анализов',
                'user': hzuser,
                'user_info': hzuser_info[0],
                'type_lbl': type_lbl,
