@@ -1,41 +1,74 @@
 {% load static %}
 <!-- Bootstrap CSS-->
-    <link rel="stylesheet" href={% static "crm/css/bootstrap.min.css" %}>
-    <link rel="stylesheet" href={% static "crm/css/font-awesome.min.css" %}>
-                    <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-header d-flex align-items-center">
-                                <h4>Расписание операций с {{ start_date|date:"d.m.Y" }} г. по {{ end_date|date:"d.m.Y" }} г.</h4>
-                            </div>
-                                <div class="card-body">
-                                <table class="table table-striped table-sm table-responsive">
-                                    <thead>
-                                    <tr>
-                                        <th>Дата операции</th>
-                                        <th>Ф.И.О. пациента</th>
-                                        <th>Запланированные операции</th>
-                                        <th>Оперирующий хирург</th>
-                                        <th>Примечания</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for candidat in data %}
-                                    <tr>
-                                        <td>{{ candidat.date_oper|date:"d.m.Y" }}<br>{{ candidat.date_oper|date:"l" }}</td>
-                                        <td>{{ candidat.Sname }} {{ candidat.Name }} {{ candidat.Mname }}<br>{{ candidat.phoneNumber }}</td>
-                                        <td>
-                                            <ul class="p-3">
-                                                {% for oper in candidat.typeOpers.all %}
-                                                <li>{{ oper }}</li>
-                                                {% endfor %}
-                                            </ul>
-                                        </td>
-                                        <td>{{ candidat.Surgeon }}</td>
-                                        <td>{{ candidat.notes|linebreaks }}</td>
-                                    </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                                </div>
-                            </div>
-                        </div>
+<link rel="stylesheet" href={% static "crm/css/bootstrap.min.css" %}>
+<link rel="stylesheet" href={% static "crm/css/font-awesome.min.css" %}>
+<link rel="stylesheet" href={% static "crm/css/uikit.min.css" %}>
+<link rel="stylesheet" href={% static "crm/fonts/Raleway.ttf" %}>
+<script src={% static "crm/js/uikit.min.js" %}></script>
+<script src={% static "crm/js/uikit-icons.min.js" %}></script>
+<style>
+    .body {
+    font-family: 'Raleway';
+    }
+    .link-text {
+  display: none;
+}
+</style>
+<script type="text/javascript">
+    function Copy(containerid) {
+          let textarea = document.createElement('textarea');
+          textarea.id = 'temp';
+          textarea.style.height = 0;
+          document.body.appendChild(textarea);
+          textarea.value = document.getElementById(containerid).innerText;
+          let selector = document.querySelector('#temp');
+          selector.select();
+          document.execCommand('copy');
+          document.body.removeChild(textarea);
+    }
+</script>
+
+<div class="col-lg-12">
+    <div class="card">
+        <div class="card-header d-flex align-items-center">
+            Расписание операций с {{ start_date|date:"d.m.Y" }} г. по {{ end_date|date:"d.m.Y" }} г.
+        </div>
+        <div class="card-header d-flex align-items-center">
+            <a href="{{ public_link }}">ссылка для просмотра расписания</a>
+            <a href="#" onclick="Copy('toCopy')" title="Копировать" class="text-primary" uk-icon="icon: copy"></a>
+            <p id="toCopy" class="link-text">https://hzcrm.hotyanznaet.ru/export_tl/{{ public_link }}</p>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped table-sm table-responsive">
+                <thead>
+                <tr>
+                    <th>№ п.п.</th>
+                    <th>Дата операции</th>
+                    <th>Ф.И.О. пациента</th>
+                    <th>Запланированные операции</th>
+                    <th>Оперирующий хирург</th>
+                    <th>Примечания</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for candidat in data %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ candidat.date_oper|date:"d.m.Y" }}<br>{{ candidat.date_oper|date:"l" }}</td>
+                    <td>{{ candidat.Sname }} {{ candidat.Name }} {{ candidat.Mname }}<br>{{ candidat.phoneNumber }}</td>
+                    <td>
+                        <ul class="p-3">
+                            {% for oper in candidat.typeOpers.all %}
+                            <li>{{ oper }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td>{{ candidat.Surgeon }}</td>
+                    <td>{{ candidat.notes|linebreaks }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

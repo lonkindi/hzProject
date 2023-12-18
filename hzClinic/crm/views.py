@@ -1,19 +1,12 @@
 import ast
 import datetime
 import os
-import random
 import re
 import csv
-from io import BytesIO
 
-from dadata import Dadata
-
-import requests
+from django.http import HttpResponseNotFound
 from django.core.paginator import Paginator
-from django.template.loader import render_to_string, get_template
-from docxtpl import DocxTemplate
 
-from transliterate import translit
 from crm.forms import LoginForm, QuestForm, CandidateForm, UploadForm, MedCardForm
 from crm.models import hzUserInfo, TypeOperations, Candidate, MedCard
 from django.contrib.auth import authenticate, login, logout
@@ -22,7 +15,6 @@ from django.shortcuts import render, redirect, reverse, get_object_or_404
 from crm import YaD, MyAPI, functions
 
 from hzClinic import settings, settings_local
-
 
 
 def page_not_found_view(request, exception):
@@ -612,20 +604,39 @@ def timeline_view(request, set_date=''):
     return render(request, template_name=template_name, context=context)
 
 
-def export_tl_view(request):
-    if not request.user.is_authenticated:
-        return redirect(reverse(login_view))
+def export_tl_view(request, encrypt_dates=None):
+    s_date = ''
+    e_date = ''
+    public_link = ''
+    template = 'crm/_content_export_tl.html'
+    # if not request.user.is_authenticated:
+    #     return redirect(reverse(login_view))
     if request.method == 'POST':
-        start_date = datetime.datetime.strptime(request.POST['start_date'], "%Y-%m-%d").date()
-        end_date = datetime.datetime.strptime(request.POST['end_date'], "%Y-%m-%d").date()
-        data = Candidate.objects.filter(date_oper__gte=start_date) & Candidate.objects.filter(date_oper__lte=end_date)
-        context = {
-            'start_date': start_date,
-            'end_date': end_date,
-            'data': data,
-        }
-        template = 'crm/_content_export_tl.html'
-        return render(request, template, context)
+        str_s_date = request.POST['start_date']
+        str_e_date = request.POST['end_date']
+        s_date = datetime.datetime.strptime(str_s_date, "%Y-%m-%d").date()
+        e_date = datetime.datetime.strptime(str_e_date, "%Y-%m-%d").date()
+        str_date = f'{str_s_date}/{str_e_date}'
+        public_link = f'{functions.encrypt(str_date)}'
+    else:
+        if encrypt_dates:
+            str_dates = functions.decrypt(encrypt_dates)
+            # if not str_dates:
+            #     return HttpResponseNotFound('<h1>Страница не найдена</h1>')
+            try:
+                s_date = datetime.datetime.strptime(str_dates[:10], "%Y-%m-%d").date()
+                e_date = datetime.datetime.strptime(str_dates[11:], "%Y-%m-%d").date()
+                public_link = f'{encrypt_dates}'
+            except Exception as e:
+                return HttpResponseNotFound(f'<h1>Страница не найдена</h1>')
+    data = Candidate.objects.filter(date_oper__gte=s_date) & Candidate.objects.filter(date_oper__lte=e_date)
+    context = {
+        'start_date': s_date,
+        'end_date': e_date,
+        'data': data,
+        'public_link': public_link,
+    }
+    return render(request, template, context)
 
 
 def loadrec_view(request):
