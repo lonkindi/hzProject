@@ -95,15 +95,16 @@ class MedCardForm(ModelForm):
         model = MedCard
         fields = "__all__"
         widgets = {
-            'anket_id': TextInput(attrs={'class': 'form-control', 'disabled': ''}),
-            'date_filling': TextInput(attrs={'type': 'date', 'class': 'form-control', 'disabled': ''}),
+            'anket_id': TextInput(attrs={'class': 'form-control', 'readonly': ''}),
+            'phone': TextInput(
+                attrs={'placeholder': 'формат ввода 79998887766', 'class': 'form-control', 'readonly': ''}),
+            'date_filling': TextInput(attrs={'type': 'date', 'class': 'form-control', 'readonly': ''}),
             'date_oper': TextInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'phone': TextInput(attrs={'placeholder': 'формат ввода 79998887766', 'class': 'form-control', 'disabled': ''}),
             's_name': TextInput(attrs={'placeholder': 'Фамилия', 'class': 'form-control'}),
             'name': TextInput(attrs={'placeholder': 'Имя', 'class': 'form-control'}),
             'm_name': TextInput(attrs={'placeholder': 'Отчество', 'class': 'form-control'}),
             'DateOfB': TextInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'AddressRow': TextInput(attrs={'class': 'form-control', 'disabled': ''}),
+            'AddressRow': TextInput(attrs={'class': 'form-control', 'readonly': ''}),
             'Address': TextInput(attrs={'class': 'form-control'}),
             'veSub': TextInput(attrs={'class': 'form-control'}),
             'veRn': TextInput(attrs={'class': 'form-control'}),

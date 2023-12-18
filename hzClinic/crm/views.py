@@ -4,10 +4,13 @@ import os
 import random
 import re
 import csv
+from io import BytesIO
+
 from dadata import Dadata
 
 import requests
 from django.core.paginator import Paginator
+from django.template.loader import render_to_string, get_template
 from docxtpl import DocxTemplate
 
 from transliterate import translit
@@ -19,6 +22,7 @@ from django.shortcuts import render, redirect, reverse, get_object_or_404
 from crm import YaD, MyAPI, functions
 
 from hzClinic import settings, settings_local
+
 
 
 def page_not_found_view(request, exception):
@@ -252,7 +256,12 @@ def quest_view(request, ext_id):
     if not request.user.is_authenticated:
         return redirect(reverse(login_view))
     if request.method == 'POST':
-        functions.do_docs(request.POST)
+        form = MedCardForm(request.POST)
+        if form.is_valid():
+            form.save()
+        else:
+            pass
+            # functions.do_docs(request.POST)
         return redirect(reverse('quests', args=[0]))
     else:
         anket = MyAPI.get_anket_myapi(ext_id) # list
@@ -301,6 +310,7 @@ def quest_view(request, ext_id):
             Address = veSub = veRn = veGor = veNP = veUl = veDom = veStr = veKv = 'не удалось определить'
 
         res_date = datetime.datetime.strptime(anket_dict['Дата рождения'], "%Y-%m-%d").date()
+        fill_date = datetime.datetime.strptime(date_filling, "%Y-%m-%d").date()
         PerZ = 'ОРВИ'
         PerZQ = anket_dict.get('Перенесённые и хронические заболевания?', 'Нет')
         if PerZQ != 'Нет':
@@ -380,7 +390,7 @@ def quest_view(request, ext_id):
 
         initial = {'anket_id': anket_id,
                    'content': content,
-                   'date_filling': date_filling,
+                   'date_filling': fill_date,
                    's_name': f,
                    'name': i,
                    'm_name': o,
@@ -434,7 +444,7 @@ def quest_view(request, ext_id):
                'user': hzuser,
                'user_info': hzuser_info[0],
                'today': today,
-               'date_filling':date_filling,
+               'date_filling': fill_date,
                'oper_types': oper_types,
                'form': form,
                'ext_id': ext_id,
@@ -600,6 +610,22 @@ def timeline_view(request, set_date=''):
                'next_page_url': f'{reverse("timeline")}?page={next_page}',
                }
     return render(request, template_name=template_name, context=context)
+
+
+def export_tl_view(request):
+    if not request.user.is_authenticated:
+        return redirect(reverse(login_view))
+    if request.method == 'POST':
+        start_date = datetime.datetime.strptime(request.POST['start_date'], "%Y-%m-%d").date()
+        end_date = datetime.datetime.strptime(request.POST['end_date'], "%Y-%m-%d").date()
+        data = Candidate.objects.filter(date_oper__gte=start_date) & Candidate.objects.filter(date_oper__lte=end_date)
+        context = {
+            'start_date': start_date,
+            'end_date': end_date,
+            'data': data,
+        }
+        template = 'crm/_content_export_tl.html'
+        return render(request, template, context)
 
 
 def loadrec_view(request):

@@ -1,13 +1,19 @@
 import os
 import datetime
+from io import BytesIO
+
 import requests
 import random
 import re
 
+from django.contrib.staticfiles import finders
+from django.http import HttpResponse
+from django.template.loader import get_template
 from transliterate import translit
 from docxtpl import DocxTemplate
 
 from crm.models import TypeOperations
+
 from hzClinic import settings, settings_local
 
 
@@ -48,6 +54,7 @@ def fill_tmpl(oper_list, context_dict):
     #     YaD.upload_file(upload_file, f'MedicalCase/{doc_folder}/{file}')
 
     return doc_folder
+
 
 def send_telegram(text: str):
     token = settings_local.botTOKEN
@@ -339,3 +346,35 @@ def do_docs(query_dict):
     fill_tmpl(selected_operations, docs_context)
     # print(f'selected_operations = {selected_operations}, docs_context = {docs_context}')
     # send_telegram('Hello BOT!')
+
+
+def link_callback(uri, rel):
+    """
+    Convert HTML URIs to absolute system paths so xhtml2pdf can access those
+    resources
+    """
+    result = finders.find(uri)
+    if result:
+        if not isinstance(result, (list, tuple)):
+            result = [result]
+        result = list(os.path.realpath(path) for path in result)
+        path = result[0]
+    else:
+        sUrl = settings.STATIC_URL  # Typically /static/
+        sRoot = settings.STATIC_ROOT  # Typically /home/userX/project_static/
+        mUrl = settings.MEDIA_URL  # Typically /media/
+        mRoot = settings.MEDIA_ROOT  # Typically /home/userX/project_static/media/
+
+        if uri.startswith(mUrl):
+            path = os.path.join(mRoot, uri.replace(mUrl, ""))
+        elif uri.startswith(sUrl):
+            path = os.path.join(sRoot, uri.replace(sUrl, ""))
+        else:
+            return uri
+
+    # make sure that file exists
+    if not os.path.isfile(path):
+        raise RuntimeError(
+            'media URI must start with %s or %s' % (sUrl, mUrl)
+        )
+    return path

@@ -100,19 +100,21 @@ class MedCard(models.Model):
     """
     Модель Медкарты
     """
-    PZK_Choices = ((1, 'нормотрофическая'), (2, 'гипертрофическая'))
-    schema_Choices = ((1, 'голова'), (2, 'тело'), (3, 'голова + тело'))
-    anest_Choices = ((1, 'общая ингаляционная анестезия'), (2, 'общая ингаляционная анестезия + ИВЛ'),
-                     (3, 'местная анестезия'), (4, 'местная анестезия + мониторинг'))
+    PZK_Choices = (('нормотрофическая', 'нормотрофическая'), ('гипертрофическая', 'гипертрофическая'))
+    schema_Choices = (('голова', 'голова'), ('тело', 'тело'), ('голова + тело', 'голова + тело'))
+    anest_Choices = (('общая ингаляционная анестезия', 'общая ингаляционная анестезия'),
+                     ('общая ингаляционная анестезия + ИВЛ', 'общая ингаляционная анестезия + ИВЛ'),
+                     ('местная анестезия', 'местная анестезия'),
+                     ('местная анестезия + мониторинг', 'местная анестезия + мониторинг'))
     gk_Choices = (('О(I)', 'О(I)'), ('A(II)', 'A(II)'), ('B(III)', 'B(III)'), ('AB(IV)', 'AB(IV)'))
     rh_Choices = (('+', '+'), ('-', '-'))
     kell_Choices = (('отрицательный', 'отрицательный'), ('положительный', 'положительный'))
 
     anket_id = models.PositiveIntegerField(verbose_name='№ анкеты')
+    phone = models.CharField(max_length=16, verbose_name='Номер телефона')
     date_filling = models.DateField(verbose_name='Дата заполнения', default=datetime.datetime.today)
     date_oper = models.DateField(verbose_name='Дата операции', default=datetime.datetime.today)
 
-    phone = models.CharField(max_length=16, verbose_name='Номер телефона')
     s_name = models.CharField(max_length=25, verbose_name='Фамилия')
     name = models.CharField(max_length=25, verbose_name='Имя')
     m_name = models.CharField(max_length=25, verbose_name='Отчество', blank=True)

@@ -36,6 +36,7 @@ urlpatterns = [
     path('quest/<int:ext_id>', views.quest_view, name='quest'),
     path('analyzes/', views.analyzes_view, name='analyzes'),
     path('medcard/', views.medcard_view, name='medcard'),
+    path('export_tl/', views.export_tl_view, name='export_tl'),
     path('loadrec/', views.loadrec_view, name='loadrec'),
 
 ]
