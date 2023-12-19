@@ -19,63 +19,32 @@
         <div class="container-fluid">
             <div class="row">
                 <!-- Candidate Form-->
-                <div class="col-lg-12">
+                <div class="col-lg-12 mb-2">
                     <div class="card">
-                        <div class="card-close">
-                            <div class="dropdown">
-                                <button type="button" id="closeCard" data-toggle="dropdown" aria-haspopup="true"
-                                        aria-expanded="false" class="dropdown-toggle"><i class="fa fa-ellipsis-v"></i>
-                                </button>
-                                <div aria-labelledby="closeCard" class="dropdown-menu has-shadow"><a href="#"
-                                                                                                     class="dropdown-item remove">
-                                    <i class="fa fa-times"></i>Close</a><a href="#" class="dropdown-item edit"> <i
-                                        class="fa fa-gear"></i>Edit</a></div>
-                            </div>
-                        </div>
                         <div class="card-header d-flex align-items-center">
-                            <h3 class="h4">Выгрузить расписание в PDF</h3>
+                            <h4>Выгрузить расписание за период</h4>
                         </div>
                         <div class="card-body">
-                            <form id="RecordForm" action="/export_tl/" method="post" class="form-inline">
+                            <form id="ExportForm" action="/export_tl/" method="post" class="form-inline">
                                 {%csrf_token%}
                                 <div class="form-group mb-2">
                                     <label for="start_date" class="col-sm-2 col-form-label">Начало периода</label>
-                                    <div class="col-sm-10">
+                                    <div class="col-sm-8">
                                         <input id="start_date" name="start_date" type="date" class="form-control"
                                                value="{{ today }}">
                                     </div>
                                 </div>
                                 <div class="form-group mb-2">
                                     <label for="end_date" class="col-sm-2 col-form-label">Конец периода</label>
-                                    <div class="col-sm-10">
+                                    <div class="col-sm-8">
                                         <input id="end_date" name="end_date" type="date" class="form-control"
                                                value="{{ today }}">
                                     </div>
                                 </div>
-                                {{form}}
+                                <div class="col-sm-4">
                                 <input class="btn btn-primary mb-2" type="submit" value="Экспорт">
+                                </div>
                             </form>
-                             <!-- Paginator Section-->
-    <section class="dashboard-counts no-padding-bottom">
-        <div class="container-fluid">
-            <nav aria-label="Paginator">
-                <ul class="pagination justify-content-center">
-                    <li class="page-item {% if not b_rec.has_previous %} disabled {% endif %}">
-                        <a class="page-link" href="{{ prev_page_url }}">&laquo;</a></li>
-                    {% for e_item in enum_rec %}
-                    <li class="page-item
-                            {% if e_item == current_page %} active {% endif %}
-                            {% if e_item == '…' %} disabled {% endif %}">
-                        <a class="page-link" href="?page={{ e_item }}">{{e_item}}</a>
-                    </li>
-                    {% endfor %}
-                    <li class="page-item {% if not b_rec.has_next %} disabled {% endif %}">
-                        <a class="page-link" href="{{ next_page_url }}">&raquo;</a></li>
-                </ul>
-
-            </nav>
-        </div>
-    </section>
                         </div>
                     </div>
                 </div>
@@ -84,18 +53,40 @@
         </div>
     </section>
 
-    <!-- Forms Section-->
+    <!-- Main Section-->
     <section class="tables">
         <div class="container-fluid">
-            <div class="row">
-            </div>
             <div class="col-lg-15">
-                <div class="card ">
+                <div class="card">
                     <div class="card-header d-flex align-items-center">
-                        <h3 class="h4">Расписание операций на {{ b_rec.0.0.0|date:"F" }}
-                            {{b_rec.0.0.0|date:"Y" }} г. </h3>
+                        <div class="col-sm-8">
+                        <h4>Расписание операций</h4>
+                            {{ b_rec.0.0.0|date:"F" }}
+                            {{b_rec.0.0.0|date:"Y" }} г.
+                        </div>
+
                     </div>
                     <div class="card-body">
+
+                        <!-- Paginator Section-->
+                    <div class="col-sm-12 mb-2">
+                        <nav aria-label="Paginator">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item {% if not b_rec.has_previous %} disabled {% endif %}">
+                                    <a class="page-link" href="{{ prev_page_url }}">&laquo;</a></li>
+                                {% for e_item in enum_rec %}
+                                <li class="page-item
+                                        {% if e_item == current_page %} active {% endif %}
+                                        {% if e_item == '…' %} disabled {% endif %}">
+                                    <a class="page-link" href="?page={{ e_item }}">{{e_item}}</a>
+                                </li>
+                                {% endfor %}
+                                <li class="page-item {% if not b_rec.has_next %} disabled {% endif %}">
+                                    <a class="page-link" href="{{ next_page_url }}">&raquo;</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+
                         <table class="table table-bordered table-striped table-responsive">
                             <thead>
                             <tr>
