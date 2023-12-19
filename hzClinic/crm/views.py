@@ -585,10 +585,6 @@ def timeline_view(request, set_date=''):
         next_page = next_page()
     else:
         next_page = paginator.num_pages
-
-    num_week = 1
-    # table = CandidateTable(Candidate.objects.all())
-
     context = {
                # 'table': table,
                'title': 'Расписание операций',
