@@ -1,5 +1,12 @@
 {% extends "crm/_base.html" %}
 {% load static %}
+{% block LocalStyle %}
+<style>
+    ul {
+     list-style-type: none; /* Убирает буллиты */
+    }
+</style>
+{% endblock %}
 {% block Content %}
-          {% include "crm/_content_quest2.html" %}
+{% include "crm/_content_quest2.html" %}
 {% endblock %}

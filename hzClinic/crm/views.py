@@ -625,7 +625,10 @@ def export_tl_view(request, encrypt_dates=None):
                 public_link = f'{encrypt_dates}'
             except Exception as e:
                 return HttpResponseNotFound(f'<h1>Страница не найдена</h1>')
-    data = Candidate.objects.filter(date_oper__gte=s_date) & Candidate.objects.filter(date_oper__lte=e_date)
+    try:
+        data = Candidate.objects.filter(date_oper__gte=s_date) & Candidate.objects.filter(date_oper__lte=e_date)
+    except Exception as e:
+        return HttpResponseNotFound(f'<h1>Некорректная ссылка</h1>')
     context = {
         'start_date': s_date,
         'end_date': e_date,
