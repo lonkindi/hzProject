@@ -6,6 +6,24 @@ from django.utils.translation import gettext_lazy as _
 from users.models import CustomUser
 
 
+class Doctor(models.Model):
+    position = models.CharField(max_length=30, verbose_name='Должность', blank=True)
+    specialty = models.CharField(max_length=30, verbose_name='Специальность', blank=True)
+    F_name = models.CharField(max_length=30, verbose_name='Фамилия', blank=True)
+    L_name = models.CharField(max_length=30, verbose_name='Имя', blank=True)
+    S_name = models.CharField(max_length=30, verbose_name='Отчество', blank=True)
+    F_name_padezhi = models.TextField(max_length=255, verbose_name='Падежи фамилии', blank=True)
+    L_name_padezhi = models.TextField(max_length=255, verbose_name='Падежи имени', blank=True)
+    S_name_padezhi = models.TextField(max_length=255, verbose_name='Падежи отчества', blank=True)
+
+    class Meta:
+        verbose_name = 'Врач'
+        verbose_name_plural = 'Врачи'
+        # ordering = ('+f_name')
+
+    def __str__(self):
+        return str(self.F_name) + ' ' + str(self.L_name)[:1] + '.' + str(self.S_name)[:1] + '.'
+
 class hzUserInfo(models.Model):
     class UserTypeChoices(models.TextChoices):
         admin = 'admin', _('Администратор'),
@@ -157,6 +175,7 @@ class MedCard(models.Model):
     PZK = models.CharField(max_length=100, choices=PZK_Choices, verbose_name='Состояние ПЖК')
     anest = models.CharField(max_length=100, choices=anest_Choices, verbose_name='Анестезия')
     schema = models.CharField(max_length=100, choices=schema_Choices, verbose_name='Схема к протоколу')
+    surgeon = models.ForeignKey(Doctor, on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = 'Медкарта'
@@ -175,7 +194,7 @@ class Candidate(models.Model):
     """
     class SurgeonChoices(models.TextChoices):
         KhotyanAR = 'Хотян А.Р.', _('Хотян А.Р.'),
-        MamedovGT = 'Мамедов Г.Т.', _('Мамедов Г.Т.')
+        MukhamedovGT = 'Мухамедов Г.Т.', _('Мухамедов Г.Т.')
 
     phoneNumber = models.CharField(max_length=16, unique=False, verbose_name='Номер телефона (phoneNumber)')
     date_oper = models.DateField(verbose_name='Дата операции (date_oper)', default=datetime.date.today)

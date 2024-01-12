@@ -3,7 +3,7 @@ from django.db import models
 from django.forms import CheckboxSelectMultiple
 
 
-from crm.models import TypeOperations, hzUserEvents, Candidate, MedCard
+from crm.models import TypeOperations, hzUserEvents, Candidate, MedCard, Doctor
 
 
 class TypeOperationsInline(admin.StackedInline):
@@ -32,3 +32,10 @@ class CandidateAdmin(admin.ModelAdmin):
     date_hierarchy = 'date_oper'
     list_display = ('date_oper', 'phoneNumber', 'Sname', 'Name', 'Mname')
     list_display_links = ('date_oper', 'phoneNumber', 'Sname', 'Name', 'Mname')
+
+
+@admin.register(Doctor)
+class DoctorAdmin(admin.ModelAdmin):
+    list_display = ('F_name', 'L_name', 'S_name', 'position', 'specialty')
+    list_display_links = ('F_name', 'L_name', 'S_name', 'position', 'specialty',)
+    # list_editable = ('plan_oper', 'opis_oper',)
