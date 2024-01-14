@@ -20,9 +20,9 @@ class MedCardAdmin(admin.ModelAdmin):
 
 @admin.register(TypeOperations)
 class TypeOperationsAdmin(admin.ModelAdmin):
-    list_display = ('code', 'name', 's_name', 'plan_oper', 'opis_oper')
+    list_display = ('code', 'name', 's_name', 'duration')
     list_display_links = ('code', 'name', 's_name',)
-    list_editable = ('plan_oper', 'opis_oper',)
+    list_editable = ('duration',)
 
 
 @admin.register(Candidate)
@@ -30,8 +30,9 @@ class CandidateAdmin(admin.ModelAdmin):
     formfield_overrides = {models.ManyToManyField: {'widget': CheckboxSelectMultiple}, }
     search_fields = ['Sname', 'phoneNumber']
     date_hierarchy = 'date_oper'
-    list_display = ('date_oper', 'phoneNumber', 'Sname', 'Name', 'Mname')
+    list_display = ('date_oper', 'phoneNumber', 'Sname', 'Name', 'Mname', 'Doctor', 'Surgeon')
     list_display_links = ('date_oper', 'phoneNumber', 'Sname', 'Name', 'Mname')
+    list_editable = ('Doctor',)
 
 
 @admin.register(Doctor)

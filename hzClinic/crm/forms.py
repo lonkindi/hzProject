@@ -77,7 +77,7 @@ class CandidateForm(ModelForm):
                   'notes': 'Примечания (необязательное)',
                   }
         model = Candidate
-        fields = ['date_oper', 'phoneNumber', 'Sname', 'Name', 'Mname', 'notes', 'typeOpers', 'Surgeon']
+        fields = ['date_oper', 'phoneNumber', 'Sname', 'Name', 'Mname', 'notes', 'typeOpers', 'Surgeon', 'Doctor']
         widgets = {
             'typeOpers': CheckboxSelectMultiple(attrs={'class': 'form-control-label'}),
             'date_oper': TextInput(attrs={'type': 'date', 'class': 'form-control'}),
@@ -86,6 +86,7 @@ class CandidateForm(ModelForm):
             'Name': TextInput(attrs={'placeholder': 'Имя', 'class': 'form-control'}),
             'Mname': TextInput(attrs={'placeholder': 'Отчество', 'class': 'form-control'}),
             'Surgeon': Select(attrs={'placeholder': 'Хирург', 'class': 'form-control'}),
+            'Doctor': Select(attrs={'placeholder': 'Врач', 'class': 'form-control'}),
             'notes': Textarea(attrs={'placeholder': 'Примечания', 'class': 'form-control'}),
         }
 

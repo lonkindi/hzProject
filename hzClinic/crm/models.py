@@ -101,8 +101,8 @@ class TypeOperations(models.Model):
     primen_lec = models.TextField(max_length=255, null=True, blank=True, verbose_name='Применение лекарств')
     rezult = models.TextField(max_length=255, null=True, blank=True, verbose_name='Результат')
     srok_gosp = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name='Срок госпитализации')
-    # LTR = models.TextField(max_length=2048, null=True, blank=True, verbose_name='Лечебные и трудовые рекомендации ')
-    # duration = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name='Продолжительнсть')
+    LTR = models.TextField(max_length=2048, null=True, blank=True, verbose_name='Лечебные и трудовые рекомендации ')
+    duration = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name='Продолжительнсть')
 
 
     class Meta:
@@ -175,7 +175,7 @@ class MedCard(models.Model):
     PZK = models.CharField(max_length=100, choices=PZK_Choices, verbose_name='Состояние ПЖК')
     anest = models.CharField(max_length=100, choices=anest_Choices, verbose_name='Анестезия')
     schema = models.CharField(max_length=100, choices=schema_Choices, verbose_name='Схема к протоколу')
-    surgeon = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+    surgeon = models.ForeignKey(Doctor, on_delete=models.CASCADE, default=1)
 
     class Meta:
         verbose_name = 'Медкарта'
@@ -205,6 +205,7 @@ class Candidate(models.Model):
                                        related_name='candidate_operations')
     Surgeon = models.CharField(verbose_name='Хирург', choices=SurgeonChoices.choices, max_length=15,
                                default='Хотян А.Р.')
+    Doctor = models.ForeignKey(Doctor, verbose_name='Врач', on_delete=models.CASCADE, blank=True, null=True)
     notes = models.TextField(max_length=255, verbose_name='Примечания (notes)', blank=True)
 
     class Meta:
