@@ -115,6 +115,7 @@ def analyzes_view(request):
                }
     return render(request, template_name=template_name, context=context)
 
+
 def login_view(request):
     if request.user.is_authenticated:
         return redirect(reverse(main_view))
@@ -143,13 +144,6 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect(reverse(login_view))
-    # template_name = 'crm/login.html'
-    # form = LoginForm()
-    # context = {'form': form,
-    #            'title': 'Вы покинули клинику',
-    #            'information': 'Введите логин и пароль чтобы вернуться к работе',
-    #            }
-    # return render(request, template_name, context=context)
 
 
 def quests_view(request, state_id=9):
@@ -166,11 +160,8 @@ def quests_view(request, state_id=9):
         stat_ankets = 'Список оформленных анкет'
     if state_id in (0, 1):
         ankets = MyAPI.get_ankets_myapi(state_id)
-        # ankets = Anket.objects.filter(state=state_id)
     else:
         ankets = MyAPI.get_ankets_myapi(-1)
-        # ankets = Anket.objects.all()
-    # ankets = Anket.objects.filter(state_filter)
     anket_list = list()
     b_ankets = ''
     e_ankets = ''
@@ -210,9 +201,7 @@ def quests_view(request, state_id=9):
         current_page = request.GET.get('page', 1)
         b_ankets = paginator.get_page(current_page)
         e_ankets = paginator.get_elided_page_range(current_page, on_each_side=1, on_ends=1)
-        # print('anket_list = ', anket_list)
-        # print('sorted anket_list = ', sorted(anket_list, key=lambda anket: anket['FIO']))
-        # prev_page, next_page = None, None
+
         if b_ankets.has_previous():
             prev_page = b_ankets.previous_page_number
             prev_page = prev_page()
@@ -223,9 +212,6 @@ def quests_view(request, state_id=9):
             next_page = next_page()
         else:
             next_page = paginator.num_pages
-            # return render(request, template_name='index_bus.html', context={
-
-            # })
 
     else:
         stat_ankets += ' пуст'
@@ -252,8 +238,8 @@ def quest_view(request, ext_id):
         if form.is_valid():
             form.save()
         else:
-            pass
-            # functions.do_docs(request.POST)
+            # pass
+            functions.do_docs(request.POST)
         return redirect(reverse('quests', args=[0]))
     else:
         anket = MyAPI.get_anket_myapi(ext_id) # list
@@ -273,11 +259,13 @@ def quest_view(request, ext_id):
         schema = ''
         typeOpers = ''
         date_oper = ''
+        surgeon = ''
         find_candidate = Candidate.objects.filter(phoneNumber=phone).order_by('date_oper')
         if find_candidate:
             find_candidate = find_candidate[0]
             date_oper = find_candidate.date_oper
             typeOpers = find_candidate.typeOpers.all()
+            surgeon = find_candidate.Doctor
         AddressRow = anket_dict['Адрес места жительства (регистрации)']
         token = settings_local.DaDaAPI
         secret = settings_local.DaDaSecret
@@ -424,10 +412,9 @@ def quest_view(request, ext_id):
                    'anest': anest,
                    'schema': schema,
                    'typeOpers': typeOpers,
+                   'surgeon': surgeon,
                    }
-
-        # form = QuestForm(initial=initial)
-        form = MedCardForm(initial=initial)
+        form = list(MedCardForm(initial=initial))
     oper_types = TypeOperations.objects.all()
     today = datetime.datetime.today().date().strftime("%Y-%m-%d")
     hzuser = request.user

@@ -35,18 +35,37 @@
                     <div class="col-lg-6">
                         <div class="card">
                             <div class="card-body">
-                                <div class="badge-rounded bg-violet" style="text-align: center;">
+                                <div class="badge-rounded bg-red" style="text-align: center;">
                                     Данные отправленные пациентом. Необходима проверка.
                                 </div>
                                 {% csrf_token %}
-                                {{ form.as_p }}
+                                <hr>
+
+                                {% for field in form|slice:':39' %}
+                                <div class="form-group">
+                                    <label class="form-control-label">{{ field.label }}</label>
+                                    {{ field }}
+                                </div>
+                                <hr>
+                                {% endfor %}
+<!--                                {{ form.as_table }}-->
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-6">
                         <div class="card">
                             <div class="card-body">
-                                Правая панель
+                                <div class="badge-rounded bg-violet" style="text-align: center;">
+                                    Данные заполняемые, сотрудником клиники
+                                </div>
+                                <hr>
+                                {% for field in form|slice:"39:" %}
+                                    <div class="form-group">
+                                    <label class="form-control-label">{{ field.label }}</label>
+                                    {{ field }}
+                                </div>
+                                <hr>
+                                {% endfor %}
                             </div>
                         </div>
                     </div>

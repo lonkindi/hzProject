@@ -131,8 +131,6 @@ class MedCard(models.Model):
     anket_id = models.PositiveIntegerField(verbose_name='№ анкеты')
     phone = models.CharField(max_length=16, verbose_name='Номер телефона')
     date_filling = models.DateField(verbose_name='Дата заполнения', default=datetime.datetime.today)
-    date_oper = models.DateField(verbose_name='Дата операции', default=datetime.datetime.today)
-
     s_name = models.CharField(max_length=25, verbose_name='Фамилия')
     name = models.CharField(max_length=25, verbose_name='Имя')
     m_name = models.CharField(max_length=25, verbose_name='Отчество', blank=True)
@@ -170,9 +168,11 @@ class MedCard(models.Model):
     RH = models.CharField(max_length=100, choices=rh_Choices, verbose_name='Резус-фактор (+, -)')
     KELL = models.CharField(max_length=100, choices=kell_Choices, default=1,
                             verbose_name='Келл-фактор (отрицательный, положительный)')
+
+    date_oper = models.DateField(verbose_name='Дата операции', default=datetime.datetime.today)
     typeOpers = models.ManyToManyField(TypeOperations, verbose_name='Операции (typeOpers)',
                                        related_name='medcard_operations')
-    PZK = models.CharField(max_length=100, choices=PZK_Choices, verbose_name='Состояние ПЖК')
+    PZK = models.CharField(max_length=100, choices=PZK_Choices, verbose_name='Состояние ПЖК', default=1)
     anest = models.CharField(max_length=100, choices=anest_Choices, verbose_name='Анестезия')
     schema = models.CharField(max_length=100, choices=schema_Choices, verbose_name='Схема к протоколу')
     surgeon = models.ForeignKey(Doctor, on_delete=models.CASCADE, default=1)
