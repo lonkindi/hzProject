@@ -236,10 +236,11 @@ def quest_view(request, ext_id):
     if request.method == 'POST':
         form = MedCardForm(request.POST)
         if form.is_valid():
-            form.save()
-        else:
-            # pass
+            # form.save()
             functions.do_docs(request.POST)
+        else:
+            pass
+
         return redirect(reverse('quests', args=[0]))
     else:
         anket = MyAPI.get_anket_myapi(ext_id) # list

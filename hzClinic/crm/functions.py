@@ -14,7 +14,7 @@ from django.template.loader import get_template
 from transliterate import translit
 from docxtpl import DocxTemplate
 
-from crm.models import TypeOperations
+from crm.models import TypeOperations, Doctor
 
 from hzClinic import settings, settings_local
 
@@ -37,9 +37,12 @@ def fill_tmpl(oper_list, context_dict):
         target_str = target_path + '/' + 's_' + str(item.code) + '_' + sFIO + '.docx'
         doc.save(target_str)
     items = ['ids', 'fv', 'ln', 'oh', 'pe', 'po', 've', 'otkaz', 'svod', 'memo', 'napr', 'VTEO']
-    if context_dict['scheme1']:
+    if context_dict['schema'] == 'голова':
         items.append('schemeG')
-    if context_dict['scheme2']:
+    elif context_dict['schema'] == 'тело':
+        items.append('schemeT')
+    elif context_dict['schema'] == 'голова + тело':
+        items.append('schemeG')
         items.append('schemeT')
     for item in items:
         doc = DocxTemplate(file_path + item + '.docx')
@@ -97,7 +100,7 @@ def del_duplicates(original_str, spliter=';'):
 def do_docs(query_dict):
     selected_operations = []
     docs_context = dict()
-    oper_date_str = query_dict.get('operation_date', False)
+    oper_date_str = query_dict.get('date_oper', False)
     select_date = datetime.datetime.strptime(oper_date_str, "%Y-%m-%d")
     today = datetime.datetime.today().date()
     day_list = [0, 1, 2, 3, 5, 6, 7, 14, 15, 29]
@@ -111,77 +114,59 @@ def do_docs(query_dict):
     docs_context['DateSP'] = docs_context['Date0']
     docs_context['DateSV'] = ''
 
-    anest = ''
-    anest1 = query_dict.get('anest1', False)
-    anest2 = query_dict.get('anest2', False)
-    anest3 = query_dict.get('anest3', False)
-    anest4 = query_dict.get('anest4', False)
-
-    if anest1:
-        anest = 'общая ингаляционная анестезия'
-        if anest2 and anest1:
-            anest += ' + ИВЛ'
-    if anest3 and anest:
-        anest += ', местная анестезия'
-    elif anest3 and not anest:
-        anest = 'местная анестезия'
-    if anest4 and anest3 and not anest1:
-        anest += ' + мониторинг'
-    docs_context['anest'] = anest
-
-    docs_context['scheme1'] = query_dict.get('scheme1', False)
-    docs_context['scheme2'] = query_dict.get('scheme2', False)
+    docs_context['anest'] = query_dict.get('anest', False)
+    docs_context['schema'] = query_dict.get('schema', False)
 
     docs_context['id_ext'] = query_dict.get('id_ext', False)
-    docs_context['PerZ'] = query_dict.get('id_PerZ', False)
-    docs_context['PerO'] = query_dict.get('id_PerO', False)
-    docs_context['PerT'] = query_dict.get('id_PerT', False)
-    docs_context['PerG'] = query_dict.get('id_PerG', False)
-    docs_context['Allerg'] = query_dict.get('id_Allerg', False)
-    docs_context['Kur'] = query_dict.get('id_Kur', False)
-    docs_context['Alk'] = query_dict.get('id_Alk', False)
-    docs_context['Nark'] = query_dict.get('id_Nark', False)
-    docs_context['Gepatit'] = query_dict.get('id_Gepatit', False)
-    docs_context['Risk'] = query_dict.get('id_Risk', False)
-    docs_context['VICH'] = query_dict.get('id_VICH', False)
-    docs_context['Tub'] = query_dict.get('id_Tub', False)
-    docs_context['Diabet'] = query_dict.get('id_Diabet', False)
-    docs_context['Vener'] = query_dict.get('id_Vener', False)
+    docs_context['anket_id'] = query_dict.get('anket_id', False)
+    docs_context['PerZ'] = query_dict.get('PerZ', False)
+    docs_context['PerO'] = query_dict.get('PerO', False)
+    docs_context['PerT'] = query_dict.get('PerT', False)
+    docs_context['PerG'] = query_dict.get('PerG', False)
+    docs_context['Allerg'] = query_dict.get('Allerg', False)
+    docs_context['Kur'] = query_dict.get('Kur', False)
+    docs_context['Alk'] = query_dict.get('Alk', False)
+    docs_context['Nark'] = query_dict.get('Nark', False)
+    docs_context['Gepatit'] = query_dict.get('Gepatit', False)
+    docs_context['Risk'] = query_dict.get('Risk', False)
+    docs_context['VICH'] = query_dict.get('VICH', False)
+    docs_context['Tub'] = query_dict.get('Tub', False)
+    docs_context['Diabet'] = query_dict.get('Diabet', False)
+    docs_context['Vener'] = query_dict.get('Vener', False)
 
     docs_context['sDate0'] = re.sub('\D', '', docs_context['Date0'])
-    docs_context['FIO'] = query_dict.get('id_FIO', False)
+    docs_context['FIO'] = query_dict.get('s_name', False) + ' ' +query_dict.get('name', False) + ' ' +query_dict.get('m_name', False)
     docs_context['sFIO'] = re.sub(r'\b(\w+)\b\s+\b(\w)\w*\b\s+\b(\w)\w*\b', r'\1\2\3', docs_context['FIO'])
     docs_context['IO'] = re.sub(r'\b(\w+)\b\s+\b(\w*)\w*\b\s+\b(\w*)\w*\b', r'\2 \3', docs_context['FIO'])
 
+    typeOpers = query_dict.getlist('typeOpers', False)
     sum_opers = '-'
-    # for item in selected_operations:
     for oper in TypeOperations.objects.all():
-        oper_id = 'oper_' + str(oper.code)
-        if query_dict.get(oper_id, False):
+        if str(oper.code) in typeOpers:
             selected_operations.append(oper)
             sum_opers += (oper.s_name + '-')
 
     docs_context['sOpers'] = sum_opers[1:-1]
-    docs_context['DR'] = query_dict.get('id_DateOfB', False)
+    docs_context['DR'] = datetime.datetime.strptime(query_dict.get('DateOfB', False), "%Y-%m-%d").strftime('%d.%m.%Y')
     docs_context['DG'] = docs_context['DR'][6:]
-    docs_context['Adr'] = query_dict.get('id_Address', False)
-    docs_context['Gender'] = query_dict.get('id_Gender', False)
-    docs_context['oGender'] = query_dict.get('id_oGender', False)
-    docs_context['MedPrep'] = query_dict.get('id_MedPrep', False)
-    docs_context['MedIzd'] = query_dict.get('id_MedIzd', False)
-    docs_context['veSub'] = query_dict.get('id_veSub', False)
-    docs_context['veRn'] = query_dict.get('id_veRn', False)
-    docs_context['veGor'] = query_dict.get('id_veGor', False)
-    docs_context['veNP'] = query_dict.get('id_veNP', False)
-    docs_context['veUl'] = query_dict.get('id_veUl', False)
-    docs_context['veDom'] = query_dict.get('id_veDom', False)
-    docs_context['veStr'] = query_dict.get('id_veStr', False)
-    docs_context['veKv'] = query_dict.get('id_veKv', False)
-    docs_context['Rost'] = query_dict.get('id_Rost', False)
-    docs_context['Massa'] = query_dict.get('id_Massa', False)
-    docs_context['GK'] = query_dict.get('id_GK', False)
-    docs_context['RH'] = query_dict.get('id_RH', False)
-    docs_context['KELL'] = query_dict.get('id_KELL', False)
+    docs_context['Adr'] = query_dict.get('Address', False)
+    docs_context['Gender'] = query_dict.get('Gender', False)
+    docs_context['oGender'] = query_dict.get('oGender', False)
+    docs_context['MedPrep'] = query_dict.get('MedPrep', False)
+    docs_context['MedIzd'] = query_dict.get('MedIzd', False)
+    docs_context['veSub'] = query_dict.get('veSub', False)
+    docs_context['veRn'] = query_dict.get('veRn', False)
+    docs_context['veGor'] = query_dict.get('veGor', False)
+    docs_context['veNP'] = query_dict.get('veNP', False)
+    docs_context['veUl'] = query_dict.get('veUl', False)
+    docs_context['veDom'] = query_dict.get('veDom', False)
+    docs_context['veStr'] = query_dict.get('veStr', False)
+    docs_context['veKv'] = query_dict.get('veKv', False)
+    docs_context['Rost'] = query_dict.get('Rost', False)
+    docs_context['Massa'] = query_dict.get('Massa', False)
+    docs_context['GK'] = query_dict.get('GK', False)
+    docs_context['RH'] = query_dict.get('RH', False)
+    docs_context['KELL'] = query_dict.get('KELL', False)
     oHH = str(random.choice(range(9, 11, 1)))
     if len(oHH) == 1:
         oHH = '0' + oHH
@@ -345,6 +330,29 @@ def do_docs(query_dict):
         sutok = ' суток'
     docs_context['srok_gosp'] = str(srok_gosp) + f' ({propis.get(srok_gosp, False)}) ' + sutok
     docs_context['PZK'] = query_dict.get('PZK', False)
+    doctor = Doctor.objects.filter(pk=int(query_dict.get('surgeon', False)))[0]
+    # docs_context['surgeon'] = doctor
+    docs_context['doc_F'] = doctor.F_name
+    docs_context['doc_I'] = doctor.L_name
+    docs_context['doc_O'] = doctor.S_name
+    docs_context['doc_pos'] = doctor.position
+    docs_context['doc_spec'] = doctor.specialty
+    docs_context['doc_inic'] = doctor.L_name[:1] + '.' + doctor.S_name[:1]+'.'
+    doc_F_list = list(doctor.F_name_padezhi.split(','))
+    doc_L_list = list(doctor.L_name_padezhi.split(','))
+    doc_S_list = list(doctor.S_name_padezhi.split(','))
+    docs_context['doc_F_R'] = doc_F_list[0]
+    docs_context['doc_I_R'] = doc_L_list[0]
+    docs_context['doc_O_R'] = doc_S_list[0]
+    docs_context['doc_F_D'] = doc_F_list[1]
+    docs_context['doc_I_D'] = doc_L_list[1]
+    docs_context['doc_O_D'] = doc_S_list[1]
+    docs_context['doc_F_T'] = doc_F_list[2]
+    docs_context['doc_I_T'] = doc_L_list[2]
+    docs_context['doc_O_T'] = doc_S_list[2]
+    docs_context['doc_F_P'] = doc_F_list[3]
+    docs_context['doc_I_P'] = doc_L_list[3]
+    docs_context['doc_O_P'] = doc_S_list[3]
 
     fill_tmpl(selected_operations, docs_context)
     # print(f'selected_operations = {selected_operations}, docs_context = {docs_context}')
