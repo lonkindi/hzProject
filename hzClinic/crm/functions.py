@@ -15,16 +15,18 @@ from transliterate import translit
 from docxtpl import DocxTemplate
 
 from crm.models import TypeOperations, Doctor
+from crm import YaD, MyAPI
 
 from hzClinic import settings, settings_local
 
 
 def fill_tmpl(oper_list, context_dict):
+    print(f'selected_operations = {oper_list}, docs_context = {context_dict}')
     sFIO = translit(context_dict['sFIO'], 'ru', reversed=True)
     sOpers = translit(context_dict['sOpers'], 'ru', reversed=True)
     doc_folder = sFIO + '_' + sOpers + '_' + context_dict['sDate0']
     base_dir = settings.BASE_DIR
-    file_path = os.path.join(base_dir, 'crm/docs/tmpls/')
+    file_path = os.path.join(base_dir, 'crm/tmpls/')
     docs_path = os.path.join(base_dir, 'crm/docs/')
     target_path = docs_path + doc_folder
 
@@ -50,15 +52,15 @@ def fill_tmpl(oper_list, context_dict):
         doc.save(docs_path + doc_folder + '/' + item + '_' + sFIO + '.docx')
 
     id_ext = int(context_dict.get('id_ext', 0))
-    # if id_ext:
-    #     MyAPI.update_anket_myapi(ext_id=id_ext, state=1)
-    #
-    # YaD.create_folder(f'MedicalCase/{doc_folder}')
-    # for file in os.listdir(target_path):
-    #     upload_file = target_path + '/' + file
-    #     YaD.upload_file(upload_file, f'MedicalCase/{doc_folder}/{file}')
-    print('doc_folder =', doc_folder)
-    print('docs_path =', docs_path)
+    if id_ext:
+        MyAPI.update_anket_myapi(ext_id=id_ext, state=1)
+
+    YaD.create_folder(f'MedicalCase/{doc_folder}')
+    for file in os.listdir(target_path):
+        upload_file = target_path + '/' + file
+        YaD.upload_file(upload_file, f'MedicalCase/{doc_folder}/{file}')
+    # print('doc_folder =', doc_folder)
+    # print('docs_path =', docs_path)
     return doc_folder
 
 
@@ -355,7 +357,7 @@ def do_docs(query_dict):
     docs_context['doc_O_P'] = doc_S_list[3]
 
     fill_tmpl(selected_operations, docs_context)
-    # print(f'selected_operations = {selected_operations}, docs_context = {docs_context}')
+    print(f'*selected_operations = {selected_operations}, *docs_context = {docs_context}')
     # send_telegram('Hello BOT!')
 
 

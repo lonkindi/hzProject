@@ -56,7 +56,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class="badge-rounded bg-violet" style="text-align: center;">
-                                    Данные заполняемые, сотрудником клиники
+                                    Данные, заполняемые системой и сотрудником клиники
                                 </div>
                                 <hr>
                                 {% for field in form|slice:"39:" %}
@@ -86,8 +86,8 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h4 id="exampleModalLabel" class="modal-title">Подготовка
-                                        документов для медицинской карты пациента <em>{{form.s_name.value}}
-                                            {{form.name.value}} {{form.m_name.value}}</em>
+                                        документов для медицинской карты пациента
+                                        <em>{{FIO}}</em>
                                     </h4>
                                     <button type="button" data-dismiss="modal" aria-label="Close"
                                             class="close"><span

@@ -1,3 +1,4 @@
 /hzClinic/hzClinic/settings_local.py
 /hzClinic/crm/migrations/
-/hzClinic/crm/docs/tmpls/
+/hzClinic/crm/docs/_tmpls_/
+/hzClinic/crm/tmpls/

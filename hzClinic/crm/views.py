@@ -4,6 +4,7 @@ import os
 import re
 import csv
 
+from dadata import Dadata
 from django.http import HttpResponseNotFound
 from django.core.paginator import Paginator
 
@@ -236,8 +237,9 @@ def quest_view(request, ext_id):
     if request.method == 'POST':
         form = MedCardForm(request.POST)
         if form.is_valid():
-            # form.save()
+            new_medcard = form.save(commit=False)
             functions.do_docs(request.POST)
+            new_medcard.save()
         else:
             pass
 
@@ -256,12 +258,13 @@ def quest_view(request, ext_id):
         fio = f + ' ' + i + ' ' + o
         raw_phone = anket_dict.get('Ваш контактный телефон', '')
         phone = re.sub('[\D]+','', raw_phone)
+        today = datetime.date.today()
         anest = ''
         schema = ''
         typeOpers = ''
         date_oper = ''
         surgeon = ''
-        find_candidate = Candidate.objects.filter(phoneNumber=phone).order_by('date_oper')
+        find_candidate = Candidate.objects.filter(phoneNumber=phone, date_oper__gte=today).order_by('date_oper')
         if find_candidate:
             find_candidate = find_candidate[0]
             date_oper = find_candidate.date_oper
@@ -270,10 +273,9 @@ def quest_view(request, ext_id):
         AddressRow = anket_dict['Адрес места жительства (регистрации)']
         token = settings_local.DaDaAPI
         secret = settings_local.DaDaSecret
-        # dadata = Dadata(token, secret)
-        # result = dadata.clean("address", AddressRow)
-        result = ''
-        Address = result  #['result']
+        dadata = Dadata(token, secret)
+        result = dadata.clean("address", AddressRow)
+        Address = result['result']
 
         if Address:
             veSub = (result['region_type_full'] + ' ' + result['region']) if result['region_type_full'] == 'республика' else (result['region'] + ' ' + result['region_type_full'])
@@ -414,6 +416,7 @@ def quest_view(request, ext_id):
                    'schema': schema,
                    'typeOpers': typeOpers,
                    'surgeon': surgeon,
+                   'candidate': find_candidate,
                    }
         form = list(MedCardForm(initial=initial))
     oper_types = TypeOperations.objects.all()

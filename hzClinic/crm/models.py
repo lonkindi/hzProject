@@ -114,6 +114,35 @@ class TypeOperations(models.Model):
         return str(self.name)
 
 
+class Candidate(models.Model):
+    """
+    Модель кандидата на операцию
+    """
+    class SurgeonChoices(models.TextChoices):
+        KhotyanAR = 'Хотян А.Р.', _('Хотян А.Р.'),
+        MukhamedovGT = 'Мухамедов Г.Т.', _('Мухамедов Г.Т.')
+
+    phoneNumber = models.CharField(max_length=16, unique=False, verbose_name='Номер телефона (phoneNumber)')
+    date_oper = models.DateField(verbose_name='Дата операции (date_oper)', default=datetime.date.today)
+    Sname = models.CharField(max_length=25, verbose_name='Фамилия (Sname)')
+    Name = models.CharField(max_length=25, verbose_name='Имя (Name)')
+    Mname = models.CharField(max_length=25, verbose_name='Отчество (Mname)', blank=True)
+    typeOpers = models.ManyToManyField(TypeOperations, verbose_name='Операции (typeOpers)',
+                                       related_name='candidate_operations')
+    Surgeon = models.CharField(verbose_name='Хирург', choices=SurgeonChoices.choices, max_length=15,
+                               default='Хотян А.Р.')
+    Doctor = models.ForeignKey(Doctor, verbose_name='Врач', on_delete=models.CASCADE, blank=True, null=True)
+    notes = models.TextField(max_length=255, verbose_name='Примечания (notes)', blank=True)
+
+    class Meta:
+        verbose_name = 'Кандидат'
+        verbose_name_plural = "Кандидаты"
+        ordering = ('date_oper',)
+
+    def __str__(self):
+        return str(self.date_oper) + ' ' + self.Sname + ' ' + self.Name + ' ' + self.Mname
+
+
 class MedCard(models.Model):
     """
     Модель Медкарты
@@ -176,6 +205,7 @@ class MedCard(models.Model):
     anest = models.CharField(max_length=100, choices=anest_Choices, verbose_name='Анестезия')
     schema = models.CharField(max_length=100, choices=schema_Choices, verbose_name='Схема к протоколу')
     surgeon = models.ForeignKey(Doctor, on_delete=models.CASCADE, default=1)
+    candidate = models.OneToOneField(Candidate, on_delete=models.CASCADE, null=True, blank=True, verbose_name='Кандидат')
 
     class Meta:
         verbose_name = 'Медкарта'
@@ -184,37 +214,3 @@ class MedCard(models.Model):
 
     def __str__(self):
         return str(self.anket_id)
-
-
-
-
-class Candidate(models.Model):
-    """
-    Модель кандидата на операцию
-    """
-    class SurgeonChoices(models.TextChoices):
-        KhotyanAR = 'Хотян А.Р.', _('Хотян А.Р.'),
-        MukhamedovGT = 'Мухамедов Г.Т.', _('Мухамедов Г.Т.')
-
-    phoneNumber = models.CharField(max_length=16, unique=False, verbose_name='Номер телефона (phoneNumber)')
-    date_oper = models.DateField(verbose_name='Дата операции (date_oper)', default=datetime.date.today)
-    Sname = models.CharField(max_length=25, verbose_name='Фамилия (Sname)')
-    Name = models.CharField(max_length=25, verbose_name='Имя (Name)')
-    Mname = models.CharField(max_length=25, verbose_name='Отчество (Mname)', blank=True)
-    typeOpers = models.ManyToManyField(TypeOperations, verbose_name='Операции (typeOpers)',
-                                       related_name='candidate_operations')
-    Surgeon = models.CharField(verbose_name='Хирург', choices=SurgeonChoices.choices, max_length=15,
-                               default='Хотян А.Р.')
-    Doctor = models.ForeignKey(Doctor, verbose_name='Врач', on_delete=models.CASCADE, blank=True, null=True)
-    notes = models.TextField(max_length=255, verbose_name='Примечания (notes)', blank=True)
-
-    class Meta:
-        verbose_name = 'Кандидат'
-        verbose_name_plural = "Кандидаты"
-        ordering = ('date_oper',)
-
-    def __str__(self):
-        return str(self.date_oper) + '-' + self.Sname + ' ' + self.Name + ' ' + self.Mname
-
-
-
