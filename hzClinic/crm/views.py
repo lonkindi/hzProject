@@ -238,7 +238,9 @@ def quest_view(request, ext_id):
         form = MedCardForm(request.POST)
         if form.is_valid():
             new_medcard = form.save(commit=False)
-            functions.do_docs(request.POST)
+            current_folder = functions.do_docs(request.POST)
+            ya_folder = f'https://disk.yandex.ru/client/disk/MedicalCase/{current_folder}'
+            new_medcard.ya_folder = ya_folder
             new_medcard.save()
         else:
             pass
@@ -252,9 +254,9 @@ def quest_view(request, ext_id):
         anket_id = ext_id
         content = anket_dict
         date_filling = anket_qs['date_filling']
-        f = anket_dict.get('Фамилия', '!НЕТ!')
-        i = anket_dict.get('Имя', '!НЕТ!')
-        o = anket_dict.get('Отчество', '')
+        f = str(anket_dict.get('Фамилия', '!НЕТ!')).capitalize()
+        i = str(anket_dict.get('Имя', '!НЕТ!')).capitalize()
+        o = str(anket_dict.get('Отчество', '')).capitalize()
         fio = f + ' ' + i + ' ' + o
         raw_phone = anket_dict.get('Ваш контактный телефон', '')
         phone = re.sub('[\D]+','', raw_phone)

@@ -143,6 +143,7 @@ class MedCardForm(ModelForm):
             'schema': Select(attrs={'class': 'form-control form-control-lg'}),
             'surgeon': Select(attrs={'class': 'form-control form-control-lg'}),
             'candidate': Select(attrs={'class': 'form-control form-control-lg'}),
+            'ya_folder': TextInput(attrs={'class': 'form-control'}),
         }
         labels = {'PZK': 'Состояние подкожно-жировой клетчатки', 'date_oper': 'Дата операции (обязательное*)',
                   'surgeon': 'Оперирующий хирург', 'typeOpers': 'Планируемые виды операций',

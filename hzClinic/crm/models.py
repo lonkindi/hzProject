@@ -85,7 +85,7 @@ class TypeOperations(models.Model):
     name = models.CharField(max_length=50, verbose_name='Название операции')
     s_name = models.CharField(max_length=25, verbose_name='Сокращённое название')
     zaloby = models.TextField(max_length=255, null=True, blank=True, verbose_name='Жалобы')
-    pri_osmotre = models.TextField(max_length=255, null=True, blank=True, verbose_name='При осмотре')
+    pri_osmotre = models.TextField(max_length=1024, null=True, blank=True, verbose_name='При осмотре')
     osn_zabol = models.TextField(max_length=255, null=True, blank=True, verbose_name='Основное заболевание')
     MKB = models.CharField(max_length=20, null=True, blank=True, verbose_name='Код МКБ')
     plan_lech = models.TextField(max_length=255, null=True, blank=True, verbose_name='План лечения')
@@ -98,10 +98,10 @@ class TypeOperations(models.Model):
     kol_salf = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name='Кол-во салфеток')
     krovop = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name='Кровопотеря')
     naznach = models.TextField(max_length=255, null=True, blank=True, verbose_name='Назначения')
-    primen_lec = models.TextField(max_length=255, null=True, blank=True, verbose_name='Применение лекарств')
+    primen_lec = models.TextField(max_length=1024, null=True, blank=True, verbose_name='Применение лекарств')
     rezult = models.TextField(max_length=255, null=True, blank=True, verbose_name='Результат')
     srok_gosp = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name='Срок госпитализации')
-    LTR = models.TextField(max_length=2048, null=True, blank=True, verbose_name='Лечебные и трудовые рекомендации ')
+    med_vmesh = models.TextField(max_length=1024, null=True, blank=True, verbose_name='Медицинское вмешательство')
     duration = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name='Продолжительнсть')
 
 
@@ -205,7 +205,8 @@ class MedCard(models.Model):
     anest = models.CharField(max_length=100, choices=anest_Choices, verbose_name='Анестезия')
     schema = models.CharField(max_length=100, choices=schema_Choices, verbose_name='Схема к протоколу')
     surgeon = models.ForeignKey(Doctor, on_delete=models.CASCADE, default=1)
-    candidate = models.OneToOneField(Candidate, on_delete=models.CASCADE, null=True, blank=True, verbose_name='Кандидат')
+    candidate = models.OneToOneField(Candidate, related_name='medcard_candidate', on_delete=models.CASCADE, null=True, blank=True, verbose_name='Кандидат')
+    ya_folder = models.URLField(max_length=255, verbose_name='Ссылка на Я.Диск', null=True, blank=True)
 
     class Meta:
         verbose_name = 'Медкарта'

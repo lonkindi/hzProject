@@ -21,7 +21,6 @@ from hzClinic import settings, settings_local
 
 
 def fill_tmpl(oper_list, context_dict):
-    print(f'selected_operations = {oper_list}, docs_context = {context_dict}')
     sFIO = translit(context_dict['sFIO'], 'ru', reversed=True)
     sOpers = translit(context_dict['sOpers'], 'ru', reversed=True)
     doc_folder = sFIO + '_' + sOpers + '_' + context_dict['sDate0']
@@ -52,6 +51,7 @@ def fill_tmpl(oper_list, context_dict):
         doc.save(docs_path + doc_folder + '/' + item + '_' + sFIO + '.docx')
 
     id_ext = int(context_dict.get('id_ext', 0))
+    '''
     if id_ext:
         MyAPI.update_anket_myapi(ext_id=id_ext, state=1)
 
@@ -61,6 +61,7 @@ def fill_tmpl(oper_list, context_dict):
         YaD.upload_file(upload_file, f'MedicalCase/{doc_folder}/{file}')
     # print('doc_folder =', doc_folder)
     # print('docs_path =', docs_path)
+    '''
     return doc_folder
 
 
@@ -204,6 +205,7 @@ def do_docs(query_dict):
     naznach = ''
     naznach_set = set()
     primen_lec = ''
+    med_vmesh = ''
     primen_lec_set = set()
     rezult = ''
     srok_gosp = 0
@@ -284,7 +286,15 @@ def do_docs(query_dict):
             selector = ''
         else:
             selector = ';'
+        print(f'primen_lec=>{primen_lec}<')
         primen_lec += selector + curr_operation.primen_lec
+
+        print(f'med_vmesh=>{med_vmesh}<***oper=>{operation}<')
+        if med_vmesh == '':
+            selector = ''
+        else:
+            selector = ';'
+        med_vmesh += selector + (curr_operation.med_vmesh if curr_operation.med_vmesh is not None else '')
 
         if rezult == '':
             selector = ''
@@ -310,19 +320,36 @@ def do_docs(query_dict):
     docs_context['krovop'] = krovop
     docs_context['naznach'] = del_duplicates(naznach, ',')
     primen_lec = del_duplicates(primen_lec, ';')
+    print(f'med_vmesh 1={med_vmesh}')
+    med_vmesh = del_duplicates(med_vmesh, ';')
+    print(f'med_vmesh 2={med_vmesh}')
     for item in day_list:
         primen_lec_str = primen_lec.replace(f'{"{Date"+str(item)+"}"}', docs_context['Date' + str(item)])
+        med_vmesh_str = med_vmesh.replace(f'{"{Date"+str(item)+"}"}', docs_context['Date' + str(item)])
         primen_lec = primen_lec_str
-    docs_context['primen_lec'] = primen_lec#[:-1] #.replace(';', '; ')
-    for i in range(1, 5):
-        docs_context['ln_lp' + str(i)] = '\r\n\r\n\r\n'
+        med_vmesh = med_vmesh_str
+    print(f'med_vmesh 3={med_vmesh}')
+    docs_context['primen_lec'] = primen_lec
+    docs_context['med_vmesh'] = med_vmesh
+
+    for i in range(1, 8):
+        docs_context['ln_lp' + str(i)] = '\r\n\r\n'
+        docs_context['ln_mv' + str(i)] = '\r\n\r\n'
+
     for index, value in enumerate(primen_lec.split(';')):
         ln_lp = re.search(r'(.*?) с ', value)
         ln_Date_n = re.search(r'с (\d\d.\d\d.*?) г.', value)
         ln_Date_o = re.search(r'по (\d\d.\d\d.*?) г.', value)
-        docs_context['ln_lp' + str(index+1)] = ln_lp.group(1) if ln_lp else '\r\n\r\n\r\n'
-        docs_context['ln_Date' + str(index+1) + '_n'] = ln_Date_n.group(1)+' г.\r\n\r\n_____________' if ln_Date_n else ''
-        docs_context['ln_Date' + str(index+1) + '_o'] = ln_Date_o.group(1)+' г.\r\n\r\n_____________' if ln_Date_o else ''
+        docs_context['ln_lp' + str(index+1)] = ln_lp.group(1) if ln_lp else '\r\n\r\n'
+        docs_context['ln_Date' + str(index+1) + '_n'] = ln_Date_n.group(1)+' г.\r\n__________' if ln_Date_n else ''
+        docs_context['ln_Date' + str(index+1) + '_o'] = ln_Date_o.group(1)+' г.\r\n__________' if ln_Date_o else ''
+
+    for index, value in enumerate(med_vmesh.split(';')):
+        ln_mv = re.search(r'(.*?) на ', value)
+        ln_Date_mv = re.search(r'на (\d\d.\d\d.*?) г.', value)
+
+        docs_context['ln_mv' + str(index+1)] = ln_mv.group(1) if ln_mv else '\r\n\r\n'
+        docs_context['ln_Date' + str(index+1) + '_mv'] = ln_Date_mv.group(1)+' г.\r\n__________' if ln_Date_mv else ''
 
     docs_context['rezult'] = del_duplicates(rezult)
     propis = {1: 'одни', 2: 'двое', 3: 'трое', 4: 'четверо', 5: 'пятеро', 6: 'шестеро', 7: 'семеро', 8: 'восемь', }
@@ -355,9 +382,9 @@ def do_docs(query_dict):
     docs_context['doc_F_P'] = doc_F_list[3]
     docs_context['doc_I_P'] = doc_L_list[3]
     docs_context['doc_O_P'] = doc_S_list[3]
-
-    fill_tmpl(selected_operations, docs_context)
-    print(f'*selected_operations = {selected_operations}, *docs_context = {docs_context}')
+    # print(f'docs_context = {docs_context}')
+    ya_folder = fill_tmpl(selected_operations, docs_context)
+    return ya_folder
     # send_telegram('Hello BOT!')
 
 
