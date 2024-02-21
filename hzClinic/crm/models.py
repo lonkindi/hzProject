@@ -214,4 +214,4 @@ class MedCard(models.Model):
         ordering = ('-date_oper',)
 
     def __str__(self):
-        return str(self.anket_id)
+        return 'МК-'+str(self.anket_id)

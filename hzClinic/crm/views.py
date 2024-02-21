@@ -441,14 +441,14 @@ def quest_view(request, ext_id):
     return render(request, template_name=template_name, context=context)
 
 
-def medcard_view(request):
+def medcard_view(request, pk):
     if not request.user.is_authenticated:
         return redirect(reverse(login_view))
     hzuser = request.user
     hzuser_info = hzUserInfo.objects.filter(hz_user=hzuser)
-    template_name = 'crm/_record.html'
-    # current_candidate = Candidate.objects.get(pk=1)
-    form = MedCardForm()
+    template_name = 'crm/_medcard.html'
+    current_medcard = get_object_or_404(MedCard, anket_id=pk)
+    form = list(MedCardForm(instance=current_medcard))
     # if request.method == 'POST':
     #     # form = CandidateForm(request.POST, instance=current_candidate)
     #     if form.is_valid():

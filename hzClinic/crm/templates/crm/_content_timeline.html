@@ -142,8 +142,14 @@
                                     <a data-toggle="modal" data-target="#delModal{{candidat.pk}}" class="text-danger" uk-icon="icon: trash"></a>
                                     {% endif %}
                                     {{ candidat.Sname }} {{ candidat.Name }} {{ candidat.Mname }}<br>
-                                    {{ candidat.phoneNumber }}<br>
-                                    Medcard={{ candidat.medcard_candidate }}
+                                    {{ candidat.phoneNumber }}
+                                    {% if candidat.medcard_candidate %}
+                                    <br>
+                                    <a href="../medcard/{{candidat.medcard_candidate.anket_id}}">Открыть медкарту</a>
+                                    {% else %}
+                                    <br>
+                                    <div class="text-danger" >Медкарта не оформлена</div>
+                                    {% endif%}
                                 </td>
                                 <td>
                                     <ul class="p-3">
