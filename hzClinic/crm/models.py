@@ -159,7 +159,7 @@ class MedCard(models.Model):
 
     anket_id = models.PositiveIntegerField(verbose_name='№ анкеты')
     phone = models.CharField(max_length=16, verbose_name='Номер телефона')
-    date_filling = models.DateField(verbose_name='Дата заполнения', default=datetime.datetime.today)
+    date_filling = models.DateField(verbose_name='Дата заполнения анкеты', default=datetime.datetime.today)
     s_name = models.CharField(max_length=25, verbose_name='Фамилия')
     name = models.CharField(max_length=25, verbose_name='Имя')
     m_name = models.CharField(max_length=25, verbose_name='Отчество', blank=True)

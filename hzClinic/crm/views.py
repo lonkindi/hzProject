@@ -23,8 +23,11 @@ def page_not_found_view(request, exception):
 
 
 def main_view(request):
+    return redirect(reverse(timeline_view)) #временная заглушка dashboard
+
     if not request.user.is_authenticated:
         return redirect(reverse(login_view))
+
     template_name = 'crm/_main.html'
     hzuser = request.user
     hzuser_info = hzUserInfo.objects.filter(hz_user=hzuser)
@@ -176,15 +179,6 @@ def quests_view(request, state_id=9):
             item_raw = item_row.replace("'", '`')
             item = ast.literal_eval(item_raw.replace('"', "'") + '}')
             item_dict = dict()
-            """ для анкет из БД
-            item_dict['state'] = item.state
-            item_dict['external_id'] = item.external_id
-            item_dict['date_filling'] = item.date_filling
-            item_dict['FIO'] = item.content['Фамилия'] + ' ' + item.content['Имя'] + ' ' + item.content['Отчество']
-            item_dict['DOB'] = item.content['Дата рождения']
-            item_dict['tel'] = item.content['Ваш контактный телефон']
-            item_dict['addr'] = item.content['Адрес места жительства (регистрации)']
-            """
             """для анкет из API"""
             item_dict['state'] = item['state']
             item_dict['external_id'] = item['external_id']
@@ -459,7 +453,7 @@ def medcard_view(request, pk):
                'title': 'Медицинская карта',
                'user': hzuser,
                'user_info': hzuser_info[0],
-               # 'current_candidate': current_candidate,
+               'current_medcard': current_medcard,
                }
     return render(request, template_name, context)
 
