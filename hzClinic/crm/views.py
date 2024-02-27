@@ -5,6 +5,7 @@ import re
 import csv
 
 from dadata import Dadata
+from dateutil.relativedelta import relativedelta
 from django.http import HttpResponseNotFound
 from django.core.paginator import Paginator
 
@@ -624,6 +625,38 @@ def export_tl_view(request, encrypt_dates=None):
     }
     return render(request, template, context)
 
+
+def control_view(request):
+    if not request.user.is_authenticated:
+        return redirect(reverse(login_view))
+    hzuser = request.user
+    hzuser_info = hzUserInfo.objects.filter(hz_user=hzuser)
+    template_name = 'crm/_control.html'
+    today = datetime.date.today()
+    date_ctrl_3 = [today + relativedelta(months=-3, days=-3), today + relativedelta(months=-3)]
+    date_ctrl_6 = [today + relativedelta(months=-6, days=-3), today + relativedelta(months=-6)]
+    date_ctrl_12 = [today + relativedelta(months=-12, days=-3), today + relativedelta(months=-12)]
+    data_3 = Candidate.objects.filter(date_oper__gte=date_ctrl_3[0]) & Candidate.objects.filter(
+        date_oper__lte=date_ctrl_3[1])
+    data_6 = Candidate.objects.filter(date_oper__gte=date_ctrl_6[0]) & Candidate.objects.filter(
+        date_oper__lte=date_ctrl_6[1])
+    data_12 = Candidate.objects.filter(date_oper__gte=date_ctrl_12[0]) & Candidate.objects.filter(
+        date_oper__lte=date_ctrl_12[1])
+
+    # if request.method == 'POST':
+    #     # form = CandidateForm(request.POST, instance=current_candidate)
+    #     if form.is_valid():
+    #         new_date = form.cleaned_data['date_oper']
+    #         form.save()
+    #         return redirect(reverse(timeline_view, args=(new_date,)))
+    context = {'title': 'Контроль прооперированных пациентов',
+               'user': hzuser,
+               'user_info': hzuser_info[0],
+               'data_3': data_3,
+               'data_6': data_6,
+               'data_12': data_12,
+               }
+    return render(request, template_name, context)
 
 def loadrec_view(request):
     if not request.user.is_authenticated:
