@@ -13,9 +13,7 @@
             </li>
         </div>
     </ul>
-
-
-    <!-- Main Section-->
+    <!-- 3 month Section-->
     <section class="tables">
         <div class="container-fluid">
             <div class="row">
@@ -24,6 +22,102 @@
                     <div class="card-header d-flex align-items-center">
                         <div class="col-sm-8">
                         <h4>Операции 3 месяца назад</h4>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-bordered table-striped table-responsive">
+                            <thead>
+                            <tr>
+                                <th>Дата</th>
+                                <th>Ф.И.О.</th>
+                                <th>Операции</th>
+                                <th>Хирург</th>
+                                <th>Примечания</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for item in data_3 %}
+                            <tr>
+                                <td>{{item.date_oper}}</td>
+                                <td>{{item.Sname}} {{item.Name}} {{item.Mname}}<br>
+                                    <a href="tel:+{{ item.phoneNumber }}">+{{ item.phoneNumber }}</a>
+                                </td>
+                                <td>
+                                    <ul class="p-3">
+                                    {% for oper in item.typeOpers.all %}
+                                    <li >{{ oper }}</li>
+                                    {% endfor %}
+                                    </ul>
+                                </td>
+                                <td>{{item.Doctor}}</td>
+                                <td>{{item.notes}}</td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </section>
+    <!-- 6 month Section-->
+    <section class="tables">
+        <div class="container-fluid">
+            <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header d-flex align-items-center">
+                        <div class="col-sm-8">
+                        <h4>Операции 6 месяцев назад</h4>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-bordered table-striped table-responsive">
+                            <thead>
+                            <tr>
+                                <th>Дата</th>
+                                <th>Ф.И.О.</th>
+                                <th>Операции</th>
+                                <th>Хирург</th>
+                                <th>Примечания</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for item in data_6 %}
+                            <tr>
+                                <td>{{item.date_oper}}</td>
+                                <td>{{item.Sname}} {{item.Name}} {{item.Mname}}<br>
+                                    <a href="tel:+{{ item.phoneNumber }}">+{{ item.phoneNumber }}</a>
+                                </td>
+                                <td>
+                                    <ul class="p-3">
+                                    {% for oper in item.typeOpers.all %}
+                                    <li >{{ oper }}</li>
+                                    {% endfor %}
+                                    </ul>
+                                </td>
+                                <td>{{item.Doctor}}</td>
+                                <td>{{item.notes}}</td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </section>
+    <!-- 12 month Section-->
+    <section class="tables">
+        <div class="container-fluid">
+            <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header d-flex align-items-center">
+                        <div class="col-sm-8">
+                        <h4>Операции 12 месяцев назад</h4>
                         </div>
 
                     </div>
@@ -35,28 +129,28 @@
                                 <th>Ф.И.О.</th>
                                 <th>Операции</th>
                                 <th>Хирург</th>
-                                <th>Врач</th>
                                 <th>Примечания</th>
                             </tr>
                             </thead>
                             <tbody>
-                            {% for item in data_3 %}
+                            {% for item in data_12 %}
                             <tr>
                                 <td>{{item.date_oper}}</td>
-                                <td>{{item.Sname}} {{item.Name}} {{item.Mname}}</td>
-                                <td><ul class="p-3">
+                                <td>{{item.Sname}} {{item.Name}} {{item.Mname}}<br>
+                                    <a href="tel:+{{ item.phoneNumber }}">+{{ item.phoneNumber }}</a>
+
+                                </td>
+                                <td>
+                                    <ul class="p-3">
                                     {% for oper in item.typeOpers.all %}
                                     <li >{{ oper }}</li>
                                     {% endfor %}
                                     </ul>
                                 </td>
-                                <td>-</td>
-                                <td>-</td>
-                                <td>-</td>
+                                <td>{{item.Doctor}}</td>
+                                <td>{{item.notes}}</td>
                             </tr>
                             {% endfor %}
-
-
                             </tbody>
                         </table>
                     </div>
