@@ -2,4 +2,4 @@
 /hzClinic/crm/migrations/
 /hzClinic/crm/docs/_tmpls_/
 /hzClinic/crm/tmpls/
-/hzClinic/hzdb.sqlite3
+/hzClinic/hz.sqlite3
