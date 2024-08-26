@@ -562,6 +562,16 @@ def timeline_view(request, set_date=''):
     b_rec = paginator.get_page(current_page)
     enum_rec = paginator.get_elided_page_range(current_page, on_each_side=1, on_ends=1)
 
+    for rec in b_rec[0]:
+        if rec[1] is None:
+            rec.append(0)
+        else:
+            day_duration = 0
+            for candidat in rec[1]:
+                for oper in candidat.typeOpers.all():
+                    day_duration += oper.duration
+            rec.append(day_duration)
+        print(rec)
 
     if b_rec.has_previous():
         prev_page = b_rec.previous_page_number
@@ -574,7 +584,7 @@ def timeline_view(request, set_date=''):
     else:
         next_page = paginator.num_pages
     context = {
-               # 'table': table,
+               # 'total_duration': total_duration,
                'title': 'Расписание операций',
                'user': hzuser,
                'user_info': hzuser_info[0],

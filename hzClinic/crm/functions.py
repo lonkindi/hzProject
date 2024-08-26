@@ -51,6 +51,7 @@ def fill_tmpl(oper_list, context_dict):
         doc.save(docs_path + doc_folder + '/' + item + '_' + sFIO + '.docx')
 
     id_ext = int(context_dict.get('id_ext', 0))
+    print(YaD.get_folder(f'MedicalCase/{doc_folder}'))
     '''
     if id_ext:
         MyAPI.update_anket_myapi(ext_id=id_ext, state=1)

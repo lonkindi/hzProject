@@ -85,7 +85,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'hzdb.sqlite3',
+        'NAME': BASE_DIR / 'hz.sqlite3',
     }
 }
 

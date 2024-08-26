@@ -94,7 +94,6 @@
                                 <th>Дата</th>
                                 <th>Ф.И.О.</th>
                                 <th>Операции</th>
-                                <th>Хирург</th>
                                 <th>Врач</th>
                                 <th>Примечания</th>
                             </tr>
@@ -120,10 +119,10 @@
                                 <td>-</td>
                                 <td>-</td>
                                 <td>-</td>
-                                <td>-</td>
                             </tr>
                             {% else %}
                             <tr>
+
                                 <td class="table-dark" rowspan="{{item.1.count}}">
                                     {% if item.0|date:"Y-m-d" >= today|date:"Y-m-d" %}
                                     <a href="../recording/?date={{ item.0|date:"Y-m-d"}}" class="text-primary" uk-icon="icon: plus-circle"></a>
@@ -133,6 +132,15 @@
                                     {{ item.0|date:"d.m.Y" }}<br>
                                     {{ item.0|date:"l" }}
                                     {% endif %}
+                                   <h1><span class="text-center badge badge-pill
+                                   {% if item.2 <= 5 %}
+                                   badge-info
+                                   {% elif  item.2 > 5 and item.2 < 8 %}
+                                   badge-warning
+                                   {% elif  item.2 >= 8 %}
+                                   badge-danger
+                                   {% endif %}"
+                                   >{{ item.2 }}</span></h1>
                                 </td>
                             {% for candidat in item.1 %}
 
@@ -154,12 +162,9 @@
                                 <td>
                                     <ul class="p-3">
                                     {% for oper in candidat.typeOpers.all %}
-                                    <li >{{ oper }}</li>
+                                    <li >{{ oper }} - {{ oper.duration }} ч.</li>
                                     {% endfor %}
                                     </ul>
-                                </td>
-                                <td>
-                                    {{ candidat.Surgeon }}
                                 </td>
                                 <td>
                                     {{ candidat.Doctor }}
@@ -167,6 +172,7 @@
                                 <td>
                                     {{ candidat.notes|linebreaks }}
                                 </td>
+
                             </tr>
         <!-- Modal-->
         <div id="delModal{{candidat.pk}}" tabindex="-1" role="dialog" aria-labelledby="leModalLabel"
