@@ -138,6 +138,7 @@ class MedCardForm(ModelForm):
             'RH': Select(attrs={'class': 'form-control form-control-lg'}),
             'KELL': Select(attrs={'class': 'form-control form-control-lg'}),
             'typeOpers': CheckboxSelectMultiple(attrs={'class': 'form-control-label'}),
+            'total_duration': NumberInput(attrs={'class': 'form-control'}),
             'PZK': Select(attrs={'class': 'form-control form-control-lg'}),
             'anest': Select(attrs={'class': 'form-control form-control-lg'}),
             'schema': Select(attrs={'class': 'form-control form-control-lg'}),

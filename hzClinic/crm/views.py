@@ -562,6 +562,7 @@ def timeline_view(request, set_date=''):
     b_rec = paginator.get_page(current_page)
     enum_rec = paginator.get_elided_page_range(current_page, on_each_side=1, on_ends=1)
 
+    #добаляем в порцию пагинатора суммарную длительность за день
     for rec in b_rec[0]:
         if rec[1] is None:
             rec.append(0)
@@ -570,8 +571,9 @@ def timeline_view(request, set_date=''):
             for candidat in rec[1]:
                 for oper in candidat.typeOpers.all():
                     day_duration += oper.duration
+                if candidat.typeOpers.all().count() > 1:
+                    day_duration = day_duration - (candidat.typeOpers.all().count()-1)
             rec.append(day_duration)
-        print(rec)
 
     if b_rec.has_previous():
         prev_page = b_rec.previous_page_number

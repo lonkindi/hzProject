@@ -201,6 +201,7 @@ class MedCard(models.Model):
     date_oper = models.DateField(verbose_name='Дата операции', default=datetime.datetime.today)
     typeOpers = models.ManyToManyField(TypeOperations, verbose_name='Операции (typeOpers)',
                                        related_name='medcard_operations')
+    total_duration = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name='Суммарное время операции')
     PZK = models.CharField(max_length=100, choices=PZK_Choices, verbose_name='Состояние ПЖК', default=1)
     anest = models.CharField(max_length=100, choices=anest_Choices, verbose_name='Анестезия')
     schema = models.CharField(max_length=100, choices=schema_Choices, verbose_name='Схема к протоколу')
