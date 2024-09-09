@@ -77,7 +77,7 @@ class CandidateForm(ModelForm):
                   'notes': 'Примечания (необязательное)',
                   }
         model = Candidate
-        fields = ['date_oper', 'phoneNumber', 'Sname', 'Name', 'Mname', 'notes', 'typeOpers', 'Surgeon', 'Doctor']
+        fields = ['date_oper', 'phoneNumber', 'Sname', 'Name', 'Mname', 'notes', 'typeOpers', 'Surgeon', 'Doctor', 'total_duration']
         widgets = {
             'typeOpers': CheckboxSelectMultiple(attrs={'class': 'form-control-label'}),
             'date_oper': TextInput(attrs={'type': 'date', 'class': 'form-control'}),
@@ -88,6 +88,7 @@ class CandidateForm(ModelForm):
             'Surgeon': Select(attrs={'placeholder': 'Хирург', 'class': 'form-control'}),
             'Doctor': Select(attrs={'placeholder': 'Врач', 'class': 'form-control'}),
             'notes': Textarea(attrs={'placeholder': 'Примечания', 'class': 'form-control'}),
+            'total_duration': NumberInput(attrs={'class': 'form-control'}),
         }
 
 
@@ -138,7 +139,6 @@ class MedCardForm(ModelForm):
             'RH': Select(attrs={'class': 'form-control form-control-lg'}),
             'KELL': Select(attrs={'class': 'form-control form-control-lg'}),
             'typeOpers': CheckboxSelectMultiple(attrs={'class': 'form-control-label'}),
-            'total_duration': NumberInput(attrs={'class': 'form-control'}),
             'PZK': Select(attrs={'class': 'form-control form-control-lg'}),
             'anest': Select(attrs={'class': 'form-control form-control-lg'}),
             'schema': Select(attrs={'class': 'form-control form-control-lg'}),

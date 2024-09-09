@@ -267,6 +267,7 @@ def quest_view(request, ext_id):
             date_oper = find_candidate.date_oper
             typeOpers = find_candidate.typeOpers.all()
             surgeon = find_candidate.Doctor
+
         AddressRow = anket_dict['Адрес места жительства (регистрации)']
         token = settings_local.DaDaAPI
         secret = settings_local.DaDaSecret
@@ -569,10 +570,7 @@ def timeline_view(request, set_date=''):
         else:
             day_duration = 0
             for candidat in rec[1]:
-                for oper in candidat.typeOpers.all():
-                    day_duration += oper.duration
-                if candidat.typeOpers.all().count() > 1:
-                    day_duration = day_duration - (candidat.typeOpers.all().count()-1)
+                day_duration += candidat.total_duration
             rec.append(day_duration)
 
     if b_rec.has_previous():

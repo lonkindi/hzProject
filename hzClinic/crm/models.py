@@ -111,7 +111,7 @@ class TypeOperations(models.Model):
         ordering = ('code',)
 
     def __str__(self):
-        return str(self.name)
+        return  str(self.name) + ' (≈'+ str(self.duration) + ' ч.)'
 
 
 class Candidate(models.Model):
@@ -133,6 +133,7 @@ class Candidate(models.Model):
                                default='Хотян А.Р.')
     Doctor = models.ForeignKey(Doctor, verbose_name='Врач', on_delete=models.CASCADE, blank=True, null=True)
     notes = models.TextField(max_length=255, verbose_name='Примечания (notes)', blank=True)
+    total_duration = models.PositiveSmallIntegerField(default=0, verbose_name='Общее время операции')
 
     class Meta:
         verbose_name = 'Кандидат'
@@ -201,7 +202,6 @@ class MedCard(models.Model):
     date_oper = models.DateField(verbose_name='Дата операции', default=datetime.datetime.today)
     typeOpers = models.ManyToManyField(TypeOperations, verbose_name='Операции (typeOpers)',
                                        related_name='medcard_operations')
-    total_duration = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name='Суммарное время операции')
     PZK = models.CharField(max_length=100, choices=PZK_Choices, verbose_name='Состояние ПЖК', default=1)
     anest = models.CharField(max_length=100, choices=anest_Choices, verbose_name='Анестезия')
     schema = models.CharField(max_length=100, choices=schema_Choices, verbose_name='Схема к протоколу')
