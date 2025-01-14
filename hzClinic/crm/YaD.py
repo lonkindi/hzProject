@@ -29,11 +29,12 @@ def upload_file(loadfile, savefile, replace=True):
 def delete_folder(path):
     """Удаление папки.
     path: Путь к удаляемой папке."""
-    requests.delete(f'{URL}?path={path}', headers=headers)
+    response = requests.delete(f'{URL}?path={path}', headers=headers)
+    return response.status_code
 
 def get_folder(path):
     """Проверить наличие папки.
-    path: Путь к удаляемой папке."""
+    path: Путь к папке."""
     response = requests.get(f'{URL}?path={path}', headers=headers)
     return response.status_code
 

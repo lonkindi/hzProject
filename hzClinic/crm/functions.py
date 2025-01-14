@@ -50,19 +50,18 @@ def fill_tmpl(oper_list, context_dict):
         doc.render(context_dict)
         doc.save(docs_path + doc_folder + '/' + item + '_' + sFIO + '.docx')
 
-    id_ext = int(context_dict.get('id_ext', 0))
-    print(YaD.get_folder(f'MedicalCase/{doc_folder}'))
-    '''
+    id_ext = int(context_dict.get('anket_id', 0))
+
+
     if id_ext:
-        MyAPI.update_anket_myapi(ext_id=id_ext, state=1)
+        MyAPI.update_anket_myapi(ext_id=id_ext, state=0) # исправить статус!!!
 
     YaD.create_folder(f'MedicalCase/{doc_folder}')
     for file in os.listdir(target_path):
         upload_file = target_path + '/' + file
         YaD.upload_file(upload_file, f'MedicalCase/{doc_folder}/{file}')
-    # print('doc_folder =', doc_folder)
-    # print('docs_path =', docs_path)
-    '''
+    # print('YaD.get_folder = ', YaD.get_folder(f'MedicalCase/{doc_folder}'))
+    # print('YaD.delete_folder =', YaD.delete_folder(f'MedicalCase/{doc_folder}'))
     return doc_folder
 
 
@@ -287,10 +286,10 @@ def do_docs(query_dict):
             selector = ''
         else:
             selector = ';'
-        print(f'primen_lec=>{primen_lec}<')
+        # print(f'primen_lec=>{primen_lec}<')
         primen_lec += selector + curr_operation.primen_lec
 
-        print(f'med_vmesh=>{med_vmesh}<***oper=>{operation}<')
+        # print(f'med_vmesh=>{med_vmesh}<***oper=>{operation}<')
         if med_vmesh == '':
             selector = ''
         else:
@@ -321,15 +320,15 @@ def do_docs(query_dict):
     docs_context['krovop'] = krovop
     docs_context['naznach'] = del_duplicates(naznach, ',')
     primen_lec = del_duplicates(primen_lec, ';')
-    print(f'med_vmesh 1={med_vmesh}')
+    # print(f'med_vmesh 1={med_vmesh}')
     med_vmesh = del_duplicates(med_vmesh, ';')
-    print(f'med_vmesh 2={med_vmesh}')
+    # print(f'med_vmesh 2={med_vmesh}')
     for item in day_list:
         primen_lec_str = primen_lec.replace(f'{"{Date"+str(item)+"}"}', docs_context['Date' + str(item)])
         med_vmesh_str = med_vmesh.replace(f'{"{Date"+str(item)+"}"}', docs_context['Date' + str(item)])
         primen_lec = primen_lec_str
         med_vmesh = med_vmesh_str
-    print(f'med_vmesh 3={med_vmesh}')
+    # print(f'med_vmesh 3={med_vmesh}')
     docs_context['primen_lec'] = primen_lec
     docs_context['med_vmesh'] = med_vmesh
 

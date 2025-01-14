@@ -4,22 +4,21 @@
     <!-- Page Header-->
     <header class="page-header">
         <div class="container-fluid">
-            <h2 class="no-margin-bottom">Редактирование медицинской карты</h2>
+            <h2 class="no-margin-bottom">Медицинская карта пациента</h2>
         </div>
     </header>
     <ul class="breadcrumb">
         <div class="container-fluid">
-            <li class="breadcrumb-item"><a href="../">Главная</a></li>
             <li class="breadcrumb-item"><a href="../timeline/">Расписание</a></li>
             <li class="breadcrumb-item active">{{ current_medcard.date_oper|date:"d.m.Y" }} г. - {{ current_medcard.s_name }} {{ current_medcard.name }} {{ current_medcard.m_name }}</li>
         </div>
     </ul>
     <!-- Forms Section-->
     <section class="forms">
-        <form action="/medcard/{{ current_medcard.anket_id }}" method="post">
+        <form method="post">
             <div class="container-fluid">
                 <div class="row">
-                    <!-- Anket Form-->
+                    <!-- Medcard Form-->
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header d-flex align-items-center">
@@ -27,7 +26,7 @@
                                     {% if state == 1 %}
                                     <div class="badge badge-rounded bg-red">документы уже оформлялись</div>
                                     {% endif %}
-                                    Медицинская карта № {{ current_medcard.anket_id }} - {{ current_medcard.date_oper|date:"d.m.Y" }} г.
+                                    Медкарта № {{ current_medcard.anket_id }} от {{ current_medcard.date_oper|date:"d.m.Y" }} г.
                                 </h3>
                                 <input type="hidden" name="id_ext" value="{{ ext_id }}">
                             </div>
@@ -49,10 +48,7 @@
                                 </div>
                                 <hr>
                                 {% endfor %}
-
-                                <div class="form-control alert alert-danger" role="alert">
-                                    <input id="reformat" type="checkbox"  value="reformat" name="reformat">  Переформировать пакет документов
-                                </div>
+<!--                                {{ form.as_table }}-->
                             </div>
                         </div>
                     </div>
@@ -70,7 +66,7 @@
                                 </div>
                                 <hr>
                                 {% endfor %}
-                                <a href="{{current_medcard.ya_folder}}" class="btn btn-primary btn-block">Открыть на Я.Диске</a>
+                                <a href="{{current_medcard.ya_folder}}" class="btn btn-primary btn-block" target="_blank">Открыть на Я.Диске</a>
                             </div>
                         </div>
                     </div>
@@ -80,7 +76,6 @@
                                 <button type="button" data-toggle="modal" data-target="#myModal"
                                         class="btn btn-primary">Сохранить
                                 </button>
-
                             </div>
                         </div>
                     </div>
@@ -91,16 +86,12 @@
                         <div role="document" class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h4 id="exampleModalLabel" class="modal-title">Сохранение изменений в медицинской карте пациента
+                                    <h4 id="exampleModalLabel" class="modal-title">Сохранение медкарты пациента
                                         <em>{{ current_medcard.s_name }} {{ current_medcard.name }} {{ current_medcard.m_name }}</em>
-                                    </h4>
-                                    <button type="button" data-dismiss="modal" aria-label="Close"
-                                            class="close"><span
-                                            aria-hidden="true">×</span></button>
+                                        и обновление документов в облачном хранилище
+                                     </h4>
                                 </div>
                                 <div class="modal-body">
-                                    <p>После сохранения медкарты документы будут переоформлены и загружены в облачное
-                                        хранилище (если была выбрана такая опция).</p>
                                     <p>Дождитесь окончания процесса и возврата к расписанию.</p>
                                 </div>
                                 <div class="modal-footer">
@@ -108,7 +99,7 @@
                                             class="btn btn-secondary">Отмена
                                     </button>
                                     <input type="submit" class="btn btn-primary"
-                                           value="Сохранить">
+                                           value="Сохранить медкарту">
                                 </div>
                             </div>
                         </div>

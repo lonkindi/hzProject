@@ -232,15 +232,15 @@ def quest_view(request, ext_id):
     if request.method == 'POST':
         form = MedCardForm(request.POST)
         if form.is_valid():
-            new_medcard = form.save(commit=False)
+            new_medcard = form.save()
             current_folder = functions.do_docs(request.POST)
             ya_folder = f'https://disk.yandex.ru/client/disk/MedicalCase/{current_folder}'
             new_medcard.ya_folder = ya_folder
             new_medcard.save()
         else:
             pass
-
         return redirect(reverse('quests', args=[0]))
+
     else:
         anket = MyAPI.get_anket_myapi(ext_id) # list
         anket_str = anket[0].replace("'", '`')
@@ -445,12 +445,19 @@ def medcard_view(request, pk):
     template_name = 'crm/_medcard.html'
     current_medcard = get_object_or_404(MedCard, anket_id=pk)
     form = list(MedCardForm(instance=current_medcard))
-    # if request.method == 'POST':
-    #     # form = CandidateForm(request.POST, instance=current_candidate)
-    #     if form.is_valid():
-    #         new_date = form.cleaned_data['date_oper']
-    #         form.save()
-    #         return redirect(reverse(timeline_view, args=(new_date,)))
+    new_date = datetime.datetime.today().date()
+    if request.method == 'POST':
+        form = MedCardForm(request.POST, instance=current_medcard)
+        if form.is_valid():
+            curr_medcard = form.save()
+            current_folder = functions.do_docs(request.POST)
+            ya_folder = f'https://disk.yandex.ru/client/disk/MedicalCase/{current_folder}'
+            curr_medcard.ya_folder = ya_folder
+            curr_medcard.save()
+            new_date = form.cleaned_data['date_oper']
+        else:
+            pass
+        return redirect(reverse(timeline_view, args=(new_date,)))
     context = {'form': form,
                'title': 'Медицинская карта',
                'user': hzuser,

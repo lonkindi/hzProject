@@ -6,7 +6,7 @@ from django.forms import NumberInput, HiddenInput, ModelForm, CheckboxSelectMult
 
 from users.models import CustomUser
 
-from crm.models import hzUserInfo, Candidate, MedCard
+from crm.models import hzUserInfo, Candidate, MedCard, TypeOperations
 
 
 class LoginForm(forms.Form):
@@ -64,7 +64,6 @@ class QuestForm(forms.Form):
 
 class CandidateForm(ModelForm):
     error_css_class = 'has-danger'
-
     # required_css_class = 'has-warning'
 
     class Meta:
@@ -75,9 +74,10 @@ class CandidateForm(ModelForm):
                   'phoneNumber': 'Номер телефона (обязательное*)', 'Sname': 'Фамилия (обязательное*)',
                   'Name': 'Имя (обязательное*)', 'Mname': 'Отчество (необязательное)',
                   'notes': 'Примечания (необязательное)',
+                  'Doctor': 'Оперирующий хирург (выберите из списка)',
                   }
         model = Candidate
-        fields = ['date_oper', 'phoneNumber', 'Sname', 'Name', 'Mname', 'notes', 'typeOpers', 'Surgeon', 'Doctor', 'total_duration']
+        fields = ['date_oper', 'phoneNumber', 'Sname', 'Name', 'Mname', 'notes', 'typeOpers', 'Doctor', 'total_duration']
         widgets = {
             'typeOpers': CheckboxSelectMultiple(attrs={'class': 'form-control-label'}),
             'date_oper': TextInput(attrs={'type': 'date', 'class': 'form-control'}),
@@ -85,10 +85,10 @@ class CandidateForm(ModelForm):
             'Sname': TextInput(attrs={'help_text': 'help_text', 'placeholder': 'Фамилия', 'class': 'form-control'}),
             'Name': TextInput(attrs={'placeholder': 'Имя', 'class': 'form-control'}),
             'Mname': TextInput(attrs={'placeholder': 'Отчество', 'class': 'form-control'}),
-            'Surgeon': Select(attrs={'placeholder': 'Хирург', 'class': 'form-control'}),
-            'Doctor': Select(attrs={'placeholder': 'Врач', 'class': 'form-control'}),
+            'Doctor': Select(attrs={'placeholder': 'Хирург', 'class': 'form-control form-control-lg'}),
             'notes': Textarea(attrs={'placeholder': 'Примечания', 'class': 'form-control'}),
             'total_duration': NumberInput(attrs={'class': 'form-control'}),
+
         }
 
 
@@ -144,7 +144,7 @@ class MedCardForm(ModelForm):
             'schema': Select(attrs={'class': 'form-control form-control-lg'}),
             'surgeon': Select(attrs={'class': 'form-control form-control-lg'}),
             'candidate': Select(attrs={'class': 'form-control form-control-lg'}),
-            'ya_folder': TextInput(attrs={'class': 'form-control'}),
+            'ya_folder': TextInput(attrs={'class': 'form-control', 'readonly': ''}),
         }
         labels = {'PZK': 'Состояние подкожно-жировой клетчатки', 'date_oper': 'Дата операции (обязательное*)',
                   'surgeon': 'Оперирующий хирург', 'typeOpers': 'Планируемые виды операций',
