@@ -2,7 +2,9 @@ asgiref==3.4.1
 async-timeout==4.0.2
 Babel==2.11.0
 certifi==2022.9.24
+cffi==1.17.1
 charset-normalizer==2.0.12
+cryptography==44.0.1
 dadata==0.3.0
 Django==3.2.16
 django-redis==5.4.0
@@ -12,11 +14,13 @@ docxtpl==0.16.4
 idna==3.4
 importlib-metadata==4.8.3
 Jinja2==3.0.3
-lxml==4.9.1
+lxml==5.3.1
 MarkupSafe==2.0.1
 mysqlclient==2.1.1
 packaging==21.3
+pycparser==2.22
 pyparsing==3.1.1
+python-dateutil==2.9.0.post0
 python-docx==0.8.11
 pytz==2022.2.1
 redis==4.3.6

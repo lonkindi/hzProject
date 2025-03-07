@@ -34,8 +34,8 @@
             Расписание операций с {{ start_date|date:"d.m.Y" }} г. по {{ end_date|date:"d.m.Y" }} г.
         </div>
         <div class="card-header d-flex align-items-center">
-            <a href="{{ public_link }}">ссылка для просмотра расписания</a>
-            <a href="#" onclick="Copy('toCopy')" title="Копировать" class="text-primary" uk-icon="icon: copy"></a>
+            <a href="{{ public_link }}">ссылка для просмотра расписания</a>   
+            <a href="#" onclick="Copy('toCopy')" title="Копировать" class="text-primary" uk-icon="icon: copy; ratio: 1.5"></a>
             <p id="toCopy" class="link-text">https://hzcrm.hotyanznaet.ru/export_tl/{{ public_link }}</p>
         </div>
         <div class="card-body">
@@ -53,7 +53,7 @@
                 <tbody>
                 {% for candidat in data %}
                 <tr>
-                    <td>{{ forloop.counter }}</td>
+                    <td><input type="checkbox" value="">  {{ forloop.counter }}</td>
                     <td>{{ candidat.date_oper|date:"d.m.Y" }}<br>{{ candidat.date_oper|date:"l" }}</td>
                     <td>{{ candidat.Sname }} {{ candidat.Name }} {{ candidat.Mname }}<br>{{ candidat.phoneNumber }}</td>
                     <td>
@@ -63,7 +63,7 @@
                             {% endfor %}
                         </ul>
                     </td>
-                    <td>{{ candidat.Surgeon }}</td>
+                    <td>{{ candidat.Doctor }}</td>
                     <td>{{ candidat.notes|linebreaks }}</td>
                 </tr>
                 {% endfor %}

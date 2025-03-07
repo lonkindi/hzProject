@@ -60,8 +60,6 @@ def fill_tmpl(oper_list, context_dict):
     for file in os.listdir(target_path):
         upload_file = target_path + '/' + file
         YaD.upload_file(upload_file, f'MedicalCase/{doc_folder}/{file}')
-    # print('YaD.get_folder = ', YaD.get_folder(f'MedicalCase/{doc_folder}'))
-    # print('YaD.delete_folder =', YaD.delete_folder(f'MedicalCase/{doc_folder}'))
     return doc_folder
 
 

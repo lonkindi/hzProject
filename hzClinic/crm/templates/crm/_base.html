@@ -9,9 +9,6 @@
     <meta name="robots" content="all,follow">
     <!-- Bootstrap CSS-->
     <link rel="stylesheet" href={% static "crm/css/bootstrap.min.css" %}>
-    <link rel="stylesheet" href={% static "crm/css/font-awesome.min.css" %}>
-
-    <link rel="stylesheet" href={% static "crm/css/uikit.min.css" %}>
     <!-- Google fonts - Roboto -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,700">
     <!-- theme stylesheet-->
@@ -20,6 +17,7 @@
     <link rel="stylesheet" href={% static "crm/css/custom.css" %}>
     <!-- Favicon-->
     <link rel="shortcut icon" href={% static "crm/img/favicon.ico" %}>
+    <link rel="stylesheet" href={% static "crm/css/uikit.min.css" %}>
     <!-- Font Awesome CDN-->
     <!-- you can replace it by local Font Awesome-->
     <script src="https://use.fontawesome.com/99347ac47f.js"></script>
@@ -33,21 +31,23 @@
   </head>
   <body>
     <div class="page home-page">
+      <!-- Main Navbar-->
       {% block MainNavbar %}
         {% include "crm/_main_navbar.html" %}
       {% endblock %}
-
       <div class="page-content d-flex align-items-stretch">
+        <!-- Side Navbar -->
         <nav class="side-navbar">
+          <!-- Sidebar Header-->
           {% block SidebarHeader %}
             {% include "crm/_sidebar_header.html" %}
           {% endblock %}
-
+          <!-- Sidebar Navidation Menus-->
           {% block SidebarNavidationMenus %}
             {% include "crm/_nav_menu.html" %}
           {% endblock %}
         </nav>
-
+        <!-- Sidebar Navidation Menus-->
         {% block Content %}
           {% include "crm/_content.html" %}
         {% endblock %}
@@ -68,7 +68,6 @@
       {% endblock %}
     </div>
     <!-- Javascript files-->
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script src={% static "crm/js/tether.min.js" %}></script>
     <script src={% static "crm/js/bootstrap.min.js" %}></script>

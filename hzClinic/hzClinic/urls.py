@@ -34,6 +34,7 @@ urlpatterns = [
     path('quests/', views.quests_view, name='quests'),
     path('quests/<int:state_id>', views.quests_view, name='quests'),
     path('quest/<int:ext_id>', views.quest_view, name='quest'),
+    path('quest_hide/<int:ext_id>', views.quest_hide, name='quest_hide'),
     path('analyzes/', views.analyzes_view, name='analyzes'),
     path('control/', views.control_view, name='control'),
     path('medcard/<int:pk>', views.medcard_view, name='medcard'),

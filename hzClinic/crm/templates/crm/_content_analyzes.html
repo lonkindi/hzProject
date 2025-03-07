@@ -19,12 +19,12 @@
         <div class="container-fluid">
 
             <nav aria-label="Paginator">
-                <ul class="pagination pagination-sm justify-content-center">
+                <ul class="pagination pagination justify-content-center">
                     <li class="page-item {% if not anket_list.has_previous %} disabled {% endif %}">
                         <a class="page-link" href="{{ prev_page_url }}">&laquo;</a></li>
                     {% for e_item in e_analyzes %}
                     <li class="page-item
-                            {% if e_item == current_page %} active disabled {% endif %}
+                            {% if e_item == current_page %} active {% endif %}
                             {% if e_item == '…' %} disabled {% endif %}">
                         <a class="page-link" href="?page={{ e_item }}">{{e_item}}</a>
                     </li>

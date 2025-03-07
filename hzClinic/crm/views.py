@@ -226,6 +226,13 @@ def quests_view(request, state_id=9):
     return render(request, template_name=template_name, context=context)
 
 
+def quest_hide(request, ext_id):
+    if not request.user.is_authenticated:
+        return redirect(reverse(login_view))
+    MyAPI.update_anket_myapi(ext_id=ext_id, state=1)
+    return redirect(reverse('quests', args=[0]))
+
+
 def quest_view(request, ext_id):
     if not request.user.is_authenticated:
         return redirect(reverse(login_view))
@@ -249,9 +256,9 @@ def quest_view(request, ext_id):
         anket_id = ext_id
         content = anket_dict
         date_filling = anket_qs['date_filling']
-        f = str(anket_dict.get('Фамилия', '!НЕТ!')).capitalize()
-        i = str(anket_dict.get('Имя', '!НЕТ!')).capitalize()
-        o = str(anket_dict.get('Отчество', '')).capitalize()
+        f = str(anket_dict.get('Фамилия', '!НЕТ!')).capitalize().strip()
+        i = str(anket_dict.get('Имя', '!НЕТ!')).capitalize().strip()
+        o = str(anket_dict.get('Отчество', '')).capitalize().strip()
         fio = f + ' ' + i + ' ' + o
         raw_phone = anket_dict.get('Ваш контактный телефон', '')
         phone = re.sub('[\D]+','', raw_phone)
