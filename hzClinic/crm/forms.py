@@ -93,6 +93,8 @@ class CandidateForm(ModelForm):
 
 
 class MedCardForm(ModelForm):
+    candidate = forms.ModelChoiceField(queryset=Candidate.objects.all().order_by('-date_oper'), label='Кандидат', widget=forms.Select(attrs={'class': 'form-control form-control-lg'}))
+
     class Meta:
         model = MedCard
         fields = "__all__"

@@ -111,7 +111,7 @@ class TypeOperations(models.Model):
         ordering = ('code',)
 
     def __str__(self):
-        return  str(self.name) + ' (≈'+ str(self.duration) + ' ч.)'
+        return  str(self.name) + ' (≈'+ str(self.duration) + ' ч.)(pk = ' + str(self.pk) + ' / code =' + str(self.code) +')'
 
 
 class Candidate(models.Model):

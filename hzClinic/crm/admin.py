@@ -15,6 +15,7 @@ class TypeOperationsInline(admin.StackedInline):
 class MedCardAdmin(admin.ModelAdmin):
     formfield_overrides = {models.ManyToManyField: {'widget': CheckboxSelectMultiple}, }
     list_display = ('anket_id', 'date_oper', 's_name', 'name', 'm_name')
+    search_fields = ('anket_id', 'phone', 's_name', 'name', 'm_name')
     # list_editable = ('anket_id',)
 
 

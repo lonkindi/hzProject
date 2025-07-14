@@ -245,7 +245,7 @@ def quest_view(request, ext_id):
             new_medcard.ya_folder = ya_folder
             new_medcard.save()
         else:
-            pass
+            print(form.errors)
         return redirect(reverse('quests', args=[0]))
 
     else:

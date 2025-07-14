@@ -21,12 +21,14 @@ from hzClinic import settings, settings_local
 
 
 def fill_tmpl(oper_list, context_dict):
+    print('(fill_tmpl) oper_list = ', oper_list)
     sFIO = translit(context_dict['sFIO'], 'ru', reversed=True)
     sOpers = translit(context_dict['sOpers'], 'ru', reversed=True)
     doc_folder = sFIO + '_' + sOpers + '_' + context_dict['sDate0']
+    doc_folder = doc_folder.replace(' ', '_')
     base_dir = settings.BASE_DIR
-    file_path = os.path.join(base_dir, 'crm/tmpls/')
-    docs_path = os.path.join(base_dir, 'crm/docs/')
+    file_path = os.path.join(base_dir, 'crm\\tmpls\\')
+    docs_path = os.path.join(base_dir, 'crm\\docs\\')
     target_path = docs_path + doc_folder
 
     if not os.path.exists(target_path):
@@ -56,10 +58,10 @@ def fill_tmpl(oper_list, context_dict):
     if id_ext:
         MyAPI.update_anket_myapi(ext_id=id_ext, state=0) # исправить статус!!!
 
-    YaD.create_folder(f'MedicalCase/{doc_folder}')
-    for file in os.listdir(target_path):
-        upload_file = target_path + '/' + file
-        YaD.upload_file(upload_file, f'MedicalCase/{doc_folder}/{file}')
+    # YaD.create_folder(f'MedicalCase/{doc_folder}')
+    # for file in os.listdir(target_path):
+    #     upload_file = target_path + '/' + file
+    #     YaD.upload_file(upload_file, f'MedicalCase/{doc_folder}/{file}')
     return doc_folder
 
 
@@ -141,8 +143,9 @@ def do_docs(query_dict):
     docs_context['IO'] = re.sub(r'\b(\w+)\b\s+\b(\w*)\w*\b\s+\b(\w*)\w*\b', r'\2 \3', docs_context['FIO'])
 
     typeOpers = query_dict.getlist('typeOpers', False)
+    print('(do_docs) typeOpers = ', typeOpers)
     sum_opers = '-'
-    for oper in TypeOperations.objects.all():
+    for oper in TypeOperations.objects.all().order_by('code'):
         if str(oper.code) in typeOpers:
             selected_operations.append(oper)
             sum_opers += (oper.s_name + '-')
