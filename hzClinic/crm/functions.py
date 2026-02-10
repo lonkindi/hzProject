@@ -55,6 +55,7 @@ def fill_tmpl(oper_list, context_dict):
     id_ext = int(context_dict.get('anket_id', 0))
 
 
+
     if id_ext:
         MyAPI.update_anket_myapi(ext_id=id_ext, state=0) # исправить статус!!!
 

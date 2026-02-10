@@ -3,6 +3,7 @@ import datetime
 import os
 import re
 import csv
+from loguru import logger
 
 from dadata import Dadata
 from dateutil.relativedelta import relativedelta
@@ -17,6 +18,8 @@ from django.shortcuts import render, redirect, reverse, get_object_or_404
 from crm import YaD, MyAPI, functions
 
 from hzClinic import settings, settings_local
+
+
 
 
 def page_not_found_view(request, exception):
@@ -122,7 +125,9 @@ def analyzes_view(request):
 
 
 def login_view(request):
+    logger.add("log/crm.log")
     if request.user.is_authenticated:
+        logger.info(f'Авторизанный пользователь {request.user} на странице авторизации')
         return redirect(reverse(main_view))
     if request.method == 'POST':
         username = request.POST.get('user_login', None)
@@ -131,9 +136,10 @@ def login_view(request):
         if user is not None:
             if user.is_active:
                 login(request, user)
+                logger.info(f'Успешная авторизация пользователя {user}')
                 return redirect(main_view)
-            # else:
-            #     pass
+            else:
+                logger.info(f'Неудачная попытка авторизация пользователя {username} с паролем {password}')
         else:
             return HttpResponse('Некорректный логин или пароль!')
     template_name = 'crm/login.html'
@@ -174,6 +180,11 @@ def quests_view(request, state_id=9):
     prev_page = ''
     next_page = ''
     current_page = 1
+
+    logger.add("log/crm_app.log")
+    logger.info("Hello, Loguru!")
+    logger.warning("Это предупреждение, будьте внимательны.")
+    logger.debug("Это сообщение не будет видно по умолчанию.")
 
     if ankets != ['']:
         for item_row in ankets:
